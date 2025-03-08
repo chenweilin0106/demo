@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f1f1f1;
+        }
+        :root {
+            --color1: #ca3b20;
+            --color2: #668036;
+            --color3: #ffca70;
+        }
+        .box{
+            width: 500px;
+            height: 500px;
+            border-radius: 20px;
+            background-image: linear-gradient(#fff, #fff),
+            linear-gradient(45deg, 
+                                      var(--color1) 5%, 
+                                      var(--color2) 5%, 
+                                      var(--color2) 10%, 
+                                      var(--color3) 10%, 
+                                      var(--color3) 15%, 
+                                      var(--color1) 15%, 
+                                      var(--color1) 20%, 
+                                      var(--color2) 20%, 
+                                      var(--color2) 25%, 
+                                      var(--color3) 25%, 
+                                      var(--color3) 30%, 
+                                      var(--color1) 30%, 
+                                      var(--color1) 35%, 
+                                      var(--color2) 35%, 
+                                      var(--color2) 40%, 
+                                      var(--color3) 40%, 
+                                      var(--color3) 45%, 
+                                      var(--color1) 45%, 
+                                      var(--color1) 50%, 
+                                      var(--color2) 50%, 
+                                      var(--color2) 55%, 
+                                      var(--color3) 55%, 
+                                      var(--color3) 60%, 
+                                      var(--color1) 60%, 
+                                      var(--color1) 65%, 
+                                      var(--color2) 65%, 
+                                      var(--color2) 70%, 
+                                      var(--color3) 70%, 
+                                      var(--color3) 75%, 
+                                      var(--color1) 75%, 
+                                      var(--color1) 80%, 
+                                      var(--color2) 80%, 
+                                      var(--color2) 85%, 
+                                      var(--color3) 85%, 
+                                      var(--color3) 90%, 
+                                      var(--color1) 90%, 
+                                      var(--color1) 95%, 
+                                      var(--color2) 95%, 
+                                      var(--color2) 100%);
+            padding: 10px;
+            background-clip: content-box,padding-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="box"></div>
+</body>
+</html>

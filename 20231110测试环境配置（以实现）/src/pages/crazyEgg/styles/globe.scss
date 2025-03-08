@@ -1,0 +1,445 @@
+$theme_html_bgc: #c24d25; // 页面背景色
+$theme_special_color: #d35dff; // 重点字体颜色
+
+// 按钮 未完成
+$theme_botton_undid_bgc: linear-gradient(0deg, #E07336, #FFF68F); // 背景色
+$theme_botton_undid_border: 2px solid #ffffff; // 边框色
+$theme_botton_undid_color: #fff; // 字体色
+
+// 按钮 领取
+$theme_botton_did_bgc: linear-gradient(0deg, #34A38F, #9ADBB9);
+$theme_botton_did_border: 2px solid #fff;
+$theme_botton_did_color: #fff;
+
+// 按钮 已完成
+$theme_botton_done_bgc: linear-gradient(0deg, #A3A3A3, #DDDDDD);
+$theme_botton_done_border: 2px solid #ffffff;
+$theme_botton_done_color: #ffffff;
+
+// 渲染项背景渐变-横向
+// 积分兑奖：任务列表子组件，兑换好礼列表子组件
+// 充值返利：累计充值和连续充值列表子组件
+// 钻石送礼：累计消费返利列表子组件，排行榜组件
+$theme_bgc_horizontal_bgc: #BC9EFF; //背景色
+//$theme_bgc_horizontal_shadow: 0px 3px 0px 0px #ffebdc; //阴影
+
+// 积分兑奖：任务列表子组件，兑换好礼列表子组件
+// 充值返利：首充充值道具，累计充值和连续充值列表子组件
+// 钻石送礼：累计消费返利列表子组件，排行榜组件
+$theme_award_bgc: #C86325; // 边框色
+$theme_award_padding: 4px; // 边框粗细
+$theme_award_icon_bgc: #FFFBDD; // 图片背景色
+$theme_award_name_bgc: #F2AB73; // 文字背景色
+$theme_award_name_color: #ffffff; // 字体颜色
+
+//----------------------------------------------------------------------
+
+// 积分兑奖
+$pointReward_excharge_bgc: #BC9EFF; // 兑换好礼列表子组件边框色
+$pointReward_excharge_Icon_bgc: linear-gradient(180deg, #EECEFF, #FFFFFF); // 兑换好礼列表子组件道具图片背景色
+$pointReward_excharge_my_present_bgc: #F2AB73; // 兑换好礼内的我的积分
+$pointReward_excharge_text_bgc: linear-gradient(90deg, #848DFF, #CFAFFF); // 说明文本背景色
+$pointReward_dialog_left_btn_col: #fff;
+$pointReward_dialog_left_btn_bgc: linear-gradient(0deg, #34A38F, #9ADBB9);
+$pointReward_dialog_left_btn_bd: 2px solid #fff;
+
+// 充值返利
+// 首次重置说明文本背景色
+$rechargeRebate_first_bgc: linear-gradient(0deg, #848DFF, #CFAFFF);
+$rechargeRebate_recharge_list_circle: #EA87FF; // 累计充值和连续充值列表子组件文本小圆点
+$rechargeRebate_recharge_list_icon_bgc: #7956CA; // 累计充值满30文本下方的盒子背景色
+$rechargeRebate_recharge_5000_text_bgc: #7956CA; // 累计充值满5000文本背景色
+
+// 钻石送礼
+$presentGift_rank_header_bgc: #fe5720; // 排行榜头部背景色
+//----------------------------------------------------------------------
+
+// 以下为组件样式
+
+// ThemeBox
+$theme_box_head_width: 201px; // 标题图标大小
+$theme_box_head_top: -21px; // 标题图标位置
+$theme_box_bgc: linear-gradient(90deg, #f2a653, #fe7043); // 背景色颜色
+$theme_box_border: 1px solid #fff; // 外层边框
+$theme_box_padding: 4px; // 渐变边框厚度
+$theme_box_bd_linear: linear-gradient(0deg, #9c80fe, #b4ccff); // 渐变边框
+$theme_box_circle_color: #fffaa6; // 文本前面圆点颜色
+$theme_box_text_color: #fff; // 文本颜色
+
+// ThemeDialog
+$theme_dailog_border: 3px solid #56cabe; // 边框颜色
+$theme_dailog_bgc: linear-gradient(0deg, #ef8133, #ffc45d); // 背景色
+$theme_dailog_title_icon_size: 228px; // 标题图标大小
+$theme_dailog_title_icon_top: -54px; // 标题图标位置
+$theme_dialog_icon_border: 2px solid #d25e2a; // 图片边框（和theme_item颜色不一样）
+
+// DialogCongrats
+// $dialog_congrats_Award_Icon_border: 2px solid #C8FFF8; // 图片边框
+//----------------------------------------------------------------------
+
+.fade-popover-enter,
+.fade-popover-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.fade-popover-enter-active,
+.fade-popover-leave-active {
+  transition: all 0.3s;
+}
+
+.fade-popover-enter-to,
+.fade-popover-leave {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+
+  .propmt-main {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s;
+
+  .propmt-main {
+    transition: all 0.3s;
+  }
+}
+
+// 背景色
+html {
+  //background-color: $theme_html_bgc;
+}
+
+// 重点字体颜色
+.speical_color {
+  color: $theme_special_color !important;
+}
+
+// 按钮 未完成
+.theme_botton_undid {
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $theme_botton_undid_bgc;
+  border: $theme_botton_undid_border;
+  color: $theme_botton_undid_color;
+}
+
+// 按钮 领取
+.theme_botton_did {
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $theme_botton_did_bgc !important;
+  border: $theme_botton_did_border !important;
+  color: $theme_botton_did_color !important;
+}
+
+// 按钮 已完成
+.theme_botton_done {
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $theme_botton_done_bgc !important;
+  border: $theme_botton_done_border !important;
+  color: $theme_botton_done_color !important;
+}
+
+// 渲染项背景渐变-横向
+.bgc_horizontal {
+  background: $theme_bgc_horizontal_bgc;
+  //padding: 3px;
+  // border: 2px solid #f59c42;
+  // box-shadow: $theme_bgc_horizontal_shadow;
+  .bgc_horizontal_main {
+    background: linear-gradient(90deg, #848DFF, #CFAFFF);
+    border-radius: 20px;
+  }
+}
+
+// 积分兑奖：任务列表子组件，兑换好礼列表子组件
+// 充值返利：首充充值道具，累计充值和连续充值列表子组件
+// 钻石送礼：累计消费返利列表子组件，排行榜组件
+.theme_item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: $theme_award_bgc;
+  overflow: hidden;
+  padding: $theme_award_padding;
+
+  .img-top {
+    background: $theme_award_icon_bgc;
+    //border-radius: 4px 4px 0 0;
+  }
+
+  .img-bottom {
+    flex: 1;
+    background-color: $theme_award_name_bgc;
+    color: $theme_award_name_color;
+    //font-size: 24px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //border-radius: 0 0 4px 4px;
+  }
+}
+
+//纵向flex布局
+.flex_vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+//横向flex布局
+.flex_across {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 文字溢出隐藏（当前元素不能使用flex布局）
+.text_overHidden {
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+//----------------------------------------------------------------------
+
+// 以下为模块样式
+
+// 积分兑奖
+.PointReward {
+  // 兑换好礼列表子组件
+  .ExchargeListItem {
+    //// 边框色
+    //background: $pointReward_excharge_bgc;
+    //
+    //// 道具图片背景
+    //.ExchargeItem_Icon {
+    //  background: $pointReward_excharge_Icon_bgc;
+    //}
+    //
+    //// 说明文本背景渐变
+    //.ExchargeListItem_Center {
+    //  background: $pointReward_excharge_text_bgc;
+    //}
+    //
+    //// 道具名称
+    //.ExchargeItem_Name {
+    //  color: #fff;
+    //  background: $theme_award_name_bgc;
+    //}
+  }
+
+  // 兑换好礼内的我的积分
+  .PointReward_BottomBox_Present {
+    background: $pointReward_excharge_my_present_bgc;
+    color: #fff;
+  }
+
+  // 兑换好礼弹框内左边按钮特殊背景色
+  .van-dialog {
+    .left-button {
+      color: $pointReward_dialog_left_btn_col;
+      background: $pointReward_dialog_left_btn_bgc;
+      border: $pointReward_dialog_left_btn_bd;
+    }
+  }
+}
+
+// 钻石送礼
+.PresentGift {
+  .PresentGiftRank {
+    .rank_header {
+      background: $presentGift_rank_header_bgc;
+    }
+  }
+}
+
+//----------------------------------------------------------------------
+
+// 以下为公共组件样式
+
+// ThemeBox
+.ThemeBox {
+  border: $theme_box_border;
+  background: $theme_box_bd_linear;
+  padding: $theme_box_padding;
+
+  .ThemeBox_head {
+    top: $theme_box_head_top;
+
+    > img {
+      width: $theme_box_head_width;
+    }
+  }
+
+  .ThemeBox_main {
+    background: $theme_box_bgc;
+
+    .ThemeBox_BottomText {
+      color: $theme_box_text_color;
+
+      span {
+        background: $theme_box_circle_color;
+      }
+    }
+  }
+}
+
+// ThemeDialog
+.ThemeDialog {
+  //.van-dialog__header {
+  //  top: $theme_dailog_title_icon_top;
+  //
+  //  > img {
+  //    width: $theme_dailog_title_icon_size;
+  //  }
+  //}
+  //
+  //.van-dialog__content {
+  //  border: $theme_dailog_border;
+  //}
+  //
+  //.ThemeDialog_bgc {
+  //  background: $theme_dailog_bgc;
+  //}
+
+  // .theme_item {
+  //   border: $theme_dialog_icon_border;
+  // }
+}
+
+// DialogCongrats
+.DialogCongrats {
+  .Award_Icon {
+    border: $theme_dialog_icon_border;
+  }
+}
+
+// 弹框样式
+.theme_tk {
+  overflow: visible;
+  background-color: transparent !important;
+
+  // 标题
+  .van-dialog__header {
+    width: 100%;
+    position: absolute;
+    top: -43px;
+    height: 65px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    > img {
+      width: 199px;
+    }
+  }
+
+  .van-dialog__content {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    // background: linear-gradient(0deg, #fd703b, #fcc27d);
+    background: #fff;
+    border: 4px solid #b2caff;
+    border-radius: 15px;
+    overflow: hidden;
+    padding: 1px;
+
+    .white_border {
+      width: 100%;
+      // height: 100%;
+      // border: 1px solid #fff;
+      background: linear-gradient(0deg, #fd703b, #fcc27d);
+      border-radius: 10px;
+      padding-top: 25px;
+      overflow: hidden;
+
+      > p {
+        > img {
+          height: 18px;
+          margin: 0 3px;
+        }
+      }
+
+      .img-box {
+        background: #fff;
+        border: 2px solid #ffedad;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1px;
+      }
+
+      // 我得道具
+      .my_present_nums_box {
+        height: 18px;
+        margin: 0 3px;
+      }
+    }
+  }
+}
+
+.ThemeBox_BottomText {
+  //margin-left: 2px;
+  //margin-right: 6px;
+
+  li {
+    position: relative;
+    list-style-type: none;
+    //margin-left: 10px;
+    //padding-left: 3px;
+    font-size: 28px;
+    color: #FFEFCF;
+    line-height: 40px;
+
+    img {
+      position: relative;
+      margin: 0 2px;
+      width: 44px;
+    }
+
+    span {
+      position: absolute;
+      top: 9px;
+      left: -30px;
+      display: block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #FFFAA6;
+    }
+
+    i {
+      color: #59F9BC;
+    }
+  }
+}
+
+// 解决 自己实现的弹框 滑动穿透问题 配合mixins -> promptFixed
+.modalOpen {
+  -webkit-overflow-scrolling: touch;
+  position: fixed;
+  //z-index: ;
+  width: 100%;
+  overflow: hidden;
+}

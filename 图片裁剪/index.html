@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>图片裁剪器2</title> <!-- 页面标题 -->
+  <link rel="stylesheet" href="./style.css" /> <!-- 引入样式表 -->
+</head>
+
+<body>
+  <input id="file" type="file" /> <!-- 文件输入框 -->
+  <div id="container" class="container"> <!-- 容器 -->
+    <img id="bgImage" width="100%" height="100%" /> <!-- 背景图片 -->
+    <div id="mask" class="mask"> <!-- 遮罩层 -->
+      <div id="maskView" class="mask__view"></div> <!-- 遮罩视图 -->
+    </div>
+    <div id="cropper" class="cropper"> <!-- 裁剪器 -->
+      <div id="cropperView" class="cropper__view"> <!-- 裁剪视图 -->
+        <span class="cropper-dashed dashed-h"></span> <!-- 水平虚线 -->
+        <span class="cropper-dashed dashed-v"></span> <!-- 垂直虚线 -->
+        <span class="cropper-center"></span> <!-- 中心点 -->
+        <span class="cropper-move"></span> <!-- 移动区域 -->
+        <span class="cropper-line line-n" data-action="top"></span> <!-- 上边线 -->
+        <span class="cropper-line line-e" data-action="right"></span> <!-- 右边线 -->
+        <span class="cropper-line line-s" data-action="bottom"></span> <!-- 下边线 -->
+        <span class="cropper-line line-w" data-action="left"></span> <!-- 左边线 -->
+        <span class="cropper-point point-e"></span> <!-- 右边点 -->
+        <span class="cropper-point point-n"></span> <!-- 上边点 -->
+        <span class="cropper-point point-w"></span> <!-- 左边点 -->
+        <span class="cropper-point point-s"></span> <!-- 下边点 -->
+        <span class="cropper-point point-nw" data-action="top-left"></span> <!-- 左上角点 -->
+        <span class="cropper-point point-ne" data-action="top-right"></span> <!-- 右上角点 -->
+        <span class="cropper-point point-se" data-action="bottom-right"></span> <!-- 右下角点 -->
+        <span class="cropper-point point-sw" data-action="bottom-left"></span> <!-- 左下角点 -->
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => { // DOM加载完成后执行
+      const file = document.getElementById("file"); // 获取文件输入框
+      const bgImage = document.getElementById("bgImage"); // 获取背景图片元素
+      const mask = document.getElementById("mask"); // 获取遮罩层元素
+      const maskView = document.getElementById("maskView"); // 获取遮罩视图元素
+      const cropper = document.getElementById("cropper"); // 获取裁剪器元素
+      const cropperView = document.getElementById("cropperView"); // 获取裁剪视图元素
+      file.addEventListener("change", (e) => { // 文件输入框变化事件
+        const target = e.target.files[0]; // 获取选中的文件
+        const imgURL = URL.createObjectURL(target); // 创建文件URL
+        bgImage.src = imgURL; // 设置背景图片的src
+        maskView.style.backgroundImage = `url('${imgURL}')`; // 设置遮罩视图的背景图片
+        bgImage.onload = () => { // 背景图片加载完成后执行
+          createCropper(); // 创建裁剪器
+        };
+      });
+      let initDimention = [50, 50, 50, 50]; // 初始化裁剪区域尺寸
+      const TOP = 0, RIGHT = 1, BOTTOM = 2, LEFT = 3; // 定义方向常量
+      let dragging = false; // 是否正在拖动
+      let startPoint = [0, 0]; // 起始点坐标
+      let currentElement = null; // 当前操作的元素
+      let currentDimention = []; // 当前裁剪区域尺寸
+      let startDimention = []; // 起始裁剪区域尺寸
+      let direction = [0, 0, 0, 0]; // 方向数组
+      let moving = false; // 是否正在移动
+      function createCropper () { // 创建裁剪器函数
+        mask.style.display = "block"; // 显示遮罩层
+        cropper.style.display = "block"; // 显示裁剪器
+        setDimention(initDimention); // 设置裁剪区域尺寸
+        const moveElement = document.querySelector(".cropper-move"); // 获取移动区域元素
+
+        const elements = [ // 获取所有可拖动元素
+          moveElement,
+          ...document.querySelectorAll(".cropper-line"),
+          ...document.querySelectorAll(".cropper-point"),
+        ];
+        elements.forEach((ele) => { // 为每个可拖动元素添加事件监听
+          ele.addEventListener("mousedown", (e) => { // 鼠标按下事件
+            dragging = true; // 设置拖动状态
+            const { clientX, clientY } = e; // 获取鼠标按下时的坐标
+            startPoint[0] = clientX; // 设置起始点X坐标
+            startPoint[1] = clientY; // 设置起始点Y坐标
+            currentElement = ele; // 设置当前操作的元素
+            currentDimention = initDimention; // 设置当前裁剪区域尺寸
+            startDimention = [...initDimention]; // 设置起始裁剪区域尺寸
+
+            if (ele === moveElement) { // 如果是移动区域
+              direction[TOP] = 1; // 设置方向
+              direction[BOTTOM] = -1;
+              direction[LEFT] = 1;
+              direction[RIGHT] = -1;
+              moving = true; // 设置移动状态
+            }
+            const action = ele.dataset.action; // 获取操作类型
+            switch (action) { // 根据操作类型设置方向
+              case "top":
+                direction[TOP] = 1;
+                direction[BOTTOM] = 0;
+                break;
+              case "right":
+                direction[LEFT] = 0;
+                direction[RIGHT] = -1;
+                break;
+              case "bottom":
+                direction[TOP] = 0;
+                direction[BOTTOM] = -1;
+                break;
+              case "left":
+                direction[LEFT] = 1;
+                direction[RIGHT] = 0;
+                break;
+              case "top-right":
+                direction[TOP] = 1;
+                direction[RIGHT] = -1;
+                break;
+              case "top-left":
+                direction[TOP] = 1;
+                direction[LEFT] = 1;
+                break;
+              case "bottom-left":
+                direction[BOTTOM] = -1;
+                direction[LEFT] = 1;
+                break;
+              case "bottom-right":
+                direction[BOTTOM] = -1;
+                direction[RIGHT] = -1;
+                break;
+            }
+          });
+        });
+      }
+      document.body.addEventListener("mousemove", (e) => { // 鼠标移动事件
+        if (!dragging) return; // 如果没有拖动则返回
+        const { clientX, clientY } = e; // 获取鼠标移动时的坐标
+        let diffX = clientX - startPoint[0]; // 计算X轴移动距离
+        let diffY = clientY - startPoint[1]; // 计算Y轴移动距离
+        if (moving) { // 如果正在移动
+          diffX = Math.min( // 限制X轴移动距离
+            Math.max(diffX, -startDimention[LEFT]),
+            startDimention[RIGHT]
+          );
+          diffY = Math.min( // 限制Y轴移动距离
+            Math.max(diffY, -startDimention[TOP]),
+            startDimention[BOTTOM]
+          );
+        }
+        const minWidth = 30; // 最小宽度
+        const minHeight = 30; // 最小高度
+        currentDimention[TOP] = Math.min( // 计算新的上边距
+          Math.max(startDimention[TOP] + direction[TOP] * diffY, 0),
+          cropper.clientHeight - currentDimention[BOTTOM] - minHeight
+        );
+        currentDimention[RIGHT] = Math.min( // 计算新的右边距
+          Math.max(startDimention[RIGHT] + direction[RIGHT] * diffX, 0),
+          cropper.clientWidth - currentDimention[LEFT] - minWidth
+        );
+        currentDimention[BOTTOM] = Math.min( // 计算新的下边距
+          Math.max(startDimention[BOTTOM] + direction[BOTTOM] * diffY, 0),
+          cropper.clientHeight - currentDimention[TOP] - minHeight
+        );
+        currentDimention[LEFT] = Math.min( // 计算新的左边距
+          Math.max(startDimention[LEFT] + direction[LEFT] * diffX, 0),
+          cropper.clientWidth - currentDimention[RIGHT] - minWidth
+        );
+        setDimention(currentDimention); // 设置新的裁剪区域尺寸
+      });
+      document.body.addEventListener("mouseup", () => { // 鼠标松开事件
+        dragging = false; // 取消拖动状态
+        moving = false; // 取消移动状态
+        direction[TOP] = 0; // 重置方向
+        direction[BOTTOM] = 0;
+        direction[LEFT] = 0;
+        direction[RIGHT] = 0;
+      });
+      function setDimention (dimention) { // 设置裁剪区域尺寸函数
+        cropperView.style.inset = `${dimention[TOP]}px ${dimention[RIGHT]}px ${dimention[BOTTOM]}px ${dimention[LEFT]}px`; // 设置裁剪视图的inset
+        maskView.style.clipPath = `inset(${dimention[TOP]}px ${dimention[RIGHT]}px ${dimention[BOTTOM]}px ${dimention[LEFT]}px)`; // 设置遮罩视图的clip-path
+      }
+    });
+  </script>
+</body>
+
+</html>

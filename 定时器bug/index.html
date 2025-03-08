@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    reloadFreeUsersData
+    function reloadFreeUsersData () {
+      this.timer = setTimeout(async () => {
+        await this.getHomeData('m4')
+        if (this.pageData.free_status == 2) {
+          this.getSwiper()
+          return this.clearTimer()
+        }
+        this.num += 1
+        if (this.num > 5) return this.clearTimer()
+        console.log('num', this.num)
+        this.reloadFreeUsersData()
+      }, 1000)
+    }
+  </script>
+</body>
+
+</html>

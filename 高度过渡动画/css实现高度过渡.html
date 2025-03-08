@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background-color: #000;
+    gap: 10px;
+  }
+  .item {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    background-color: #fff;
+  }
+</style>
+<body>
+  <div class="grid">
+    <span class="item">1fr</span>
+    <span class="item">1fr</span>
+    <span class="item">1fr</span>
+  </div>
+</body>
+</html>

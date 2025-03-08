@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- 阻止页面双指放大缩小 -->
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    #container {
+      width: 200px;
+      height: 200px;
+      background-color: pink;
+      pointer-events: auto;
+      user-select: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <p id="scaleNum"></p>
+  <script>
+    var scaleNum = document.getElementById('scaleNum');
+    var container = document.getElementById('container');
+    var nomrlaWidth = container.offsetWidth;
+    var nomrlaHeight = container.offsetHeight;
+      var startX, startY;
+      var distanceStart, distanceEnd;
+
+      container.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var touches = e.touches;
+        if (touches.length == 2) { // 双指触摸
+          startX = Math.abs(touches[0].pageX - touches[1].pageX);
+          startY = Math.abs(touches[0].pageY - touches[1].pageY);
+          distanceStart = Math.sqrt(startX * startX + startY * startY); // 计算两个触点之间的距离
+        }
+      });
+
+      container.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var touches = e.touches;
+        if (touches.length == 2) { // 双指触摸
+          var endX = Math.abs(touches[0].pageX - touches[1].pageX);
+          var endY = Math.abs(touches[0].pageY - touches[1].pageY);
+          distanceEnd = Math.sqrt(endX * endX + endY * endY); // 计算两个触点之间的距离
+          var distanceDiff = distanceEnd - distanceStart; // 计算距离差值
+          var scale = (distanceEnd / distanceStart).toFixed(2); // 计算缩放比例
+          scaleNum.innerHTML = scale;
+          container.style.width = nomrlaWidth * scale + 'px'; // 根据缩放比例来缩放图片或其他内容
+          container.style.height = nomrlaHeight * scale + 'px';
+        }
+      });
+
+      container.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        startX = null;
+        startY = null;
+        distanceStart = null;
+        distanceEnd = null;
+        nomrlaWidth = container.offsetWidth;
+        nomrlaHeight = container.offsetHeight;
+      });
+  </script>
+</body>
+</html>

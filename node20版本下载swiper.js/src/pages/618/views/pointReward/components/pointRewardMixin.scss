@@ -1,0 +1,17 @@
+// publicCard大小 $width: 宽度 $height: 高度 $marginBottom: 底部间距 $borderRadius: 圆角
+@mixin publicCardSize($width, $height, $marginBottom, $borderRadius: 20px) {
+  margin: 0 auto $marginBottom;
+  width: $width;
+  height: $height;
+  border-radius: $borderRadius;
+}
+// 道具图标大小 $width: 宽度 $height: 高度
+@mixin pointIconSize($width: 60px, $height: 57px) {
+  width: $width;
+  height: $height;
+}
+// 文本背景色和字体颜色 $bgc: 背景色 $fontColor: 字体颜色
+@mixin textMixin($bgc: #aa673a, $fontColor: #fff) {
+  background-color: $bgc;
+  color: $fontColor;
+}

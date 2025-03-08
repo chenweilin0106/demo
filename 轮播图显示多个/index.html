@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn-image.dandan818.com/activity/public/vue/node_modules/swiper.min.js"></script>
+    <link rel="stylesheet" href="https://cdn-image.dandan818.com/activity/public/vue/node_modules/swiper.min.css">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        html,
+        body {
+            position: relative;
+            height: 100%;
+        }
+        body {
+            background: #eee;
+            font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            color: #000;
+        }
+        .swiper-container {
+            width: 690px;
+            height: 302px;
+            background-color: #fff;
+        }
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .swiper-slide img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .swiper-slide {
+            width: 539px;
+            height: 302px;
+        }
+    </style>
+</head>
+<body>
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <img src="./images/mk6_1.png" alt="">
+          </div>
+          <div class="swiper-slide">
+            <img src="./images/mk6_2.png" alt="">
+          </div>
+          <div class="swiper-slide">
+            <img src="./images/mk6_3.png" alt="">
+          </div>
+        </div>
+      </div>
+    <script>
+        var swiper = new Swiper('.swiper-container', {
+            slidesPerView: 'auto',
+            centeredSlides: true
+        })
+    </script>
+</body>
+</html>

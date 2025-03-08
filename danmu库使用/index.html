@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danmu</title>
+    <script src="https://unpkg.com/danmu/dist/danmu.umd.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        body {
+            width: 100%;
+            height: 100%;
+        }
+        .container {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container"></div>
+    <script>
+        const manager = Danmu.create({
+            mode: 'strict', // 严格碰撞
+            plugin: {
+                $createNode(danmaku) {
+                    danmaku.node.textContent = danmaku.data; // 设置弹幕内容
+                }
+            }
+        });
+        manager.mount('.container');
+        manager.startPlaying();
+        let loop = 0;
+        setInterval(() => {
+            manager.push('弹幕内容' + loop++);
+        }, 500);
+    </script>
+</body>
+</html>

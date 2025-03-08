@@ -1,0 +1,38 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: pink;
+}
+
+.box {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  background-color: red;
+}
+
+.box .inner {
+  position: absolute;
+  z-index: -1;
+  bottom: -50px;
+  right: -50px;
+  width: 100px;
+  height: 100px;
+  background-color: blue;
+  color: white;
+}
+
+.box .test {
+  position: absolute;
+  z-index: 1;
+  top: 50px;
+  left: 50px;
+  width: 100px;
+  height: 100px;
+  background-color: green;
+  color: white;
+}

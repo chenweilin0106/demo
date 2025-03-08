@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <button>打开新页面</button>
+    <script>
+        const button = document.querySelector('button');
+        button.addEventListener('click', function(){
+            try {
+                const a = document.createElement('a');
+                a.id = 'rechare';
+                a.href = 'https://www.baidu.com';
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } catch (error) {
+                alert(error)   
+            }
+        });
+    </script>
+</body>
+</html>

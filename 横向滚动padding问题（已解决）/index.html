@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        .scrollBox{
+            width: 90vw;
+            height: 300px;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            background-color: #f1f1f1;
+            padding-left: 50px;
+        }
+        .container{
+            position: relative;
+            top: 100px;
+            width: 800px;
+            height: 100px;
+            /* background-color: skyblue; */
+            display: flex;
+            justify-content: space-evenly;
+            padding-right: 50px;
+
+        }
+        .item{
+            width: 100px;
+            height: 100px;
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+    <div class="scrollBox">
+        <div class="container">
+            <div class="item">1</div>
+            <div class="item">2</div>
+            <div class="item">3</div>
+            <div class="item">4</div>
+            <div class="item">5</div>
+            <div class="item">6</div>
+            <div class="item">7</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./vue.js"></script>
+  <style>
+    .list-move {
+      transition: transform 0.5s;
+    }
+
+    .list1-move {
+      transition: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <transition-group :name="transitionName" tag="ul">
+      <li v-for="(item, index)  in items" :key="item.id" @click="moveItem(item,index)">
+        {{ item.text }}
+      </li>
+    </transition-group>
+  </div>
+</body>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      items: [
+        { id: 1, text: "Item 1" },
+        { id: 2, text: "Item 2" },
+        { id: 3, text: "Item 3" }
+      ],
+      transitionName: 'list1',
+      isClick: true
+    },
+    mounted() {
+      this.init_load()
+    },
+    methods: {
+      async init_load() {
+        try {
+          const res = await this.get_data()
+          this.items = [
+            { id: 1, text: "Item 1" },
+            { id: 5, text: "Item 5" },
+            { id: 2, text: "Item 2" },
+            res,
+            { id: 3, text: "Item 3" }
+          ]
+          await this.sleep('list')
+        } catch (error) {
+
+        } finally {
+          this.isClick = false
+        }
+      },
+      get_data() {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve({ id: 4, text: "Item 4" })
+          }, 1000)
+        })
+      },
+      async moveItem(item, index) {
+        if (this.isClick) return
+        try {
+          this.isClick = true
+          this.items.splice(index, 1);
+          this.items.push(item);
+          this.transitionName === 'list' ? await this.sleep('list1', 500) : null
+        } catch (error) { } finally {
+          this.isClick = false
+        }
+      },
+      sleep(className, timer = 0) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            this.transitionName = className
+            resolve(true)
+          }, timer)
+        })
+      }
+    }
+  })
+</script>
+
+</html>

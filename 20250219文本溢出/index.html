@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            display: flex;
+        }
+        .box{
+            display: flex;
+            flex-basis: 45%;
+            flex-direction: row;
+            align-items: center;
+            background-color: red;
+        }
+        .inner1{
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+        }
+        .text1{
+            text-align: center;
+            font-size: 14px;
+            color: #ACB2C0;
+        }
+        .icon{
+            width: 40px;
+            height: 40px;
+            background-color: #000;
+            flex-shrink: 0;
+        }
+        .inner2{
+            width: 300px;
+            overflow: hidden;
+        }
+        .text2{
+            font-size: 14px;
+            color: #ACB2C0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            background-color: #fff;
+        }
+        .text2-1{
+            font-size: 12px;
+            color: #ACB2C0;
+            margin-top: 1px;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="inner1">
+            <div class="text1">1</div>
+        </div>
+        <div class="icon"></div>
+        <div class="inner2">
+            <div class="text2">123123213</div>
+            <div class="text2-1">铭牌</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+</head>
+
+<body>
+  <input type="text">
+  <!-- <button id="Copy">点击复制</button> -->
+  <button id="Past">点击粘贴</button>
+  <!-- <p></p> -->
+  <!-- <script>
+    const input = document.querySelector("input");
+    const pastBtn = document.querySelector("#Past");
+
+    function isIOS () {
+      const u = window.navigator.userAgent
+      return !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) || window.navigator.userAgent.indexOf('Safari') === -1
+    }
+
+    function addP (text) {
+      const p = document.createElement('p')
+      p.innerText = text
+      document.body.appendChild(p)
+    }
+
+    //APP获取剪贴板内容
+    function getCopyString () {
+      console.log('进入getCopyString')
+      addP('进入getCopyString')
+      if (isIOS()) {
+        console.log('进入IOS getCopyString')
+        addP('进入IOS getCopyString')
+        window.webkit.messageHandlers.getCopyString.postMessage('')
+      } else {
+        addP('进入Android getCopyString')
+        console.log('进入Android getCopyString')
+        window.external.action('/getCopyString')
+      }
+    }
+
+    function past () {
+      addP('点击粘贴')
+      // getCopyString()
+      // 需要剪贴板权限
+      // clipboard.readText().then(
+      //   (text) => { input.value = text; },
+      //   (error) => { console.log(error); }
+      // );
+    }
+
+    // APP获取剪贴板回调
+    function postCopyString (param) {
+      addP('postCopyString回调触发，粘贴内容：' + param)
+      console.log('postCopyString回调触发', param)
+      input.value = param
+    }
+
+    window.postCopyString = postCopyString
+    pastBtn.addEventListener("click", past);
+  </script> -->
+  <script>
+    // 参考文档 https://www.ruanyifeng.com/blog/2021/01/clipboard-api.html
+    // 目前结论 只有在https协议下才能使用clipboard API或者本地localhost环境下
+    // 并且需要剪贴板权限
+    // 没有权限得报错信息为Read is not supported in your browser
+    // 非https环境下也是同样的报错，在控制台直接访问navigator.clipboard是undefined
+    // new window.VConsole();
+    // import * as clipboard from 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/4.1.0/es6/clipboard-polyfill.es6.min.js';
+    const input = document.querySelector("input");
+    // const copyBtn = document.querySelector("#Copy");
+    const pastBtn = document.querySelector("#Past");
+
+    function isIOS () {
+      const u = window.navigator.userAgent
+      return !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) || window.navigator.userAgent.indexOf('Safari') === -1
+    }
+
+    function addP (text) {
+      const p = document.createElement('p')
+      p.innerText = text
+      document.body.appendChild(p)
+    }
+
+    //APP获取剪贴板内容
+    function getCopyString () {
+      console.log('进入getCopyString')
+      addP('进入getCopyString')
+      if (isIOS()) {
+        addP('进入IOS getCopyString')
+        window.webkit.messageHandlers.getCopyString.postMessage('')
+      } else {
+        addP('进入Android getCopyString')
+        // window.external.action('/getCopyString')
+        window.external.getCopyString()
+      }
+    }
+
+    // function copy () {
+    //   clipboard.writeText("用户复制的文字").then(
+    //     () => { addP('复制成功，复制的内容：用户复制的文字'); },
+    //     (error) => { console.log(error); }
+    //   );
+    // }
+
+    function past () {
+      addP('点击粘贴')
+      getCopyString()
+      // 需要剪贴板权限
+      // clipboard.readText().then(
+      //   (text) => { input.value = text; },
+      //   (error) => { console.log(error); }
+      // );
+    }
+
+    // APP获取剪贴板回调
+    function onPostCopyString () {
+      addP('postCopyString回调触发，粘贴内容：')
+    }
+
+    window.postCopyString = onPostCopyString
+    pastBtn.addEventListener("click", past);
+    window.addEventListener('error', function(e) {
+      addP('error：' + e.message)
+    })
+    // addP(window.postCopyString)
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>结论：使用背景图实现相同效果</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            width: 100%;
+            height: 100vh;
+            background-color: #000;
+        }
+        :root{
+            --width: 525px; /* 背景图宽度 */
+            --top-height: 191px; /* 上背景图高度 */
+            --bottom-height: 117px; /* 下背景图高度 */
+            --over-height: 4px; /* 遮盖高度 用于覆盖中间背景图与上下背景图之间的缝隙 */
+            --center-height: calc(100% - calc(var(--top-height) + var(--bottom-height)) + var(--over-height) * 2) /* 计算中间高度 8px 覆盖中间背景图与上下背景图之间的缝隙 各4px 根据实际情况变动 */
+        }
+        .box{
+            width: var(--width);
+            min-height: 460px;
+            background: 
+                url('./tk_2_2.png') top center/var(--width) var(--top-height) no-repeat, 
+                url('./tk_2_4.png') bottom center/var(--width) var(--bottom-height) no-repeat,
+                url('./tk_2_3.png') center calc(var(--top-height) - var(--over-height))/var(--width) var(--center-height) no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+</body>
+</html>

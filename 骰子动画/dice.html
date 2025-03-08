@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .box {
+      width: 100px;
+      height: 100px;
+      margin: 50px auto;
+      transform-style: preserve-3d;
+      transform: rotateX(0) rotateY(0) rotateZ(0);
+      /* animation: rotate_6 0.5s linear forwards; */
+    }
+
+    .box>div {
+      width: 100px;
+      height: 100px;
+      position: absolute;
+      font-size: 30px;
+      color: #fff;
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box1 {
+      transform: rotateY(90deg) translateZ(50px);
+      background-color: black;
+    }
+
+    .box2 {
+      transform: rotateX(-90deg) translateZ(50px);
+      background-color: red;
+    }
+
+    .box3 {
+      transform: rotateY(-90deg) translateZ(50px);
+      background-color: green;
+    }
+
+    .box4 {
+      transform: rotateX(90deg) translateZ(50px);
+      background-color: skyblue;
+    }
+
+    .box5 {
+      transform: rotateX(180deg) translateZ(50px);
+      background-color: black;
+    }
+
+    .box6 {
+      /* background-position: -600px 0; */
+      transform: rotateZ(0deg) translateZ(50px);
+      background-color: purple;
+    }
+
+    .rotateClass_1 {
+      animation: rotate_1 0.5s linear forwards;
+    }
+
+    .rotateClass_2 {
+      animation: rotate_2 0.5s linear forwards;
+    }
+
+    .rotateClass_3 {
+      animation: rotate_3 0.5s linear forwards;
+    }
+
+    .rotateClass_4 {
+      animation: rotate_4 0.5s linear forwards;
+    }
+
+    .rotateClass_5 {
+      animation: rotate_5 0.5s linear forwards;
+    }
+
+    .rotateClass_6 {
+      animation: rotate_6 0.5s linear forwards;
+    }
+
+    @keyframes rotate_1 {
+      40% {
+        transform: rotateX(1turn) rotateY(1turn) rotateZ(0);
+      }
+
+      80% {
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+      }
+
+      100% {
+        transform: rotateX(90deg) rotateY(-90deg) rotateZ(90deg);
+      }
+    }
+
+    @keyframes rotate_2 {
+      40% {
+        transform: rotateX(1turn) rotateY(1turn) rotateZ(0);
+      }
+
+      80% {
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+      }
+
+      100% {
+        transform: rotateX(90deg) rotateY(0) rotateZ(0);
+      }
+    }
+
+    @keyframes rotate_3 {
+      40% {
+        transform: rotateX(1turn) rotateY(1turn) rotateZ(0);
+      }
+
+      80% {
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+      }
+
+      100% {
+        transform: rotateX(0deg) rotateY(90deg) rotateZ(0);
+      }
+    }
+
+    @keyframes rotate_4 {
+      40% {
+        transform: rotateX(1turn) rotateY(1turn) rotateZ(0);
+      }
+
+      80% {
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+      }
+
+      100% {
+        transform: rotateX(-90deg) rotateY(0) rotateZ(0);
+      }
+    }
+
+    @keyframes rotate_5 {
+      40% {
+        transform: rotateX(1turn) rotateY(1turn) rotateZ(0);
+      }
+
+      80% {
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+      }
+
+      100% {
+        transform: rotateX(180deg) rotateY(0deg) rotateZ(0deg);
+      }
+    }
+
+    @keyframes rotate_6 {
+      40% {
+        transform: rotateX(1turn) rotateY(1turn) rotateZ(0);
+      }
+
+      80% {
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+      }
+
+      100% {
+        transform: rotateX(0deg) rotateY(0deg) rotateZ(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="box1">1</div>
+    <div class="box2">2</div>
+    <div class="box3">3</div>
+    <div class="box4">4</div>
+    <div class="box5">5</div>
+    <div class="box6">6</div>
+  </div>
+  <button class="button">投掷</button>
+</body>
+<script>
+
+  const box = document.querySelector('.box')
+  const button = document.querySelector('.button')
+  button.addEventListener('click', () => {
+    box.className = 'box'
+    const random = Math.floor(Math.random() * 6) + 1
+    void box.offsetHeight;
+    box.classList.add(`rotateClass_${random}`)
+  })
+  box.addEventListener('animationend', () => {
+    console.log('动画结束')
+  })
+</script>
+
+</html>

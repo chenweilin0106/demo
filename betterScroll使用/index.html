@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script src="https://unpkg.com/@better-scroll/core@latest/dist/core.min.js"></script>
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
+    .father {
+      width: 100vw;
+      height: 500px;
+      background-color: grey;
+      overflow: hidden;
+    }
+    .content {
+      width: 100%;
+    }
+    .son {
+      width: 100%;
+      height: 100px;
+      background-color: skyblue;
+      margin-bottom: 50px;
+    }
+    .topBox, .bottomBox {
+      width: 100vw;
+      height: 500px;
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="topBox"></div>
+  <div class="father">
+    <div class="content">
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+      <div class="son"></div>
+    </div>
+  </div>
+  <div class="bottomBox"></div>
+  <script>
+    let father = document.querySelector('.father')
+    let bs = new BScroll(father, {
+      bounce: false,
+    })
+  </script>
+</body>
+</html>

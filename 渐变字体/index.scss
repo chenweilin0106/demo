@@ -1,0 +1,32 @@
+// 字体描边：https://zhuanlan.zhihu.com/p/634162662（不要和文字阴影一起使用，会有兼容性问题，在一些设备上描边属性会失效）；
+// <div class="text" data-text="1234567890">
+//   <div class="inner">1234567890</div>
+// </div>
+.text {
+  $stroke: 2px; /* 描边宽度 建议不要看蓝湖 因为text-stroke会向字体内部延申 所以宽度不准确 和效果图类似即可 */
+  position: relative;
+  z-index: 1;
+  font-size: 30px;
+  white-space: nowrap; /* 防止换行 */
+  .inner {
+    position: relative;
+    z-index: 2;
+    color: transparent; /* 字体颜色透明 只保留描边 */
+    background: -webkit-linear-gradient(0deg, white, black); /* 渐变背景 */
+    padding: stroke; /* 为描边预留位置 加上描边大小 防止描边被溢出隐藏 */
+    -webkit-background-clip: text; /* 背景裁剪成字体 */
+  }
+  &::before {
+    content: attr(data-text); /* 继承文本 */
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: stroke; /* 为描边预留位置 加上描边大小 防止描边被溢出隐藏 */
+    color: transparent; /* 字体颜色透明 只保留描边 */
+    -webkit-text-stroke:stroke transparent; /* 字体描边 为渐变背景占位 背景会覆盖在描边上 */
+    background: -webkit-linear-gradient(0deg, pink, skyblue); /* 渐变背景 */
+    -webkit-background-clip: text; /* 背景裁剪成字体 */
+  }
+}

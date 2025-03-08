@@ -1,0 +1,117 @@
+// 重点字体颜色
+.focus-color {
+  color: #FFEF85;
+}
+.rules-text{
+  line-height: 45px;
+  font-weight: 500;
+  white-space: nowrap;
+  width: 605px;
+  // margin-left: 40px;
+  margin: 0 auto;
+  li {
+    position: relative;
+    list-style-type: none;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    color: #6E56E7;
+    vertical-align: middle;
+    span {
+      position: absolute;
+      top: 16px;
+      left: -24px;
+      width: 12px;
+      height: 12px;
+      background: #DDA3FF;
+      border-radius: 50%;
+    }
+    i {
+      color: #F552AE;
+    }
+    img{
+      width: auto;
+      height: 45px;
+      margin: 0 2px;
+    }
+    address{
+      background: linear-gradient(90deg, #AC74FF, #FB8CFF);
+      border-radius: 25px;
+      border: 2px solid #B9EAFF;
+      color: #fff;
+      padding: 0 10px;
+      margin: 0 10px;
+    }
+  }
+}
+.rules-text-border{
+  background: rgba(118, 62, 19, 0.6);
+  border-radius: 20px;
+  line-height: 40px;
+  font-weight: 500;
+  white-space: nowrap;
+  width: 670px;
+  padding: 20px 10px 20px 35px;
+  margin: 0 auto;
+  li {
+    position: relative;
+    list-style-type: none;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    color: #F3D584;
+    span {
+      position: absolute;
+      top: 16px;
+      left: -24px;
+      width: 12px;
+      height: 12px;
+      background: #F09843;
+      border-radius: 50%;
+    }
+    i {
+      color: #4EEAB8;
+    }
+  }
+}
+.rules-text-popup{
+  color: #fff;
+  white-space: nowrap;
+  width: 520px;
+  margin: 0 auto;
+  li {
+    position: relative;
+    list-style-type: none;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    line-height: 45px;
+    span {
+      position: absolute;
+      top: 50%;
+      left: -24px;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background: #FFEC95;
+      border-radius: 50%;
+    }
+    em {
+      color: #6E56E7;
+    }
+    i {
+      color: #FFEC6C;
+    }
+    img{
+      width: 34px;
+      height: 36px;
+      margin: 0 5px;
+    }
+  }
+}
+.noTransition-move {
+  transition: none;
+}
+.hasTransition-move {
+  transition: all 0.7s;
+}

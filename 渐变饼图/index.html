@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .box {
+      width: 500px;
+      height: 500px;
+      color: transparent;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box"></div>
+</body>
+<script>
+  const myChart = echarts.init(document.querySelector('.box'));
+  const option = {
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      bottom: 10,
+      left: 'center',
+      data: [
+        {
+        name: 'Search Engine',
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+              offset: 0,
+              color: " red", // 起始颜色
+            },
+            {
+              offset: 1,
+              color: "transparent", // 结束颜色
+            },
+          ])
+        },
+        },
+        {
+          name: 'Direct',
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: " blue", // 起始颜色
+              },
+              {
+                offset: 1,
+                color: "transparent", // 结束颜色
+              },
+            ])
+          },
+        },
+        {
+          name: 'Email',
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: " yellow", // 起始颜色
+              },
+              {
+                offset: 1,
+                color: "transparent", // 结束颜色
+              },
+            ])
+          },
+        },
+        {
+          name: 'Union Ads',
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: " green", // 起始颜色
+              },
+              {
+                offset: 1,
+                color: "transparent", // 结束颜色
+              },
+            ])
+          },
+        },
+        {
+        name: 'Video Ads',
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+              offset: 0,
+              color: " purple", // 起始颜色
+            },
+            {
+              offset: 1,
+              color: "transparent", // 结束颜色
+            },
+          ])
+        },
+      },
+      ]
+    },
+    series: [
+      {
+        name: 'Access From',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        padAngle: 5,
+        label: {
+          show: false,
+          position: 'center'
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          {
+            value: 1048,
+            name: 'Search Engine',
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
+                { offset: 0, color: 'transparent' },
+                { offset: 1, color: 'red' }
+              ])
+            }
+          },
+          {
+            value: 735,
+            name: 'Direct',
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                { offset: 0, color: 'transparent' },
+                { offset: 1, color: 'blue' }
+              ])
+            }
+          },
+          {
+            value: 580,
+            name: 'Email',
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(1, 1, 0, 0, [
+                { offset: 0, color: 'transparent' },
+                { offset: 1, color: 'yellow' }
+              ])
+            }
+          },
+          {
+            value: 484,
+            name: 'Union Ads',
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(0, 1, 1, 0, [
+                { offset: 0, color: 'transparent' },
+                { offset: 1, color: 'green' }
+              ])
+            }
+          },
+          {
+            value: 300,
+            name: 'Video Ads',
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                { offset: 0, color: 'transparent' },
+                { offset: 1, color: 'purple' }
+              ])
+            }
+          }
+        ]
+      }
+    ]
+  };
+  myChart.setOption(option);
+</script>
+</html>

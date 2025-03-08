@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn-image.dandan818.com/activity/public/vue/node_modules/swiper.min.css" />
+    <script src="https://cdn-image.dandan818.com/activity/public/vue/node_modules/swiper.min.js"></script>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .swiper-container {
+        width: 400px;
+        height: 302px;
+      }
+      .swiper-slide {
+        height: 302px;
+        background-color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="swiper-container margin-row-center">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+        </div>
+        <div class="swiper-slide">
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+        </div>
+        <div class="swiper-slide">
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+          <p>榜单信息1231233123</p>
+        </div>
+      </div>
+    </div>
+    <script>
+      let timer = null
+      var mySwiper = new Swiper(".swiper-container", {
+        on: {
+          touchEnd: function (event) {
+            if (mySwiper.isEnd && !timer) {
+              timer = setTimeout(() => {
+                mySwiper.appendSlide(
+                  '<div class="swiper-slide"><p>榜单信息1231233123</p><p>榜单信息1231233123</p><p>榜单信息1231233123</p><p>榜单信息1231233123</p><p>榜单信息1231233123</p><p>榜单信息1231233123</p></div>')
+                clearTimeout(timer)
+                timer = null
+              }, 1000)
+            }
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

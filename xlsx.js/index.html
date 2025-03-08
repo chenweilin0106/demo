@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    table,
+    table td,
+    table th {
+        border: 1px solid #000000;
+    }
+    #TableToExport, #tabeller {
+      width: 300px;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 20px;
+      border-radius: 20px;
+    }
+    #TableToExport {
+      color: green;
+    }
+    #tabeller {
+      color: red;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <table id="TableToExport">
+    <thead>
+      <th>name</th>
+      <th>age</th>
+      <th>from</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>John Doe</td>
+        <td>25</td>
+        <td>USA</td>
+      </tr>
+      <tr>
+        <td>Jane Doe</td>
+        <td>24</td>
+        <td>UK</td>
+      </tr>
+      <tr>
+        <td>John Smith</td>
+        <td>30</td>
+        <td>Canada</td>
+      </tr>
+      <tr>
+        <td>Jane Smith</td>
+        <td>28</td>
+        <td>Germany</td>
+      </tr>
+    </tbody>
+  </table>
+  <button id="sheetjsexport"><b>Export as XLSX</b></button>
+  <hr>
+  <input type="file" id="file">
+  <div class="container"></div>
+  <script>
+    // 读取表格
+    const fileInput = document.getElementById("file");
+    const container = document.querySelector(".container");
+    fileInput.addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      const data = await file.arrayBuffer();
+      /* parse and load first worksheet */
+      const wb = XLSX.read(data);
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      // 怎么添加边框等样式
+      const tableHtml = XLSX.utils.sheet_to_html(ws, { id: "tabeller" });
+      // const tableHtml = XLSX.utils.sheet_to_html(ws, { id: "tabeller" });
+      container.innerHTML = tableHtml;
+      // document.appendChild(tableHtml);
+    });
+    // -------------------
+    // 导出表格
+    document.getElementById("sheetjsexport").addEventListener('click', function() {
+      /* Create worksheet from HTML DOM TABLE */
+      var wb = XLSX.utils.table_to_book(document.getElementById("TableToExport"));
+      /* Export to file (start a download) */
+      XLSX.writeFile(wb, "SheetJSTable.xlsx");
+    });
+  </script>
+</body>
+</html>

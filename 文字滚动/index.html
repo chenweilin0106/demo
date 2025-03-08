@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  * {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+  }
+
+  .text {
+	color: #000;
+	white-space: nowrap;
+	display: flex;
+	width: 200px;
+	overflow: hidden;
+	background-color: red;
+  }
+
+  .inner {
+	animation: move 5s linear infinite;
+  }
+
+  @keyframes move {
+	0% {
+	  transform: translateX(100%);
+	}
+
+	100% {
+	  transform: translateX(-100%);
+	}
+  }
+</style>
+
+<body>
+  <p class="text"><span class="inner">这是一段需要滚动显示的文本内容～</span></p>
+  <script>
+	const text = document.querySelector('.text');
+	const inner = document.querySelector('.inner');
+	const innerWidth = inner.getBoundingClientRect().width;
+	const textWidth = text.clientWidth;
+	// console.log(textWidth, innerWidth)
+	if (innerWidth > textWidth) {
+	  console.log('需要滚动')
+	}
+  </script>
+</body>
+
+</html>

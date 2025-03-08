@@ -1,0 +1,30 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container{
+    position: relative;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background-color: skyblue;
+}
+.container .arrow{
+    position: absolute;
+    top: 150px;
+    left: 175px;
+    /* transform: translate(-50%, -50%); */
+    width: 50px;
+    height: 100px;
+    background-color: white;
+    /* transform: rotate(1800deg); */
+    transition: transform 1s;
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">0000</div>
+    <script type="module">
+        import { CountUp } from 'https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.min.js'
+        import { Odometer } from 'https://cdn.jsdelivr.net/npm/odometer_countup@1.0.4/dist/odometer.min.js'
+        const box = document.querySelector('.box');
+        const countUp = new CountUp(box, 9999, {
+            plugin: new Odometer({ duration: 2.3, lastDigitDelay: 0 }),
+        });
+        countUp.start();
+    </script>
+</body>
+</html>

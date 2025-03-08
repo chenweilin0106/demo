@@ -1,0 +1,17 @@
+# Ignore built files
+dist/
+build/
+
+# Ignore project
+src/pages/killDevil/utils/jquery-vendor.js
+src/pages/yearCelebration/views/OpenBox
+src/pages/yearCelebration/views/YearMedal
+src/pages/yearCelebration/views/YearRank
+src/pages/yearCelebration/utils/pageData.js
+src/pages/labaFestival/utils/pageData.js
+
+
+
+
+
+

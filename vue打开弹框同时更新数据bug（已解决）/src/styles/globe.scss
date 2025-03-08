@@ -1,0 +1,114 @@
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.popup-rules-text{
+  $line-height: 36px;
+  $circle-size: 12px;
+  margin: 0 61px 0 86px;
+  li {
+    position: relative;
+    font-size: 24px;
+    color: #3A1CA5;
+    line-height: $line-height;
+    span{
+      position: absolute;
+      top: $line-height / 2 - $circle-size / 2;
+      left: -24px;
+      width: $circle-size;
+      height: $circle-size;
+      background-color: #E0AE42;
+      border-radius: 50%;
+    }
+    i {
+      color: #FFF580;
+    }
+  }
+  .empty {
+    display: block;
+    width: 100%;
+    height: 30px;
+  }
+}
+.rules-text{
+  $line-height: 36px;
+  $circle-size: 12px;
+  margin: 0 94px;
+  li {
+    position: relative;
+    font-size: 24px;
+    color: #9D7024;
+    line-height: $line-height;
+    span{
+      position: absolute;
+      top: $line-height / 2 - $circle-size / 2;
+      left: -24px;
+      width: $circle-size;
+      height: $circle-size;
+      background-color: #E0AE42;
+      border-radius: 50%;
+    }
+    i {
+      color: #FFF580;
+    }
+  }
+  .empty {
+    display: block;
+    width: 100%;
+    height: 30px;
+  }
+}
+/*右上角私聊气泡，公屏气泡角标*/
+.typeLabel {
+  position: absolute;
+  z-index: 1;
+  transform: translateY(-50%);
+  top: 0;
+  right: -8px;
+  padding: 0 8px;
+  height: 28px;
+  background: #C9A544;
+  border-radius: 14px;
+  font-weight: 500;
+  font-size: 18px;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 100%;
+}
+
+.rules-text-border{
+  $line-height: 40px;
+  $circle-size: 12px;
+  margin: 0 auto;
+  width: 699px;
+  background: rgba(63, 38, 123, 0.5);
+  border-radius: 20px;
+  padding: 22px 0 22px 54px;
+  li {
+    position: relative;
+    font-size: 28px;
+    color: #CAB6FA;
+    line-height: $line-height;
+    span{
+      position: absolute;
+      top: $line-height / 2 - $circle-size / 2;
+      left: -24px;
+      width: $circle-size;
+      height: $circle-size;
+      background-color: #E0AE42;
+      border-radius: 50%;
+    }
+    i {
+      color: #FFDD3F;
+    }
+  }
+  .empty {
+    display: block;
+    width: 100%;
+    height: 30px;
+  }
+}

@@ -1,0 +1,87 @@
+// 背景色
+html {
+  background: #08ACFF;
+  white-space: nowrap;
+}
+// 重点字体颜色
+.focus-color {
+  color: #FFFAA6;
+}
+.iconClass {
+  width: 47px;
+  height: 46px;
+}
+.rules-text{
+  line-height: 45px;
+  color: #4A50D1;
+  font-weight: 500;
+  white-space: nowrap;
+  width: 605px;
+  // margin-left: 40px;
+  margin: 0 auto;
+  li {
+    position: relative;
+    list-style-type: none;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    span {
+      position: absolute;
+      top: 16px;
+      left: -28px;
+      width: 12px;
+      height: 12px;
+      background: #FF78D0;
+      border-radius: 50%;
+    }
+    i {
+      color: #FFFAA6;
+    }
+    img{
+      width: 34px;
+      height: 36px;
+      margin: 0 5px;
+    }
+  }
+}
+.rules-text-popup{
+  line-height: 45px;
+  color: #fff;
+  font-weight: 500;
+  white-space: nowrap;
+  width: 510px;
+  // margin-left: 40px;
+  margin: 0 auto;
+  li {
+    position: relative;
+    list-style-type: none;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    span {
+      position: absolute;
+      top: 16px;
+      left: -28px;
+      width: 12px;
+      height: 12px;
+      background: #FFFA7B;
+      border-radius: 50%;
+    }
+    em {
+      position: absolute;
+      top: 16px;
+      width: 12px;
+      height: 12px;
+      background: #FFFA7B;
+      border-radius: 50%;
+    }
+    i {
+      color: #FFFAA6;
+    }
+    img{
+      width: 34px;
+      height: 36px;
+      margin: 0 5px;
+    }
+  }
+}

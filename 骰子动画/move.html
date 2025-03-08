@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      /* display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center; */
+      position: relative;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .box {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .position_1 {
+      top: 50px;
+      left: 50px;
+    }
+
+    .position_2 {
+      top: 100px;
+      left: 100px;
+    }
+
+    .position_3 {
+      top: 150px;
+      left: 150px;
+    }
+
+    .position_4 {
+      top: 200px;
+      left: 200px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box"></div>
+  <script>
+    const box = document.querySelector('.box');
+    const positions = ['position_1', 'position_2', 'position_3', 'position_4'];
+    let i = 0;
+
+    let timer = setInterval(() => {
+      if (i === positions.length) {
+        clearInterval(timer);
+        return (timer = null);
+      }
+      box.className = `box ${positions[i]}`;
+      i++;
+    }, 1000);
+  </script>
+</body>
+
+</html>

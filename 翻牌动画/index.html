@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 20px;
+    }
+
+    .front,
+    .back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      transition: 0.5s;
+    }
+
+    .front {
+      background-color: skyblue;
+    }
+
+    .back {
+      transform: rotateY(-180deg);
+      background-color: pink;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 100%;
+      white-space: nowrap;
+      color: #000;
+      font-size: 20px;
+    }
+
+    .label {
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 100%;
+      white-space: nowrap;
+      background-color: lawngreen;
+      border-radius: 20px;
+      color: #fff;
+      transform: translate(50%, -50%);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="front">
+      <div class="label">label</div>
+    </div>
+    <div class="back"></div>
+  </div>
+  <button>翻转卡片</button>
+  <script>
+    const front = document.querySelector('.front')
+    const back = document.querySelector('.back')
+    const btn = document.querySelector('button')
+    let frontRotateY = 0
+    let backRotateY = 180
+    function turnCard () {
+      frontRotateY -= 180
+      backRotateY -= 180
+      front.style.transform = `rotateY(${frontRotateY}deg)`
+      back.style.transform = `rotateY(${backRotateY}deg)`
+    }
+    btn.onclick = turnCard
+  </script>
+</body>
+
+</html>

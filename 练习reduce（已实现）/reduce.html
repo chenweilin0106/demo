@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      // 求对象数组中值的总和
+      // const arr = [{ x: 1 }, { x: 2 }, { x: 3 }]
+      // const result = arr.reduce((accumulator, currentValue) => {
+      //   return accumulator + currentValue.x
+      // }, 0)
+      // console.log(result)
+      // 展平嵌套数组
+      // const flattened = [
+      //   [0, 1],
+      //   [2, 3],
+      //   [4, 5]
+      // ]
+      // const result = flattened.reduce((accumulator, currentValue) => {
+      //   return accumulator.concat(currentValue)
+      // }, [])
+      // console.log(result)
+      // 统计对象中值的出现次数
+      // const names = ['Alice', 'Bob', 'Tiff', 'Bruce', 'Alice']
+      // const result = names.reduce((accumulator, currentValue) => {
+      //   const params = {
+      //     [currentValue]: accumulator.hasOwnProperty(currentValue)
+      //       ? accumulator[currentValue] + 1
+      //       : 1
+      //   }
+      //   return Object.assign(accumulator, params)
+      // }, {})
+      // console.log(result)
+      // 按属性对对象进行分组
+      // const people = [
+      //   { name: 'Alice', age: 21 },
+      //   { name: 'Max', age: 20 },
+      //   { name: 'Jane', age: 20 }
+      // ]
+      // const result = people.reduce((accumulator, currentValue) => {
+      //   const params = {
+      //     [currentValue.age]: accumulator.hasOwnProperty(currentValue.age)
+      //       ? [...accumulator[currentValue.age], currentValue]
+      //       : [currentValue]
+      //   }
+      //   return {
+      //     ...accumulator,
+      //     ...params
+      //   }
+      // }, {})
+      // console.log(result)
+      // friends——一个对象数组，其中对象字段“books”是最喜欢的书的列表
+      // const friends = [
+      //   {
+      //     name: 'Anna',
+      //     books: ['Bible', 'Harry Potter', '12345'],
+      //     age: 21
+      //   },
+      //   {
+      //     name: 'Bob',
+      //     books: ['War and peace', 'Romeo and Juliet', '12345'],
+      //     age: 26
+      //   },
+      //   {
+      //     name: 'Alice',
+      //     books: ['The Lord of the Rings', 'The Shining', '12345'],
+      //     age: 18
+      //   }
+      // ]
+      // const result = friends.reduce((accumulator, currentValue) => {
+      //   return [...new Set([...accumulator, ...currentValue.books])]
+      // }, [])
+      // console.log(result)
+      // 使用 reduce() 来替代 .filter().map()
+      // const numbers = [-5, 6, 2, 0]
+      // const result = numbers.reduce((accumulator, currentValue) => {
+      //   if (currentValue > 0) {
+      //     return [...accumulator, currentValue * 2]
+      //   }
+      //   return accumulator
+      // }, [])
+      // console.log(result)
+      // function factorial(n) {
+      //   let result = 1
+      //   for (let i = 2; i <= n; i++) {
+      //     result *= i
+      //   }
+      //   return result
+      // }
+
+      // function binomial_coefficient(n, k) {
+      //   return factorial(n) / (factorial(k) * factorial(n - k))
+      // }
+
+      // function binomial_probability(n, k, p) {
+      //   return (
+      //     binomial_coefficient(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k)
+      //   )
+      // }
+
+      // let n = 30 // 试验次数
+      // let k = 13 // 成功次数
+      // let p = 0.61 // 成功概率
+
+      // let probability = binomial_probability(n, k, p)
+      // console.log('P(X=13)的概率为:', probability)
+    </script>
+  </body>
+</html>

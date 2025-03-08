@@ -1,0 +1,33 @@
+伪元素动态content
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+    }
+    .box::after {
+      content: attr(count);
+    }
+  </style>
+</head>
+<body>
+  <div class="box" count="0"></div>
+  <script>
+    const box = document.querySelector('.box');
+    let count = 1;
+    setInterval(() => {
+      box.setAttribute('count', count++);
+    }, 1000);
+  </script>
+</body>
+</html>

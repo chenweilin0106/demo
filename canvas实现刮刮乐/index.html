@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>刮刮乐</title>
+		<style type="text/css">
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+			#c1{
+				border: 1px solid blue;
+				position: absolute;
+                top: 0;
+                left: 0;
+			}
+			
+			#c2{
+				border: 1px solid red;
+			}
+			
+			body{
+				position: relative;
+			}
+            .box {
+                position: relative;
+                width: 500px;
+                height: 500px;
+            }
+		</style>
+	</head>
+	<body>
+		<div class="box">
+            <canvas id="c2"></canvas>
+            <canvas id="c1"></canvas>
+        </div>
+	</body>
+	<script type="text/javascript">
+        const box = document.querySelector('.box');
+        const s = box.offsetWidth / 20; // 擦除区域的大小
+		var c1 = document.getElementById("c1");
+		var c2 = document.getElementById("c2");
+		
+		var ctx1 = c1.getContext("2d");
+		var ctx2 = c2.getContext("2d");
+		
+		
+		// 绘制图片到底层  canvas2
+		var imgs = new Image();
+		imgs.src = 'https://cdn-image.dandan818.com/uploads/user/icon/201711/11351510221321.jpeg';
+		imgs.onload = function(){
+            // 设置canvas元素大小等于图片大小
+            c2.width = box.offsetWidth;
+            c2.height = box.offsetHeight;
+            // 绘制图片 图片大小和canvas大小一致 保证图片不变形
+            ctx2.drawImage(this, 0, 0, box.offsetWidth, box.offsetHeight);
+            c1.width = box.offsetWidth;
+            c1.height = box.offsetHeight;
+            // 涂层绘制到顶层(即覆盖膜)  canvas1
+            ctx1.fillStyle = "lightgray";
+            ctx1.fillRect(0,0,c1.offsetWidth,c1.offsetHeight);
+            ctx1.font = "normal 80px PingFang SC"; // 设置字体
+            ctx1.textAlign = "center";
+            ctx1.textBaseline = "middle";
+            ctx1.fillStyle = "white"; // 设置填充样式
+            ctx1.fillText("请刮开!", c1.width/2, c1.height/2);
+            ctx1.strokeStyle = "skyBlue"; // 设置描边样式
+            ctx1.strokeText("请刮开!", c1.width/2, c1.height/2);
+		}
+
+        function moveFunc(x,y) {
+            ctx1.beginPath();
+            ctx1.globalCompositeOperation = "destination-out"; // 设置合成操作为“destination-out”，实现擦除效果
+            ctx1.arc(x, y, s, 0, Math.PI * 2); // 绘制圆形路径
+            ctx1.fill(); // 填充路径，实际是清除该区域
+            ctx1.closePath(); // 关闭路径
+        }
+		
+		// 监听canvas的onmousedown事件
+		c1.onmousedown = function(){
+            c1.onmousemove = function(e){
+                var x = e.pageX-c1.offsetLeft - s/2;    // 清除区域的x位置
+                var y = e.pageY-c1.offsetTop - s/2;		// 清除区域的y位置
+                moveFunc(x,y);
+            }
+		}
+		c1.onmouseup = function(ev){
+            // 取消onmousemove事件
+		    c1.onmousemove = null;
+		}
+        // 兼容移动端
+        c1.ontouchstart = function () {
+            c1.ontouchmove = function (e) {
+                var x = event.touches[0].clientX;
+                var y = event.touches[0].clientY;
+                moveFunc(x, y)
+            };
+        };
+        c1.ontouchend = function () {
+            c1.ontouchmove = function () {};
+        };
+	</script>
+</html>

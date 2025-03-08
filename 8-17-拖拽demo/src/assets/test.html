@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翻牌效果</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 卡牌展示区域 */
+        .card-list {
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* 每张卡牌属性 */
+        .card-item {
+            position: absolute;
+            width: 100px;
+            height: 150px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+        }
+
+        .card-item .card {
+            width: 100%;
+            width: 100px;
+            height: 150px;
+            background: yellowgreen;
+            border-radius: 10px;
+            backface-visibility: hidden;
+        }
+
+        .card-item .contxt {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 150px;
+            background-color: pink;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            transform: rotateY(180deg);
+        }
+
+        .contxt.contxtAnimate {
+            animation: contxtRotate .5s ease-in;
+            animation-fill-mode: forwards;
+        }
+
+        .card-item-1 {
+            top: 70px;
+            left: calc(100vw / 3 - 100px);
+            transform: none;
+        }
+
+        .animate-item-1 {
+            animation: issueCard1 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .card-item-2 {
+            top: calc(70px + 40px + 150px);
+            left: calc(100vw / 3 - 100px);
+            transform: none;
+        }
+
+        .animate-item-2 {
+            animation: issueCard2 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .card-item-3 {
+            top: calc(70px + (40px + 150px) * 2);
+            left: calc(100vw / 3 - 100px);
+            transform: none;
+        }
+
+        .animate-item-3 {
+            animation: issueCard3 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .card-item-4 {
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .animate-item-4 {
+            animation: issueCard4 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .card-item-5 {
+            top: calc(30px + 20px + 150px);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .animate-item-5 {
+            animation: issueCard5 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .card-item-6 {
+            top: calc(30px + (20px + 150px) * 2);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .animate-item-6 {
+            animation: issueCard6 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .card-item-7 {
+            top: calc(30px + (20px + 150px) * 3);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .animate-item-7 {
+            animation: issueCard7 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .card-item-8 {
+            top: 70px;
+            left: calc((100vw / 3) * 2);
+            transform: none;
+        }
+
+        .animate-item-8 {
+            animation: issueCard8 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .card-item-9 {
+            top: calc(70px + 40px + 150px);
+            left: calc((100vw / 3) * 2);
+            transform: none;
+        }
+
+        .animate-item-9 {
+            animation: issueCard9 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .card-item-10 {
+            top: calc(70px + (40px + 150px) * 2);
+            left: calc((100vw / 3) * 2);
+            transform: none;
+        }
+
+        .animate-item-10 {
+            animation: issueCard10 .3s ease-in;
+            animation-fill-mode: backwards;
+        }
+
+        .cardAnimate {
+            animation: rotetaCard .3s ease-in;
+            animation-fill-mode: forwards;
+        }
+
+        /* 反面 */
+        @keyframes contxtRotate {
+            from {
+                transform: rotateY(180deg);
+            }
+
+            to {
+                transform: rotateY(0deg);
+            }
+        }
+
+        @keyframes contxtRotateMiddle {
+            from {
+                transform: rotateY(180deg);
+            }
+
+            to {
+                transform: rotateY(0deg);
+            }
+        }
+
+        /* 左右两列卡牌翻牌动画 */
+        @keyframes rotetaCard {
+            from {
+                transform: translate(0, 0) rotateY(0);
+            }
+
+            to {
+                transform: rotateY(180deg);
+            }
+        }
+
+        /* 每张卡牌发牌动画 */
+        @keyframes issueCard1 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: 140px;
+                left: calc(100vw / 3 - 100px);
+            }
+        }
+
+        @keyframes issueCard2 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: calc(70px + 40px + 150px);
+                left: calc(100vw / 3 - 100px);
+            }
+        }
+
+        @keyframes issueCard3 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: calc(70px + (40px + 150px) * 2);
+                left: calc(100vw / 3 - 100px);
+            }
+        }
+
+        @keyframes issueCard4 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes issueCard5 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: 300px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes issueCard6 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: 570px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes issueCard7 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: 840px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes issueCard8 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: 70px;
+                left: calc((100vw / 3) * 2);
+            }
+        }
+
+        @keyframes issueCard9 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: 430px;
+                left: calc((100vw / 3) * 2);
+            }
+        }
+
+        @keyframes issueCard10 {
+            from {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                top: calc(70px + (40px + 150px) * 2);
+                left: calc((100vw / 3) * 2);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="card-list">
+            <div :class="['card-item', `card-item-${index+1}`, `animate-item-${index+1}`]"
+                v-for="(item, index) in cardList" :key="index" @click="rotateCard(index)">
+                <div :class="['card', selectArr.includes(index) ? 'cardAnimate' : '']">正面{{index+1}}</div>
+                <div :class="['contxt', selectArr.includes(index) ? 'contxtAnimate' : '']">你中奖了</div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.7/dist/vue.js"></script>
+
+    <script>
+        let vm = new Vue({
+            el: '.card',
+            data() {
+                return {
+                    cardList: 10,
+                    selectArr: []
+                }
+            },
+            methods: {
+                rotateCard(index) {
+                    this.selectArr.push(index)
+                    // this.selectArr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

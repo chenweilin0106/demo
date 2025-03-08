@@ -1,0 +1,84 @@
+// 背景色
+html {
+  background: #16474A;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// 重点字体颜色
+.focus-color {
+  color: #FFFAA6;
+}
+
+.iconClass {
+  width: 47px;
+  height: 46px;
+}
+
+// 按钮 未完成
+.button-noFinish {
+  //font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('../assets/btn_2.png') no-repeat left top/100% 100%;
+  font-size: 28px;
+  color: #F5FFD7;
+}
+
+// 按钮 领取
+.button-receive {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('../assets/btn_3.png') no-repeat left top/100% 100%;
+  font-size: 28px;
+  color: #16474A;
+}
+
+// 按钮 已完成
+.button-finish {
+  //font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('../assets/btn_1.png') no-repeat left top/100% 100%;
+  font-size: 28px;
+  color: #464642;
+}
+
+.rule-text {
+  line-height: 45px;
+  color: #fff;
+  font-weight: 500;
+  white-space: nowrap;
+
+  li {
+    position: relative;
+    list-style-type: none;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+
+    img {
+      position: relative;
+      margin: 0 5px;
+      width: 47px;
+      //height: 29px;
+    }
+
+    span {
+      position: absolute;
+      top: 16px;
+      left: -28px;
+      width: 12px;
+      height: 12px;
+      background: #FFFAA6;
+      border-radius: 50%;
+    }
+  }
+}

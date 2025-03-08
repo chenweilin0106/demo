@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>My first three.js app</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+    // 创建场景 scene 目前对这个的理解是一个容器，类似canvas的画布
+    const scene = new THREE.Scene();
+    // 创建一个透视相机
+    const camera = new THREE.PerspectiveCamera();
+    camera.position.set(0, 2, 6);
+    // 创建一个立方体 目前的理解是一个架子 canvas的描边 立方体结构
+    const geometry = new THREE.BoxGeometry();
+    // 创建一个材质 目前理解是canvas的填充 立方体材质对象
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    // 创建一个网格 用于控制立方体的位置 目前对这个的理解 将结构和材质合成 生成完整立方体对象
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(0, 1, 1)
+    // 将立方体网格放到场景中
+    scene.add(cube)
+    // 创建一个网格辅助器 用于辅助查看网格的位置
+    const gridHelper = new THREE.GridHelper();
+    scene.add(gridHelper);
+    // 创建一个渲染器 准备开始渲染 目前理解 用于渲染场景和相机
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    // 往页面中放置一个canvas用于渲染
+    document.body.appendChild(renderer.domElement);
+    // 开始渲染 传入场景和相机
+    rotateFn();
+    function rotateFn () {
+      cube.rotation.x += 0.05;
+      renderer.render(scene, camera);
+      requestAnimationFrame(rotateFn)
+    }
+  </script>
+</body>
+
+</html>

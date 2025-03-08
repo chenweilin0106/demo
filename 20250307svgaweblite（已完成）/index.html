@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/svga/dist/index.min.js"></script>
+    <style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    #canvas{
+        width: 450px;
+        /* 高度由第三方库按比例计算 */
+        /* height: 700px; */
+    }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script type="module">
+        const { Parser, Player, DB } = window.SVGA
+
+        const player = new Player(document.getElementById('canvas'))
+
+        try {
+            const url = 'https://cdn-image.dandan818.com/activity/weekly/svga/sailing_xc_3.svga'
+            const db = new DB()
+            let svga = await db.find(url)
+            if (!svga) {
+                const parser = new Parser({
+                    isDisableImageBitmapShim: true, // Parser 需要配置取消使用 ImageBitmap 特性，ImageBitmap 数据无法直接存储到 DB 内
+                    isCacheFrames: true, // 
+                    isUseIntersectionObserver: true
+                })
+                svga = await parser.load(url)
+                await db.insert(url, svga)
+            }
+            await player.mount(svga)
+        } catch (error) {
+            console.error(error)
+        }
+
+        // player.onStart = () => console.log('onStart')
+        // player.onResume = () => console.log('onResume')
+        // player.onPause = () => console.log('onPause')
+        // player.onStop = () => console.log('onStop')
+        // player.onProcess = () => console.log('onProcess', player.progress)
+        // player.onEnd = () => console.log('onEnd')
+
+        // 开始播放动画
+        player.start()
+
+        // 暂停播放动画
+        // player.pause()
+
+        // 继续播放动画
+        // player.resume()
+
+        // 停止播放动画
+        // player.stop()
+
+        // 清空动画
+        // player.clear()
+
+        // 销毁
+        // parser.destroy()
+        // player.destroy()
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bug已修复，可直接使用</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            line-height: 1;
+        }
+        .rankValueCommonNum {
+            --stroke: 3px;
+            position: relative;
+            z-index: 1;
+            font-size: 26px;
+            font-weight: bold;      
+            white-space: nowrap;
+            line-height: 1;
+            color: transparent;
+            max-width: 200px;
+            overflow: hidden;
+            text-align: center;
+        }
+        .rankValueCommonNum .inner {
+            position: relative;
+            z-index: 2;
+            padding: var(--stroke);
+            background-image: linear-gradient(90deg, #FF87C1 0%, #9376FF 53%, #65C1FC 95%);
+            -webkit-background-clip: text;
+            background-repeat: no-repeat;
+            border: 1px solid transparent;
+            margin: -1px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .rankValueCommonNum::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: 1;
+            padding: var(--stroke);
+            -webkit-text-stroke: var(--stroke) transparent;
+            background-image: linear-gradient(white, white);
+            -webkit-background-clip: text;
+            background-repeat: no-repeat;
+            box-sizing: border-box;
+            border: 1px solid transparent;
+            margin: -1px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="rankValueCommonNum" data-text="123456789011111111111111111"><div class="inner">123456789011111111111111111</div></div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Ignore built files
+dist/
+build/
+
+# Ignore project
+src/pages/qiXi/views/QiXiRank
+src/pages/qiXi/views/dailyFortune
+

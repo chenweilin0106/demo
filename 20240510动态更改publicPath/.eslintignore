@@ -1,0 +1,12 @@
+# Ignore built files
+dist/
+build/
+
+# Ignore project
+src/pages/killDevil/utils/jquery-vendor.js
+
+
+
+
+
+
