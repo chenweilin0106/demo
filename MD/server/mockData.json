@@ -1,0 +1,135 @@
+{
+  "errno": 0,
+  "errmsg": "获取成功",
+  "data": {
+    "award_list": [
+      {
+        "key": 5000,
+        "finish_nums": 0,
+        "max_nums": 5000,
+        "type": "tool",
+        "id": 2,
+        "text": "100",
+        "icon": "ljs_120_120.png",
+        "nums": 100,
+        "has_right": 1
+      },
+      {
+        "max_nums": 10000,
+        "type": "tool",
+        "id": 9,
+        "nums": 50,
+        "text": "50",
+        "icon": "fbs_120_120.png",
+        "key": 10000,
+        "finish_nums": 0,
+        "has_right": 0
+      },
+      {
+        "max_nums": 15000,
+        "type": "tool",
+        "id": 2,
+        "nums": 280,
+        "text": "280",
+        "icon": "ljs_120_120.png",
+        "key": 15000,
+        "finish_nums": 0,
+        "has_right": 0
+      },
+      {
+        "max_nums": 20000,
+        "type": "tool",
+        "id": 1,
+        "nums": 80,
+        "text": "80",
+        "icon": "zjs_120_120.png",
+        "key": 20000,
+        "finish_nums": 0,
+        "has_right": 0
+      }
+    ],
+    "consume_status": {
+      "1000": {
+        "type": "property",
+        "tool_id": "gamegold",
+        "nums": 50000,
+        "gamegold_text": "5万",
+        "consume_nums": 1000,
+        "is_daily": false,
+        "has_right": 1
+      },
+      "2000": {
+        "type": "property",
+        "tool_id": "gamegold",
+        "nums": 100000,
+        "gamegold_text": "10万",
+        "consume_nums": 2000,
+        "is_daily": false,
+        "has_right": 1
+      },
+      "3000": {
+        "type": "property",
+        "tool_id": "gamegold",
+        "nums": 150000,
+        "gamegold_text": "15万",
+        "consume_nums": 3000,
+        "is_daily": false,
+        "has_right": 1
+      },
+      "5000": {
+        "type": "property",
+        "tool_id": "gamegold",
+        "nums": 200000,
+        "gamegold_text": "20万",
+        "consume_nums": 5000,
+        "is_daily": false,
+        "has_right": 1
+      },
+      "10000": {
+        "type": "property",
+        "tool_id": "gamegold",
+        "nums": 400000,
+        "gamegold_text": "40万",
+        "consume_nums": 10000,
+        "is_daily": false,
+        "has_right": 1
+      },
+      "20000": {
+        "type": "property",
+        "tool_id": "gamegold",
+        "nums": 600000,
+        "gamegold_text": "60万",
+        "consume_nums": 20000,
+        "is_daily": false,
+        "has_right": 1
+      },
+      "30000": {
+        "type": "property",
+        "tool_id": "gamegold",
+        "nums": 850000,
+        "gamegold_text": "85万",
+        "consume_nums": 30000,
+        "is_daily": false,
+        "has_right": 1
+      },
+      "50000": {
+        "type": "property",
+        "tool_id": "gamegold",
+        "nums": 1300000,
+        "gamegold_text": "130万",
+        "consume_nums": 50000,
+        "is_daily": false,
+        "has_right": 1
+      },
+      "100000": {
+        "type": "property",
+        "tool_id": "gamegold",
+        "nums": 2000000,
+        "gamegold_text": "200万",
+        "consume_nums": "50000",
+        "is_daily": false,
+        "has_right": 0
+      }
+    }
+  }
+}
