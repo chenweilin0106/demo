@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无限横向滚动 - 虚拟DOM实现</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            height: 100vh;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 90%;
+            padding: 10px 0;
+            overflow-x: auto;
+            position: relative;
+            overscroll-behavior: auto;
+            background-color: #fff;
+        }
+        .scroll-content {
+            display: flex;
+            position: relative;
+            height: 100px;
+        }
+        .item {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="scroll-content" id="scrollContent">
+            <!-- 虚拟DOM将在这里渲染内容 -->
+        </div>
+    </div>
+    <script src="virtualScroll.js"></script>
+</body>
+</html>
