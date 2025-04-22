@@ -1,12 +1,14 @@
 通用身体:part_type-[0]
 面容:part_type-[1]
-服饰:part_type-[3,4]
+服饰:
+	套装:part_type-[3,4]
+	上装:part_type-[3]
+	下装:part_type-[4]
 鞋袜:part_type-[5]
 场景:part_type-[6]
 装饰:
 	彩虹/雨点:part_type-[7]
-	冲浪板/桃花枝/九尾狐:part_type-[8]
-	兔耳/猫耳:part_type-[9]
-
-迷人夏日 面容 part_type:男-[1] 女-[1,9]
-墨染眉峰 面容 part_type:男-[1] 女-[1,9]
+	冲浪板/桃花枝/九尾狐/蝴蝶翅膀:part_type-[8]
+	兔耳/猫耳/花环/鹿角/蝴蝶面饰/红色帽子:part_type-[9]
+	蝴蝶环身:part_type-[10]
+	小熊:part_type-[11]
