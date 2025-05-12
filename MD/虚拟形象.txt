@@ -1,14 +1,29 @@
 通用身体:part_type-[0]
+
 面容:part_type-[1]
+
 服饰:
 	套装:part_type-[3,4]
 	上装:part_type-[3]
 	下装:part_type-[4]
+	
 鞋袜:part_type-[5]
+
 场景:part_type-[6]
+
 装饰:
 	彩虹/雨点:part_type-[7]
-	冲浪板/桃花枝/九尾狐/蝴蝶翅膀:part_type-[8]
-	兔耳/猫耳/花环/鹿角/蝴蝶面饰/红色帽子:part_type-[9]
+	冲浪板/桃花枝/蝴蝶翅膀/气球:part_type-[8]
+	兔耳/猫耳/花环/鹿角/蝴蝶面饰/红色帽子/皇冠/松鼠耳朵:part_type-[9]
 	蝴蝶环身:part_type-[10]
-	小熊:part_type-[11]
+	小熊/狮子:part_type-[11]
+	猫尾巴/松鼠尾巴/九尾狐:part_type-[12]
+	
+改动:
+	九尾狐:[8]=>[12]
+	
+新增:
+	猫尾巴/松鼠尾巴:part_type-[12]
+	狮子:[11]
+	皇冠/松鼠耳朵:part_type-[9]
+	气球:part_type-[8]
