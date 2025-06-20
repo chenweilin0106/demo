@@ -156,10 +156,11 @@
           content: attr(data-text);
           position: absolute;
           z-index: 1;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          right: 0;
+          top: -$stroke;
+          left: -$stroke;
+          right: -$stroke;
+          bottom: -$stroke;
+          padding: $stroke; /* 为描边预留位置 加上描边大小 防止描边被溢出隐藏 */
           padding: $stroke; /*保持与inner大小相同 方便定位*/
           -webkit-text-stroke: $stroke transparent; /*字体描边 为渐变背景占位 背景会覆盖在描边上*/
           background-image: linear-gradient(white, white); /*描边颜色*/
@@ -171,6 +172,9 @@
           overflow: hidden;
           white-space: nowrap;
           clip-path: inset($stroke)
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
     }
     ```
