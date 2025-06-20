@@ -1,0 +1,230 @@
+// 重点字体颜色
+.focus-color {
+  color: #FFEF85;
+}
+.rules-text{
+  line-height: 45px;
+  font-weight: 500;
+  white-space: nowrap;
+  width: 605px;
+  // margin-left: 40px;
+  margin: 0 auto;
+  li {
+    position: relative;
+    list-style-type: none;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    color: #FFEFCF;
+    vertical-align: middle;
+    span {
+      position: absolute;
+      top: 50%;
+      left: -24px;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background: #FFFAA6;
+      border-radius: 50%;
+    }
+    i {
+      color: #FFFAA6;
+    }
+    img {
+      width: auto;
+      height: 45px;
+      margin: 0 2px;
+    }
+    address{
+      background: linear-gradient(90deg, #AC74FF, #FB8CFF);
+      border-radius: 999999999px;
+      color: #fff;
+      padding: 9px 13px;
+      margin: 0 5px;
+      font-size: 24px;
+      line-height: 1;
+    }
+  }
+}
+.rules-text-border{
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  line-height: 40px;
+  font-weight: 500;
+  white-space: nowrap;
+  width: 680px;
+  padding: 20px 10px 20px 35px;
+  margin: 0 auto;
+  li {
+    position: relative;
+    list-style-type: none;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    color: #EB5222;
+    span {
+      position: absolute;
+      top: 16px;
+      left: -24px;
+      width: 12px;
+      height: 12px;
+      background: #EB5222;
+      border-radius: 50%;
+    }
+    i {
+      color: #12AEAC;
+    }
+  }
+}
+.rules-text-popup{
+  color: #FFFFFF;
+  white-space: nowrap;
+  width: 539px;
+  margin: 0 auto;
+  li {
+    position: relative;
+    list-style-type: none;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    line-height: 45px;
+    span {
+      position: absolute;
+      top: 50%;
+      left: -24px;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background: #FFFA7B;
+      border-radius: 50%;
+    }
+    em {
+      color: #4DEBC8;
+    }
+    dfn {
+      color: #ffffff;
+      font-style: normal;
+    }
+    i {
+      color: #FFEC6C;
+    }
+    img{
+      width: 34px;
+      height: 36px;
+      margin: 0 5px;
+    }
+    &.empty {
+      height: 45px;
+    }
+  }
+}
+// publicTable示例
+// <table class="publicTable">
+//   <thead class="tableHead">
+//     <tr class="tableTr">
+//       <th class="tableCell tableTh">倍数</th>
+//       <th class="tableCell tableTh">概率</th>
+//       <th class="tableCell tableTh">可得绿晶石<br>可得绿晶石</th>
+//     </tr>
+//   </thead>
+//   <tbody class="tableBody">
+//     <tr class="tableTr">
+//       <td class="tableCell tableTd">2</td>
+//       <td class="tableCell tableTd borderRight borderLeft">39.9%</td>
+//       <td class="tableCell tableTd deep">40</td>
+//     </tr>
+//     <tr class="tableTr stripe">
+//       <td class="tableCell tableTd">3</td>
+//       <td class="tableCell tableTd borderRight borderLeft">25%</td>
+//       <td class="tableCell tableTd deep">60</td>
+//     </tr>
+//     <tr class="tableTr">
+//       <td class="tableCell tableTd">4</td>
+//       <td class="tableCell tableTd borderRight borderLeft">15%</td>
+//       <td class="tableCell tableTd deep">80</td>
+//     </tr>
+//     <tr class="tableTr stripe">
+//       <td class="tableCell tableTd">5</td>
+//       <td class="tableCell tableTd borderRight borderLeft">10%</td>
+//       <td class="tableCell tableTd deep">100</td>
+//     </tr>
+//   </tbody>
+// </table>
+.publicTable {
+  width: 90%;
+  max-width: 610px;
+  border-collapse: separate;
+  border-radius: 23px;
+  border: 3px solid transparent;
+  background-color: #faf9fc;
+  overflow: hidden;
+  margin: 0 auto;
+  white-space: wrap;
+  text-align: center;
+  line-height: 1;
+  margin-bottom: 20px;
+
+  i {
+    color: #4FB5A5;
+  }
+
+  .tableCell {
+    padding: 20px 0;
+  }
+
+  .borderTop {
+    border-top: 3px solid #FFDCD4;
+  }
+
+  .borderRight {
+    border-right: 3px solid #FFDCD4;
+  }
+
+  .borderBottom {
+    border-bottom: 3px solid #FFDCD4;
+  }
+
+  .borderLeft {
+    border-left: 3px solid #FFDCD4;
+  }
+
+  .tableTr {
+    background-color: #ffffff;
+
+    .tableTh{
+      padding:  15px 0;
+    }
+  }
+
+  .tableHead {
+    color: #fff;
+    font-size: 26px;
+
+    .tableTr {
+      background-color: #E66F55;
+
+      .tableTh{
+        padding:  15px 0;
+      }
+    }
+  }
+
+  .tableBody {
+    color: #EC6C51;
+    font-size: 26px;
+  }
+
+  .stripe {
+    background-color: #FFEEEA;
+
+    .deep {
+      background-color: #E66F55;
+    }
+  }
+}
+.noTransition-move {
+  transition: none;
+}
+.hasTransition-move {
+  transition: all 0.7s;
+}
