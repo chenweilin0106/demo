@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片转Base64测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .result-container {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            word-break: break-all;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>图片转Base64测试</h1>
+    
+    <!-- 测试在线图片 -->
+    <div class="test-section">
+        <h2>测试在线图片URL</h2>
+        <input type="text" id="imageUrl" placeholder="输入图片URL" value="https://picsum.photos/200/300">
+        <button id="testUrl">测试URL</button>
+        <div>
+            <h3>原图预览:</h3>
+            <img id="urlPreview" class="preview">
+        </div>
+        <div>
+            <h3>Base64结果:</h3>
+            <div id="urlResult" class="result-container"></div>
+        </div>
+        <div>
+            <h3>Base64图片预览:</h3>
+            <img id="urlBase64Preview" class="preview">
+        </div>
+    </div>
+
+    <!-- 测试File对象 -->
+    <div class="test-section">
+        <h2>测试File对象</h2>
+        <input type="file" id="fileInput" accept="image/*">
+        <div>
+            <h3>原图预览:</h3>
+            <img id="filePreview" class="preview">
+        </div>
+        <div>
+            <h3>Base64结果:</h3>
+            <div id="fileResult" class="result-container"></div>
+        </div>
+        <div>
+            <h3>Base64图片预览:</h3>
+            <img id="fileBase64Preview" class="preview">
+        </div>
+    </div>
+
+    <!-- 测试Blob对象 -->
+    <div class="test-section">
+        <h2>测试Blob对象(从URL获取)</h2>
+        <input type="text" id="blobUrl" placeholder="输入图片URL以转换为Blob" value="https://picsum.photos/200/300">
+        <button id="testBlob">获取Blob并测试</button>
+        <div>
+            <h3>Base64结果:</h3>
+            <div id="blobResult" class="result-container"></div>
+        </div>
+        <div>
+            <h3>Base64图片预览:</h3>
+            <img id="blobBase64Preview" class="preview">
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+    <script>
+        // 测试在线URL
+        document.getElementById('testUrl').addEventListener('click', function() {
+            const url = document.getElementById('imageUrl').value;
+            if (!url) return;
+            
+            // 显示原图预览
+            document.getElementById('urlPreview').src = url;
+            
+            // 转换为base64
+            imageToBase64(url)
+                .then(base64 => {
+                    document.getElementById('urlResult').textContent = base64;
+                    document.getElementById('urlBase64Preview').src = base64;
+                })
+                .catch(error => {
+                    document.getElementById('urlResult').textContent = '错误: ' + error.message;
+                });
+        });
+
+        // 测试File对象
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // 显示原图预览
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('filePreview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            
+            // 转换为base64
+            imageToBase64(file)
+                .then(base64 => {
+                    document.getElementById('fileResult').textContent = base64;
+                    document.getElementById('fileBase64Preview').src = base64;
+                })
+                .catch(error => {
+                    document.getElementById('fileResult').textContent = '错误: ' + error.message;
+                });
+        });
+
+        // 测试Blob对象
+        document.getElementById('testBlob').addEventListener('click', function() {
+            const url = document.getElementById('blobUrl').value;
+            if (!url) return;
+            
+            // 获取Blob并转换为base64
+            fetch(url)
+                .then(response => response.blob())
+                .then(blob => {
+                    return imageToBase64(blob);
+                })
+                .then(base64 => {
+                    document.getElementById('blobResult').textContent = base64;
+                    document.getElementById('blobBase64Preview').src = base64;
+                })
+                .catch(error => {
+                    document.getElementById('blobResult').textContent = '错误: ' + error.message;
+                });
+        });
+    </script>
+</body>
+</html> 
