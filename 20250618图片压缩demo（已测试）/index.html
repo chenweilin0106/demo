@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片压缩测试</title>
+    <script src="index.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+      }
+      .input-section {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 15px 0;
+        justify-content: center;
+      }
+      .option-group {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .image-comparison {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+      .image-container {
+        flex: 1;
+        min-width: 300px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .image-container h3 {
+        text-align: center;
+        margin-bottom: 10px;
+        color: #555;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+        margin: 0 auto;
+        max-height: 400px;
+        object-fit: contain;
+      }
+      .stats {
+        margin-top: 10px;
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .stats p {
+        margin: 5px 0;
+      }
+      .compression-ratio {
+        font-weight: bold;
+        color: #2c7be5;
+        font-size: 1.1em;
+        margin-top: 10px;
+      }
+      .loading {
+        display: none;
+        margin: 20px auto;
+        text-align: center;
+      }
+      button {
+        background-color: #2c7be5;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      button:hover {
+        background-color: #1a68d1;
+      }
+      input[type="file"] {
+        display: none;
+      }
+      .file-input-label {
+        background-color: #2c7be5;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: inline-block;
+      }
+      .file-input-label:hover {
+        background-color: #1a68d1;
+      }
+      input[type="number"], select {
+        padding: 6px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>图片压缩测试</h1>
+      
+      <div class="input-section">
+        <p style="margin-bottom: 15px; color: #666;">
+          此页面可测试图片压缩功能。支持上传 JPG、PNG、WebP 等格式，可调整压缩质量、尺寸和输出格式。
+          <br>特别说明：选择 JPG/JPEG 格式时会自动添加白色背景（避免透明区域变黑）。
+        </p>
+        <label for="file" class="file-input-label">选择图片</label>
+        <input type="file" id="file" accept="image/*" />
+        
+        <div class="options">
+          <div class="option-group">
+            <label for="quality">压缩质量</label>
+            <input type="number" id="quality" min="0.1" max="1" step="0.1" value="0.7" />
+          </div>
+          
+          <div class="option-group">
+            <label for="maxWidth">最大宽度</label>
+            <input type="number" id="maxWidth" min="100" step="100" placeholder="原始尺寸" />
+          </div>
+          
+          <div class="option-group">
+            <label for="maxHeight">最大高度</label>
+            <input type="number" id="maxHeight" min="100" step="100" placeholder="原始尺寸" />
+          </div>
+          
+          <div class="option-group">
+            <label for="format">输出格式</label>
+            <select id="format">
+              <option value="auto">自动</option>
+              <option value="jpeg">JPEG</option>
+              <option value="jpg">JPG</option>
+              <option value="png">PNG</option>
+              <option value="webp">WebP</option>
+            </select>
+          </div>
+          
+          <div class="option-group">
+            <label for="compress-btn">&nbsp;</label>
+            <button id="compress-btn">压缩图片</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="loading" id="loading">处理中...</div>
+      
+      <div class="image-comparison">
+        <div class="image-container">
+          <h3>原始图片</h3>
+          <img src="" alt="原始图片" id="original-img" />
+          <div class="stats">
+            <p id="original-name">文件名: -</p>
+            <p id="original-dimensions">尺寸: - x -</p>
+            <p id="original-size">大小: - KB</p>
+            <p id="original-type">类型: -</p>
+          </div>
+        </div>
+        
+        <div class="image-container">
+          <h3>压缩后图片</h3>
+          <img src="" alt="压缩后图片" id="compressed-img" />
+          <div class="stats">
+            <p id="compressed-dimensions">尺寸: - x -</p>
+            <p id="compressed-size">大小: - KB</p>
+            <p id="compressed-type">类型: -</p>
+            <p class="compression-ratio" id="compression-ratio">压缩率: -%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const fileInput = document.getElementById("file");
+      const originalImg = document.getElementById("original-img");
+      const compressedImg = document.getElementById("compressed-img");
+      const originalName = document.getElementById("original-name");
+      const originalDimensions = document.getElementById("original-dimensions");
+      const originalSize = document.getElementById("original-size");
+      const originalType = document.getElementById("original-type");
+      const compressedDimensions = document.getElementById("compressed-dimensions");
+      const compressedSize = document.getElementById("compressed-size");
+      const compressedType = document.getElementById("compressed-type");
+      const compressionRatio = document.getElementById("compression-ratio");
+      const loading = document.getElementById("loading");
+      const compressBtn = document.getElementById("compress-btn");
+      const qualityInput = document.getElementById("quality");
+      const maxWidthInput = document.getElementById("maxWidth");
+      const maxHeightInput = document.getElementById("maxHeight");
+      const formatSelect = document.getElementById("format");
+      
+      // 存储原始文件
+      let originalFile = null;
+      
+      // 监听文件选择
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length === 0) return;
+        
+        originalFile = e.target.files[0];
+        displayOriginalImage(originalFile);
+      });
+      
+      // 监听压缩按钮点击
+      compressBtn.addEventListener("click", async () => {
+        if (!originalFile) {
+          alert("请先选择图片");
+          return;
+        }
+        
+        await compressAndDisplay();
+      });
+      
+      // 显示原始图片及其信息
+      function displayOriginalImage(file) {
+        // 清空压缩图片
+        compressedImg.src = "";
+        compressedDimensions.textContent = "尺寸: - x -";
+        compressedSize.textContent = "大小: - KB";
+        compressedType.textContent = "类型: -";
+        compressionRatio.textContent = "压缩率: -%";
+        
+        // 显示原始图片
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          originalImg.src = e.target.result;
+          
+          // 获取图片加载完成后的尺寸
+          originalImg.onload = () => {
+            originalDimensions.textContent = `尺寸: ${originalImg.naturalWidth} x ${originalImg.naturalHeight}`;
+          };
+        };
+        reader.readAsDataURL(file);
+        
+        // 显示原始图片信息
+        originalName.textContent = `文件名: ${file.name}`;
+        originalSize.textContent = `大小: ${(file.size / 1024).toFixed(2)} KB`;
+        originalType.textContent = `类型: ${file.type}`;
+      }
+      
+      // 压缩图片并显示
+      async function compressAndDisplay() {
+        try {
+          loading.style.display = "block";
+          
+          // 获取压缩选项
+          const options = {
+            quality: parseFloat(qualityInput.value) || 0.7,
+            format: formatSelect.value
+          };
+          
+          // 只有当用户输入了值时才添加maxWidth和maxHeight
+          if (maxWidthInput.value) {
+            options.maxWidth = parseInt(maxWidthInput.value);
+          }
+          
+          if (maxHeightInput.value) {
+            options.maxHeight = parseInt(maxHeightInput.value);
+          }
+          
+          // 压缩图片
+          const compressedDataUrl = await compressImage(originalFile, options);
+          compressedImg.src = compressedDataUrl;
+          
+          // 计算Base64图片大小
+          const base64String = compressedDataUrl.split(',')[1];
+          // Base64 编码的字符串每4个字符代表3个字节的数据
+          // 但需要考虑到填充字符 '='
+          const paddingSize = base64String.endsWith('==') ? 2 : (base64String.endsWith('=') ? 1 : 0);
+          const sizeInBytes = Math.floor((base64String.length * 3) / 4) - paddingSize;
+          const sizeInKB = (sizeInBytes / 1024).toFixed(2);
+          
+          // 获取压缩后的尺寸
+          compressedImg.onload = () => {
+            compressedDimensions.textContent = `尺寸: ${compressedImg.naturalWidth} x ${compressedImg.naturalHeight}`;
+            
+            // 计算压缩率
+            const originalSizeKB = originalFile.size / 1024;
+            const compressionPercentage = ((1 - (sizeInBytes / originalFile.size)) * 100).toFixed(2);
+            compressionRatio.textContent = `压缩率: ${compressionPercentage}%`;
+          };
+          
+          // 显示压缩后的信息
+          compressedSize.textContent = `大小: ${sizeInKB} KB`;
+          
+          // 判断压缩后的图片类型
+          let imgType = "未知";
+          if (compressedDataUrl.startsWith("data:image/jpeg")) {
+            imgType = "image/jpeg (JPEG)";
+          } else if (compressedDataUrl.startsWith("data:image/png")) {
+            imgType = "image/png";
+          } else if (compressedDataUrl.startsWith("data:image/webp")) {
+            imgType = "image/webp";
+          } else if (compressedDataUrl.startsWith("data:image/jpg")) {
+            imgType = "image/jpg";
+          }
+          compressedType.textContent = `类型: ${imgType}`;
+          
+        } catch (error) {
+          console.error("压缩失败", error);
+          alert("图片压缩失败: " + error.message);
+        } finally {
+          loading.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>
