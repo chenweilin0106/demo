@@ -34,16 +34,6 @@ export function highlightText(text, options = {}) {
 }
 
 /**
- * 高亮显示昵称 (兼容旧版本)
- * @param {string} message 消息内容
- * @returns {string} 格式化后的消息
- */
-export function formatMessage(message) {
-  return highlightText(message, { className: 'light' })
-}
-
-
-/**
  * 数字限制
  *
  * @param {number} current 当前值
@@ -116,11 +106,65 @@ export function executeAtTime({ targetHour = 0, targetMinute = 0, targetSecond =
 }
 
 /**
- * 高亮显示昵称
- * @param {string} message 消息内容
- * @returns {string} 格式化后的消息
+ * 解析URL地址，返回包含URL各部分信息的对象
+ * @param {string} url 需要解析的URL地址
+ * @returns {{
+ *  href: string,      // 完整URL，如 http://ddxx.com/vue/normal/friendsBeCash/index.html?uid=82347659#/share
+ *  protocol: string,  // URL协议，如 http:、https:
+ *  host: string,      // 主机名(域名+端口)，如 ddxx.com:8080，不带端口时就是域名
+ *  hostname: string,  // 域名，如 ddxx.com
+ *  port: string,      // 端口号，如 8080，未指定时为空字符串
+ *  pathname: string,  // 路径，如 /vue/normal/friendsBeCash/index.html
+ *  pathSegments: string[], // 路径段数组，如 ['vue', 'normal', 'friendsBeCash', 'index.html']
+ *  search: string,    // 查询字符串(带?)，如 ?uid=82347659
+ *  searchParams: Record<string, string>, // 查询参数对象，如 { uid: '82347659' }
+ *  hash: string,      // 哈希值(带#)，如 #/share
+ *  hashPath: string   // 哈希路径(不带#)，如 /share
+ * }} URL解析结果对象
  */
-export function formatMessage(message) {
-  const regex = /#([^#]+)#/g
-  return message.replace(regex, '<span class="light">$1</span>')
+export function parseUrl(url) {
+  // 创建一个URL对象
+  const urlObj = new URL(url)
+
+  // 解析查询参数
+  const searchParams = {}
+  urlObj.searchParams.forEach((value, key) => {
+    searchParams[key] = value
+  })
+
+  // 提取路径部分
+  const pathSegments = urlObj.pathname.split('/').filter(segment => segment !== '')
+
+  // 返回包含URL各部分信息的对象
+  return {
+    href: urlObj.href,
+    protocol: urlObj.protocol,
+    host: urlObj.host,
+    hostname: urlObj.hostname,
+    port: urlObj.port || '',
+    pathname: urlObj.pathname,
+    pathSegments,
+    search: urlObj.search,
+    searchParams,
+    hash: urlObj.hash,
+    hashPath: urlObj.hash.substring(1)
+  }
+}
+
+/**
+ * 将元素滚动到容器的中心位置
+ * @param {Element} element 需要滚动的元素
+ * @param {Element} container 容器元素
+ * @param {'h' | 'v'} direction 滚动方向，'h'表示横向，'v'表示纵向，默认为'h'
+ * @param {'auto' | 'smooth'} behavior 滚动行为，'auto'|'smooth'，默认'smooth'
+ */
+export function scrollCenter(element, container, direction = 'h', behavior = 'smooth') {
+  if (!element || !container) return console.log('scrollCenter: 请传入element和container')
+  const offsetPosition = element[direction === 'h' ? 'offsetLeft' : 'offsetTop']
+  const centerPosition = container[direction === 'h' ? 'offsetWidth' : 'offsetHeight'] / 2
+  const scrollPosition = offsetPosition - centerPosition + (element[direction === 'h' ? 'offsetWidth' : 'offsetHeight'] / 2)
+  container.scrollTo({
+    [direction === 'h' ? 'left' : 'top']: scrollPosition,
+    behavior
+  })
 }
