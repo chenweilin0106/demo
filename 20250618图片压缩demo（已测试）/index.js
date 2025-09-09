@@ -2,7 +2,7 @@
  * 通用图片压缩函数
  * @param {File|Blob|string} imageSource - 图片源(File, Blob, Base64字符串或URL)
  * @param {Object} options - 压缩选项
- * @param {number} [options.quality=0.7] - 压缩质量(0-1)
+ * @param {number} [options.quality=0.5] - 压缩质量(0-1)
  * @param {number} [options.maxWidth] - 最大宽度，不传则保持原始宽度
  * @param {number} [options.maxHeight] - 最大高度，不传则保持原始高度
  * @param {'auto' | 'jpeg' | 'jpg' | 'png' | 'webp'} [options.format='auto'] - 输出格式 auto-会判断图片是否包含透明通道，如果包含则输出png，否则输出jpeg
@@ -30,106 +30,13 @@
 function compressImage(imageSource, options = {}) {
   // 默认选项
   const settings = {
-    quality: options.quality || 0.7,
+    quality: options.quality || 0.5,
     maxWidth: options.maxWidth, // 不设默认值，保持原始宽度
     maxHeight: options.maxHeight, // 不设默认值，保持原始高度
     format: options.format || 'auto',
     outputType: options.outputType || 'base64', // 默认返回base64
     fileName: options.fileName || 'compressed-image'
-  }
-
-  /**
-   * 将不同类型的图片源标准化为URL或DataURL
-   * @param {File|Blob|string} source 
-   * @returns {Promise<string>}
-   */
-  async function normalizeImageSource(source) {
-    // 如果是字符串，可能是URL或Base64
-    if (typeof source === 'string') {
-      // 检查是否是Base64
-      if (source.startsWith('data:image')) {
-        return source
-      }
-      // 假设是URL，直接返回
-      return source
-    }
-    
-    // 如果是File或Blob
-    if (source instanceof File || source instanceof Blob) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = reject
-        reader.readAsDataURL(source)
-      })
-    }
-    
-    throw new Error('不支持的图片源类型')
-  }
-
-  /**
-   * 检测图片是否包含透明通道
-   * @param {HTMLImageElement} img 
-   * @returns {boolean}
-   */
-  function detectTransparency(img) {
-    // 创建一个小画布来检测透明度
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    
-    // 使用较小的尺寸进行检测以提高性能
-    const size = Math.min(50, img.width, img.height)
-    canvas.width = size
-    canvas.height = size
-    
-    // 绘制图像
-    ctx.drawImage(img, 0, 0, size, size)
-    
-    // 获取像素数据
-    const imageData = ctx.getImageData(0, 0, size, size).data
-    
-    // 检查是否有透明像素
-    for (let i = 3; i < imageData.length; i += 4) {
-      if (imageData[i] < 255) {
-        return true // 找到透明像素
-      }
-    }
-    
-    return false // 没有透明像素
-  }
-
-  /**
-   * 计算保持纵横比的新尺寸
-   * @param {number} width 原始宽度
-   * @param {number} height 原始高度
-   * @param {number} maxWidth 最大宽度
-   * @param {number} maxHeight 最大高度
-   * @returns {{width: number, height: number}}
-   */
-  function calculateDimensions(width, height, maxWidth, maxHeight) {
-    // 如果图片尺寸已经小于最大限制，则保持原始尺寸
-    if (width <= maxWidth && height <= maxHeight) {
-      return { width, height }
-    }
-    
-    // 计算宽高比
-    const aspectRatio = width / height
-    
-    // 根据宽高比决定如何调整尺寸
-    if (width / maxWidth > height / maxHeight) {
-      // 宽度是限制因素
-      return {
-        width: maxWidth,
-        height: Math.round(maxWidth / aspectRatio)
-      }
-    } else {
-      // 高度是限制因素
-      return {
-        width: Math.round(maxHeight * aspectRatio),
-        height: maxHeight
-      }
-    }
-  }
+  } 
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -176,8 +83,14 @@ function compressImage(imageSource, options = {}) {
         // 7. 根据输出格式和类型处理结果
         const mimeType = `image/${outputFormat}`
         
-        // PNG不支持质量参数，所以只在非PNG格式时使用质量设置
-        const qualityToUse = outputFormat === 'png' ? undefined : settings.quality
+        let qualityToUse = settings.quality
+
+        // PNG不支持质量参数，所以只在非PNG格式时使用质量设置 
+        if (outputFormat === 'png') {
+          qualityToUse = undefined
+        } else if (qualityToUse < 0 || qualityToUse > 1) {
+          qualityToUse = 0.5
+        } 
         
         if (settings.outputType === 'base64') {
           const base64 = canvas.toDataURL(mimeType, qualityToUse)
@@ -206,4 +119,97 @@ function compressImage(imageSource, options = {}) {
       reject(error)
     }
   })
+}
+
+/**
+ * 将不同类型的图片源标准化为URL或DataURL
+ * @param {File|Blob|string} source 
+ * @returns {Promise<string>}
+ */
+async function normalizeImageSource(source) {
+  // 如果是字符串，可能是URL或Base64
+  if (typeof source === 'string') {
+    // 检查是否是Base64
+    if (source.startsWith('data:image')) {
+      return source
+    }
+    // 假设是URL，直接返回
+    return source
+  }
+
+  // 如果是File或Blob
+  if (source instanceof File || source instanceof Blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = reject
+      reader.readAsDataURL(source)
+    })
+  }
+
+  throw new Error('不支持的图片源类型')
+}
+
+/**
+ * 检测图片是否包含透明通道
+ * @param {HTMLImageElement} img 
+ * @returns {boolean}
+ */
+function detectTransparency(img) {
+  // 创建一个小画布来检测透明度
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+
+  // 使用较小的尺寸进行检测以提高性能
+  const size = Math.min(50, img.width, img.height)
+  canvas.width = size
+  canvas.height = size
+
+  // 绘制图像
+  ctx.drawImage(img, 0, 0, size, size)
+
+  // 获取像素数据
+  const imageData = ctx.getImageData(0, 0, size, size).data
+
+  // 检查是否有透明像素
+  for (let i = 3; i < imageData.length; i += 4) {
+    if (imageData[i] < 255) {
+      return true // 找到透明像素
+    }
+  }
+
+  return false // 没有透明像素
+}
+
+/**
+ * 计算保持纵横比的新尺寸
+ * @param {number} width 原始宽度
+ * @param {number} height 原始高度
+ * @param {number} maxWidth 最大宽度
+ * @param {number} maxHeight 最大高度
+ * @returns {{width: number, height: number}}
+ */
+function calculateDimensions(width, height, maxWidth, maxHeight) {
+  // 如果图片尺寸已经小于最大限制，则保持原始尺寸
+  if (width <= maxWidth && height <= maxHeight) {
+    return { width, height }
+  }
+
+  // 计算宽高比
+  const aspectRatio = width / height
+
+  // 根据宽高比决定如何调整尺寸
+  if (width / maxWidth > height / maxHeight) {
+    // 宽度是限制因素
+    return {
+      width: maxWidth,
+      height: Math.round(maxWidth / aspectRatio)
+    }
+  } else {
+    // 高度是限制因素
+    return {
+      width: Math.round(maxHeight * aspectRatio),
+      height: maxHeight
+    }
+  }
 }
