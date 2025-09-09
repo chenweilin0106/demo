@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .levelProgressBar {
+        width: 354px;
+        height: 354px;
+        background-color: #000;
+      }
+      .progress_ring {
+        width: 354px;
+        height: 354px;
+        display: block;
+        transform: rotate(90deg);
+      }
+      .progress_ring_bg {
+        fill: none;
+        stroke: #fff;
+        stroke-width: 15;
+      }
+      .progress_ring_bar {
+        fill: none;
+        stroke: url(#progressGradient);
+        stroke-width: 15;
+        /* 圆角 */
+        /* stroke-linecap: round; */
+        /* 外阴影 */
+        /* filter: drop-shadow(0 0 5px white); */
+        /* 内阴影 */
+        filter: url(#insetShadow);
+        transition: stroke-dashoffset 0.5s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="levelProgressBar">
+      <svg class="progress_ring" viewBox="0 0 354 354">
+        <defs>
+          <linearGradient
+            id="progressGradient"
+            x1="0%"
+            y1="50%"
+            x2="100%"
+            y2="50%"
+          >
+            <stop offset="0%" stop-color="#FFB745" />
+            <stop offset="100%" stop-color="#54B6A7" />
+          </linearGradient>
+          <!-- 内阴影 -->
+          <filter id="insetShadow" height="100%" width="100%" x="0%" y="0%" filterUnits="userSpaceOnUse">
+            <feFlood flood-color="#fff" />
+            <feComposite in2="SourceGraphic" operator="out" />
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite operator="atop" in2="SourceGraphic" />
+          </filter>
+        </defs>
+        <!-- 外圆 -->
+         <circle class="progress_ring_bg" cx="177" cy="177" r="166" />
+         <!-- 内圆 -->
+        <circle class="progress_ring_bar" cx="177" cy="177" r="166" />
+      </svg>
+    </div>
+    <script>
+      const levelProgressBar = document.querySelector(".levelProgressBar");
+      const progressGradient = document.querySelector("#progressGradient");
+      const progressRingBar = document.querySelector(".progress_ring_bar");
+      const r = 166;
+      const circleLength = 2 * Math.PI * r;
+      progressRingBar.style.strokeDasharray = circleLength;
+      progressRingBar.style.strokeDashoffset = 0.5 * circleLength;
+    </script>
+  </body>
+</html>
