@@ -1,20 +1,20 @@
 <template>
   <div class="wardrobe">
     <WheelDisc :config="{ticket_nums,is_free,invite_red_point,half_card,task_point_st}" :configPreviewPopup="configPreviewPopup" @update="getPageData" />
-    <OutBox title="title_9.png" class="bind position-relative">
+    <OutBox title="title_6.png" class="bind position-relative" isLeft isRight>
       <div class="tip flex justify-center line-height-1">单人/组队达到进度即可领取奖励</div>
       <div class="lookRank position-absolute" @click="toRank"></div>
       <div class="usersBox margin-row-center position-relative" :class="`status${intimate_type}`">
         <div class="user1 flex-column align-center position-absolute position-column-center">
           <div class="avatarBox">
-            <img class="radius-50 fit-cover block avatar" :src="pair_info[0]?.profile_image||IconPath('avatarDefault.png')" @error="imgAtError" @click="toUserMain(pair_info[0]?.id)" />
+            <img class="radius-50 fit-cover block avatar" v-lazy="pair_info[0]?.profile_image||defaultAvatar" @error="imgAtError" @click="toUserMain(pair_info[0]?.id)" />
           </div>
           <div class="username text-center ellipsis">{{pair_info[0]?.username}}</div>
         </div>
         <div class="user2 flex-column align-center position-absolute position-column-center">
           <div class="avatarBox" @click="bind">
             <div v-if="!pair_status" class="add"></div>
-            <img v-else class="radius-50 fit-cover block avatar" :src="pair_info[1]?.profile_image||IconPath('avatarDefault.png')" @error="imgAtError" @click.stop="toUserMain(pair_info[1]?.id)" />
+            <img v-else class="radius-50 fit-cover block avatar" v-lazy="pair_info[1]?.profile_image||defaultAvatar" @error="imgAtError" @click.stop="toUserMain(pair_info[1]?.id)" />
           </div>
           <div class="username text-center ellipsis">{{pair_status?pair_info[1].username:'邀请好友绑定'}}</div>
         </div>
@@ -23,8 +23,10 @@
       <StepProgress :tot_num="tot_magic" :tot_list="tot_awards" @openReceivePopup="openReceivePopup" />
     </OutBox>
     <div class="dating position-relative">
-      <img :src="IconPath('title_10.png')" class="titleIcon pointer-none position-absolute" />
-      <div class="datingIcon position-absolute pointer-none"></div>
+      <img :src="IconPath('title_7.png')" class="titleIcon pointer-none position-absolute" />
+      <img :src="IconPath('back_1.png')" class="leftLeaf position-absolute pointer-none" />
+      <img :src="IconPath('back_2.png')" class="rightLeaf position-absolute pointer-none" />
+      <!-- <div class="datingIcon position-absolute pointer-none"></div> -->
       <!--提示文本-->
       <p class="p1 flex align-center justify-center text-center">活动结束后系统将保留玩家在活动中获取的<br>形象部件，未来的装扮活动仍可使用</p>
       <!--尝鲜礼包-->
@@ -57,7 +59,7 @@
           <!--当前用户-->
           <div class="userInfo flex-column align-center">
             <div class="avatarBox overflow-hidden">
-              <img class="radius-50 fit-cover block avatar" :src="pair_info[0]?.profile_image||IconPath('avatarDefault.png')" @error="imgAtError" crossorigin="anonymous" @click="toUserMain(pair_info[0]?.id)" />
+              <img class="radius-50 fit-cover block avatar" :src="pair_info[0]?.profile_image||defaultAvatar" @error="imgAtError" crossorigin="anonymous" @click="toUserMain(pair_info[0]?.id)" />
             </div>
             <div v-if="pair_info[0]?.username" class="username w-100 text-center flex-shrink-0">{{textLengthLimit(pair_info[0]?.username,4)}}</div>
           </div>
@@ -69,7 +71,7 @@
             <!--绑定用户-->
             <div class="userInfo flex-column align-center friend">
               <div class="avatarBox overflow-hidden">
-                <img class="radius-50 fit-cover block avatar" crossorigin="anonymous" :src="IconPath(pair_status?pair_info[1]?.profile_image||'avatarDefault.png':'mk6_44.png')" @error="imgAtError" @click="toUserMain(pair_info[1]?.id)" />
+                <img class="radius-50 fit-cover block avatar" crossorigin="anonymous" :src="IconPath(pair_status?pair_info[1]?.profile_image||defaultAvatar:'mk5_44.png')" @error="imgAtError" @click="toUserMain(pair_info[1]?.id)" />
               </div>
               <div class="username w-100 text-center">{{pair_status?textLengthLimit(pair_info[1]?.username,4):'当前未组队'}}</div>
             </div>
@@ -83,7 +85,7 @@
         </div>
       </lazy-component>
       <!--提示文本-->
-      <p class="p2 line-height-1 position-absolute position-row-center">{{pictureMode==1?'创造你的虚拟形象，来记录这个美好春天吧！':'与最默契的TA，一起合拍吧！'}}</p>
+      <p class="p2 line-height-1 position-absolute position-row-center">{{pictureMode==1?'创造你的虚拟形象，来记录你的时尚穿搭吧！':'与最默契的TA，一起合拍吧！'}}</p>
       <!-- <p class="p2 line-height-1 position-absolute position-row-center flex align-center">
         <template v-if="pictureMode==1">创造你的虚拟形象，来记录这个"520"吧！</template>
         <template v-if="pictureMode==2">
@@ -141,10 +143,10 @@ import WheelDisc from './components/wheelDisc.vue'
 import StepProgress from './components/stepProgress.vue'
 import Person from './components/person.vue'
 import Back from './components/back.vue'
-import ResetPopup from './components/resetPopup.vue'
-import PicturePopup from './components/picturePopup.vue'
-import ReceivePopup from './components/receivePopup.vue'
-import BindPopup from './components/bindPopup.vue'
+import ResetPopup from './popups/resetPopup.vue'
+import PicturePopup from './popups/picturePopup.vue'
+import ReceivePopup from './popups/receivePopup.vue'
+import BindPopup from './popups/bindPopup.vue'
 
 export default {
   name: 'wardrobeVue',
@@ -152,7 +154,8 @@ export default {
   components: { Buy, ReceivePopup, PicturePopup, Back, ResetPopup, StepProgress, WheelDisc, Person, BindPopup },
   data() {
     return {
-      money: 0, // 现金余额
+      defaultAvatar: Object.freeze('avatarDefault.png'),
+      money: 10000, // 现金余额
       bug_gift_list: [{ gift_id: 6, price: 6, apple_id: 'new_active_6', goods_type: 'active_bingo', status: 1 }],
       gender: '0',
       user_icon: '',
@@ -173,7 +176,7 @@ export default {
         { id: 625, need_num: 625, award: { id: 0, type: 'pretty_card', nums: 5, name: '靓号券', unit: '天', icon: 'lhq_120_120.png' }, has_right: 0 },
         { id: 1270, need_num: 1270, award: { id: 142, type: 'tool', nums: 600, name: '精粹', unit: '', icon: 'fsjc_120_120.png' }, has_right: 0 },
         { id: 1920, need_num: 1920, award: { id: 158, type: 'tool', nums: 15, name: '藏宝图', unit: '', icon: 'cbt_120_120.png' }, has_right: 0 },
-        { id: 2350, need_num: 2350, award: { id: 5170, type: 'title', nums: 7, name: '【甜蜜双排】属性称号', unit: '', icon: 'mp_tmsp' }, has_right: 0 }
+        { id: 2350, need_num: 2350, award: { id: 5170, type: 'title', nums: 7, name: '【甜蜜双排】属性称号', unit: '天', icon: 'mp_tmsp' }, has_right: 0 }
       ],
       my_virtual_status: false, // 当前用户是否开启虚拟形象
       my_virtual_info: getStorage(`my_virtual_info_${this.$store.state.uid}`) || [], // 当前用户虚拟形象数组
@@ -195,17 +198,22 @@ export default {
       pictureMode: 1, // 1：我的形象 2：开启合照
       wardrobeMode: 'all', // all-全部 其他参考material_list中的component_id
       configPreviewPopup: Object.freeze([
-        { icon: 'dpscxgt_010.png', text: '套装·星芒华庭', qualityIcon: 'tk_48.png' },
-        { icon: 'dpscxgt_008.png', text: '套装·童话森林', qualityIcon: 'tk_49.png' },
-        { icon: 'dpscxgt_009.png', text: '套装·萌趣乐园', qualityIcon: 'tk_49.png' }
-      ]),
+        { icon: 'dpscxgt_018.png', text: '套装·荆棘蔷薇', quality: '3' },
+        { icon: 'dpscxgt_017.png', text: '套装·鲸落歌谣', quality: '2' },
+        { icon: 'dpscxgt_016.png', text: '套装·黄昏邮差', quality: '2' }
+      ]), // quality：1-优良 2-珍品 3-卓越 4-传世 5-天工
       isShowPicturePopup: false, // 生成图片弹框
       configPicturePopup: null,
       isShowResetPopup: false, // 确认重置弹框
       isShowBindPopup: false, // 绑定弹框
-      configBindPopup: {},
+      configBindPopup: {
+        // intimate_type: 1,
+        // pair_user_info: { username: '虚位以待', uid: 1, profile_image: 'https://imagevo.dandanvoice.com/test/ufile/head/20200408/8016666/30121545889115.jpeg' }
+      },
       isShowReceivePopup: false, // 是否显示恭喜获得弹窗
-      configReceivePopup: [], // 恭喜获得配置
+      configReceivePopup: [
+        // { id: 1, icon: 'ljs_120_120.png', name: '绿晶石', nums: '1', type: 'tool', unit: '', has_right: 0 },
+      ], // 恭喜获得配置
       configBuy: {
         money: 0,
         goods: {},
@@ -263,14 +271,10 @@ export default {
     }
   },
   methods: {
-    // routerJump(path) {
-    //   scrollToHeight('top')
-    //   this.$nextTick(() => this.$router.replace({ path }))
-    // },
     // 打开抢鲜礼包弹窗
     openGiftPopup() {
       this.configBuy.money = this.money
-      this.configBuy.goods = { ...this.bug_gift_list[0], list: [{ id: 1, icon: 'zs_120_120.png', text: '+60', name: '钻石', nums: '1', type: 'tool', unit: '', has_right: 0 }, { id: 2, icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_017_120_120.png', text: '配饰·兔子气球', nums: '1', type: 'tool', unit: '', has_right: 0 }] }
+      this.configBuy.goods = { ...this.bug_gift_list[0], list: [{ id: 1, icon: 'zs_120_120.png', text: '+60', name: '钻石', nums: '1', type: 'tool', unit: '', has_right: 0 }, { id: 2, icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_039_120_120.png', text: '配饰·信羽游影', nums: '1', type: 'tool', unit: '', has_right: 0 }] }
       this.$refs.buy.openGiftPopup()
     },
     // 生成图片
@@ -387,7 +391,7 @@ export default {
     },
     // 获取页面数据
     async getPageData() {
-      const res = await getPageData({ type: 'tab', mark: 'm7' })
+      const res = await getPageData({ type: 'tab', mark: 'm5' })
       if (res.errno) return this.$toast(res.errmsg)
       Object.assign(this, res.data)
       this.setLocal()
@@ -411,7 +415,7 @@ export default {
     },
     // 数数点击埋点
     thinkingTrack(element) {
-      this.$thinking.track('WebClick', { module: '爱的衣橱', sub_module: '约会搭配', element }) // 数数点击埋点
+      this.$thinking.track('WebClick', { module: '魔法衣橱', sub_module: '约会搭配', element }) // 数数点击埋点
     },
     textLengthLimit,
     toUserMain,
@@ -425,7 +429,7 @@ export default {
   .bind{
     .tip{
       font-size: 28px;
-      color: #C34C79;
+      color: #398FB5;
       margin-bottom: 16px;
     }
     .usersBox{
@@ -433,7 +437,7 @@ export default {
       width: 532px;
       height: 210px;
       margin-bottom: 19px;
-      background: url('@/pages/gardenParty/assets/mk5_12.png') no-repeat left top/100% 100%;
+      background: url('@/pages/summerParty/assets/mk5_12.png') no-repeat left top/100% 100%;
       .user1,.user2{
         left: 73px;
         .avatarBox{
@@ -456,7 +460,7 @@ export default {
             left: 55px;
             width: 54px;
             height: 54px;
-            background: url('@/pages/gardenParty/assets/mk5_39.png') no-repeat left top/100% 100%;
+            background: url('@/pages/summerParty/assets/mk5_39.png') no-repeat left top/100% 100%;
           }
         }
         .username{
@@ -465,7 +469,7 @@ export default {
           color: #FFFFFF;
           width: 166px;
           height: 46px;
-          background: url('@/pages/gardenParty/assets/mk5_13.png') no-repeat left top/100% 100%;
+          background: url('@/pages/summerParty/assets/mk5_13.png') no-repeat left top/100% 100%;
           line-height: 46px;
         }
       }
@@ -474,70 +478,76 @@ export default {
         right: 73px;
       }
       &.status1{
-        background: url('@/pages/gardenParty/assets/mk5_14.png') no-repeat left top/100% 100%;
+        background: url('@/pages/summerParty/assets/mk5_14.png') no-repeat left top/100% 100%;
         .username{
-          background: url('@/pages/gardenParty/assets/mk5_15.png') no-repeat left top/100% 100%;
+          background: url('@/pages/summerParty/assets/mk5_15.png') no-repeat left top/100% 100%;
         }
       }
       &.status2{
-        background: url('@/pages/gardenParty/assets/mk5_18.png') no-repeat left top/100% 100%;
+        background: url('@/pages/summerParty/assets/mk5_18.png') no-repeat left top/100% 100%;
         .username{
-          background: url('@/pages/gardenParty/assets/mk5_19.png') no-repeat left top/100% 100%;
+          background: url('@/pages/summerParty/assets/mk5_19.png') no-repeat left top/100% 100%;
         }
       }
       &.status3{
-        background: url('@/pages/gardenParty/assets/mk5_20.png') no-repeat left top/100% 100%;
+        background: url('@/pages/summerParty/assets/mk5_20.png') no-repeat left top/100% 100%;
         .username{
-          background: url('@/pages/gardenParty/assets/mk5_21.png') no-repeat left top/100% 100%;
+          background: url('@/pages/summerParty/assets/mk5_21.png') no-repeat left top/100% 100%;
         }
       }
       &.status4{
-        background: url('@/pages/gardenParty/assets/mk5_16.png') no-repeat left top/100% 100%;
+        background: url('@/pages/summerParty/assets/mk5_16.png') no-repeat left top/100% 100%;
         .username{
-          background: url('@/pages/gardenParty/assets/mk5_17.png') no-repeat left top/100% 100%;
+          background: url('@/pages/summerParty/assets/mk5_17.png') no-repeat left top/100% 100%;
         }
       }
       &.status5{
-        background: url('@/pages/gardenParty/assets/mk5_22.png') no-repeat left top/100% 100%;
+        background: url('@/pages/summerParty/assets/mk5_22.png') no-repeat left top/100% 100%;
         .username{
-          background: url('@/pages/gardenParty/assets/mk5_23.png') no-repeat left top/100% 100%;
+          background: url('@/pages/summerParty/assets/mk5_23.png') no-repeat left top/100% 100%;
         }
       }
     }
     .lookRank{
       z-index: 2;
       top: 105px;
-      right: 4px;
+      right: -12px;
       width: 178px;
       height: 68px;
-      background: url('@/pages/gardenParty/assets/mk5_11.png') no-repeat left top/100% 100%;
+      background: url('@/pages/summerParty/assets/mk5_11.png') no-repeat left top/100% 100%;
     }
     .nums{
       max-width: 650px;
       padding: 9px 45px;
-      background: #EA8BAF;
+      background: #73B1FB;
       font-size: 26px;
       color: #FFFFFF;
     }
   }
   .dating{
-    margin-top: 123px;
+    margin-top: 122px;
     .titleIcon {
       z-index: 2;
-      top: -115px;
+      top: -102px;
       // left: 108px;
       left: 50%;
       transform: translateX(-50%);
       width: auto;
-      height: 174px;
+      height: 157px;
     }
-    .datingIcon {
+    .leftLeaf {
       z-index: 2;
-      top: -285px;
+      top: -150px;
+      left: 0;
+      width: 136px;
+      height: 268px;
+    }
+    .rightLeaf {
+      z-index: 2;
+      top: -135px;
       right: 0;
-      width: 213px;
-      height: 292px;
-      background: url('@/pages/520/assets/back_4.png') no-repeat left top/100% 100%;
+      width: 164px;
+      height: 267px;
     }
     .p1{
       position: relative;
@@ -545,9 +555,9 @@ export default {
       margin-left: 18px;
       width: 726px;
       height: 180px;
-      background: url('@/pages/520/assets/mk5_1.png') no-repeat left top/100% 100%;
+      background: url('@/pages/summerParty/assets/mk5_32.png') no-repeat left top/100% 100%;
       font-size: 28px;
-      color: #FC7949;
+      color: #3CACDD;
       line-height: 40px;
       // transform: translateY(-10px);
       margin-bottom: 10px;
@@ -555,10 +565,10 @@ export default {
     .giftBtn{
       z-index: 5;
       top: 96px;
-      right: 5px;
-      width: 141px;
+      right: 3px;
+      width: 149px;
       height: 150px;
-      background: url('@/pages/520/assets/mk6_33.png') no-repeat left top/100% 100%;
+      background: url('@/pages/summerParty/assets/mk5_33.png') no-repeat left top/100% 100%;
     }
     .tabs{
       z-index: 4;
@@ -566,11 +576,13 @@ export default {
       left: 127px;
       width: 488px;
       height: 91px;
+      background: no-repeat left top/100% 100%;
+      transition: background-image 0.3s;
       &.status1{
-        background: url('@/pages/520/assets/mk6_30.png') no-repeat left top/100% 100%;
+        background-image: url('@/pages/summerParty/assets/mk5_30.png');
       }
       &.status2{
-        background: url('@/pages/520/assets/mk6_31.png') no-repeat left top/100% 100%;
+        background-image: url('@/pages/summerParty/assets/mk5_31.png');
       }
     }
     .my-swipe{
@@ -658,16 +670,16 @@ export default {
           width: 146px;
           &:nth-child(1){
             height: 147px;
-            background: url('@/pages/520/assets/mk6_37.png') no-repeat left top/100% 100%;
+            background: url('@/pages/summerParty/assets/mk5_37.png') no-repeat left top/100% 100%;
           }
           &:nth-child(2){
             height: 146px;
             margin: -20px 0;
-            background: url('@/pages/520/assets/mk6_36.png') no-repeat left top/100% 100%;
+            background: url('@/pages/summerParty/assets/mk5_36.png') no-repeat left top/100% 100%;
           }
           &:nth-child(3){
             height: 147px;
-            background: url('@/pages/520/assets/mk6_35.png') no-repeat left top/100% 100%;
+            background: url('@/pages/summerParty/assets/mk5_35.png') no-repeat left top/100% 100%;
           }
         }
         .disabled{
@@ -677,33 +689,33 @@ export default {
       }
     }
     .p2{
-      top: 251px;
+      top: 259px;
       z-index: 2;
       font-weight: 500;
       font-size: 26px;
       color: #FFFFFF;
-      text-shadow: #FC7949 0 0 5px,#FC7949 0 0 5px,#FC7949 0 0 5px,#FC7949 0 0 5px;
+      text-shadow: #72c5f9 0 0 5px,#72c5f9 0 0 5px,#72c5f9 0 0 5px,#72c5f9 0 0 5px;
       height: 43px;
-      .jumpBtn{
-        width: 127px;
-        height: 43px;
-        text-shadow: none;
-      }
+      // .jumpBtn{
+      //   width: 127px;
+      //   height: 43px;
+      //   text-shadow: none;
+      // }
     }
     .createBtn{
       z-index: 2;
       top: 900px;
       width: 303px;
       height: 120px;
-      background: url('@/pages/520/assets/mk6_34.png') no-repeat left top/100% 100%;
+      background: url('@/pages/summerParty/assets/mk5_34.png') no-repeat left top/100% 100%;
     }
     .wardrobeTabs{
       z-index: 2;
       margin-top: -58px;
       width: 750px;
       height: 80px;
-      background: #F6F8FF;
-      box-shadow: 0px 3px 6px 0px rgba(255,96,141,0.27);
+      background: #FFFFFF;
+      box-shadow: 0px 3px 6px 0px rgba(57,160,255,0.27);
       border-radius: 40px;
       display: flex;
       justify-content: center;
@@ -717,11 +729,11 @@ export default {
           height: 69px;
           font-weight: bold;
           font-size: 28px;
-          color: #F7AF93;
+          color: #8DC4F2;
           transition: all 0.3s;
           &.active{
             color: #fff;
-            background: url('@/pages/520/assets/mk6_43.png') no-repeat left top/100% 100%;
+            background: url('@/pages/summerParty/assets/mk5_43.png') no-repeat left top/100% 100%;
           }
         }
       //}
@@ -729,12 +741,12 @@ export default {
     .backpack{
       width: 750px;
       height: 525px;
-      background: rgba(246,248,255,0.6);
+      background: rgba(255,255,255,0.7);
       border-radius: 40px;
       padding-top: 17px;
       .p3{
         font-size: 26px;
-        color: #EB8057;
+        color: #398FB5;
         line-height: 40px;
       }
       .clothesList{
@@ -770,7 +782,7 @@ export default {
             color: #FFFFFF;
           }
           &.status_0{
-            background-image: url('@/pages/520/assets/mk6_56.png');
+            background-image: url('@/pages/summerParty/assets/mk5_55.png');
             pointer-events: none;
             .icon{
               opacity: 0.5;
@@ -792,13 +804,13 @@ export default {
               transform: translate(-50%, -50%);
               width: 100%;
               height: 100%;
-              background: url('@/pages/520/assets/mk6_38.png') no-repeat left top/100% 100%;
+              background: url('@/pages/summerParty/assets/mk5_58.png') no-repeat left top/100% 100%;
             }
           }
           &.status_empty{
             width: 158px;
             height: 158px;
-            background: linear-gradient(0deg, #FFDECC, #FFDECC);
+            background: linear-gradient(0deg, #C5E2FA, #C5E2FA);
             border-radius: 24px;
             border: 4px solid #F2F4FF;
             pointer-events: none;
@@ -806,15 +818,15 @@ export default {
           // 1-R 2-SR 3-SSR 4-UR 5-SP
           &.quality_1{
             text-shadow: 1px 0 #809DF1, -1px 0 #809DF1, 0 1px #809DF1, 0 -1px #809DF1, 1px 1px #809DF1, -1px -1px #809DF1, 1px -1px #809DF1, -1px 1px #809DF1;
-            background-image: url('@/pages/520/assets/mk6_57.png');
+            background-image: url('@/pages/summerParty/assets/mk5_56.png');
           }
           &.quality_2{
             text-shadow: 1px 0 #AD7FE6, -1px 0 #AD7FE6, 0 1px #AD7FE6, 0 -1px #AD7FE6, 1px 1px #AD7FE6, -1px -1px #AD7FE6, 1px -1px #AD7FE6, -1px 1px #AD7FE6;
-            background-image: url('@/pages/520/assets/mk6_55.png');
+            background-image: url('@/pages/summerParty/assets/mk5_54.png');
           }
           &.quality_3{
             text-shadow: 1px 0 #E79912, -1px 0 #E79912, 0 1px #E79912, 0 -1px #E79912, 1px 1px #E79912, -1px -1px #E79912, 1px -1px #E79912, -1px 1px #E79912;
-            background-image: url('@/pages/520/assets/mk6_54.png');
+            background-image: url('@/pages/summerParty/assets/mk5_53.png');
           }
         }
       }
@@ -824,11 +836,14 @@ export default {
       margin-top: -58px;
       width: 750px;
       height: 116px;
-      background: #F6F8FF;
-      box-shadow: 0 3px 6px 0 rgba(255, 96, 141, 0.27);
+      background: #FFFFFF;
+      box-shadow: 0 3px 6px 0 rgba(57,160,255,0.27);
       border-radius: 58px;
       li{
-        color: #EB8057;
+        color: #398FB5;
+        span{
+          background-color: #81E0ED;
+        }
       }
     }
   }

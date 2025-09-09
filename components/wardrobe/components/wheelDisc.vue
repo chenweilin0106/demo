@@ -1,5 +1,5 @@
 <template>
-  <OutBox title="title_9.png" class="wheelDisc">
+  <OutBox title="title_5.png" class="wheelDisc">
     <div class="ruleBtn position-absolute" @click="isShowRulesPopup=true"></div>
     <div class="taskBtn position-absolute" @click="isShowTaskPopup=true">
       <div v-if="config.task_point_st" class="redDot radius-999 position-absolute pointer-none"></div>
@@ -35,11 +35,6 @@
       <div @click="lotteryBtnCk(50)"></div>
     </div>
     <div class="rules-text">
-      <!-- <ul>
-        <li><span></span>玩家<i>每消费300钻石</i>可获得1次冒险次数，每次冒险</li>
-        <li>可获得随机奖励</li>
-        <li><span></span>完成每日任务可获得更多冒险次数</li>
-      </ul> -->
       <ul>
         <li><span></span>玩家<i>每消费300钻石</i>可获得1次冒险次数，完成每日</li>
         <li>任务可获得更多冒险次数</li>
@@ -54,67 +49,18 @@
     <RecordPopup v-if="isShowRecordPopup" @clickClose="isShowRecordPopup=false" />
     <RulesPopup v-if="isShowRulesPopup" @clickClose="isShowRulesPopup=false" />
     <PreviewPopup v-if="isShowPreviewPopup" :config="configPreviewPopup" @clickClose="isShowPreviewPopup=false" />
-    <div class="text" :data-text="textLengthLimit(1234567890,8)"><div class="inner">textLengthLimit(1234567890,8)</div></div>
-    
-    .text{
-      $stroke: 2px;
-      position: relative;
-      z-index: 1;
-      font-size: 30px;
-      color: transparent;
-      width: fit-content;
-      overflow: hidden;
-      text-align: center;
-      // 字体
-      .inner{
-        position: relative;
-        z-index: 2;
-        padding: $stroke; /* 为描边预留位置 加上描边大小 防止描边被溢出隐藏 */
-        background-image: -webkit-linear-gradient(0deg, white, black); /* 渐变背景 */
-        -webkit-background-clip: text; /* 背景裁剪成字体 */
-        background-repeat: no-repeat;
-        border: 1px solid transparent;
-        margin: -1px;
-        overflow: hidden;
-        white-space: nowrap;
-        clip-path: inset($stroke)
-      }
-      // 描边
-      &::before{
-        content: attr(data-text); /* 继承文本 */
-        position: absolute;
-        z-index: 1;
-        top: -$stroke;
-        left: -$stroke;
-        right: -$stroke;
-        bottom: -$stroke;
-        padding: $stroke; /* 为描边预留位置 加上描边大小 防止描边被溢出隐藏 */
-        -webkit-text-stroke: $stroke transparent; /* 字体描边 为渐变背景占位 背景会覆盖在描边上 */
-        background-image: -webkit-linear-gradient(0deg, pink, skyblue);
-        -webkit-background-clip: text; /* 背景裁剪成字体 */
-        background-repeat: no-repeat;
-        border: 1px solid transparent;
-        margin: -1px;
-        overflow: hidden;
-        white-space: nowrap;
-        clip-path: inset($stroke);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    }
   </OutBox>
 </template>
 
 <script>
 import Marquee from './marquee.vue'
-import EmailPopup from '../components/emailPopup.vue'
-import InvitePopup from '../components/invitePopup.vue'
-import ReceivePopup from '../components/receivePopup.vue'
-import RecordPopup from '../components/recordPopup.vue'
-import TaskPopup from '../components/taskPopup.vue'
-import RulesPopup from '../components/rulesPopup.vue'
-import PreviewPopup from '../components/previewPopup.vue'
+import EmailPopup from '../popups/emailPopup.vue'
+import InvitePopup from '../popups/invitePopup.vue'
+import ReceivePopup from '../popups/receivePopup.vue'
+import RecordPopup from '../popups/recordPopup.vue'
+import TaskPopup from '../popups/taskPopup.vue'
+import RulesPopup from '../popups/rulesPopup.vue'
+import PreviewPopup from '../popups/previewPopup.vue'
 import { getPageData } from '@/api'
 import { getStorage, getUrlData, setStorage } from '@/utils/tool'
 
@@ -136,37 +82,37 @@ export default {
         // { id: 1, icon: 'ljs_120_120.png', name: '绿晶石', nums: '1', type: 'tool', unit: '', has_right: 0 }
       ], // 恭喜获得弹窗数据
       marqueeList: Object.freeze([
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/face/mrscnv_008_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/face/mrscnv_009_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/face/mrscnan_008_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/face/mrscnan_009_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnv_s_009_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnv_t_008_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnv_x_009_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnan_s_009_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnan_t_008_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnan_x_009_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/shoes/xwscnv_008_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/shoes/xwscnv_009_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/shoes/xwscnan_008_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/shoes/xwscnan_009_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/scene/cjsc_8thsl_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/scene/cjsc_9mqly_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_015_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_016_120_120.png' },
-        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_018_120_120.png' }
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/face/mrscnv_016_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/face/mrscnv_017_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/face/mrscnan_016_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/face/mrscnan_017_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnv_s_016_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnv_t_017_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnan_s_016_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/clothes/fzscnan_t_017_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/shoes/xwscnv_016_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/shoes/xwscnv_017_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/shoes/xwscnan_016_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/shoes/xwscnan_017_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/scene/cjsc_16hhyc_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/scene/cjsc_17jlgy_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_040_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_041_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_042_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_043_120_120.png' },
+        { icon: 'https://cdn-image.dandan818.com/activity/normal/virtual/ornament/pssc_044_120_120.png' }
       ]), // 轮播图数据
       rewardsList: [
-        { id: 1, icon: 'cazy_120_120.png', type: 'chat_bubble_pub', text: '公屏气泡+1天', label: true, active: true },
-        { id: 2, icon: 'sb_thsk', type: 'voice', text: '声波+1天', label: false, active: false },
-        { id: 3, icon: 'zpsc_120_120.png', type: 'costume', text: '随机SSR素材+1', label: false, active: false },
-        { id: 4, icon: 'sjlwzsq_120_120.png', type: '', text: '随机礼物赠送权+1天', label: false, active: false },
-        { id: 5, icon: 'qsmx_120_120.png', type: 'ring', text: '戒指+1', label: true, price: 520, active: false },
+        { id: 1, icon: 'xhhj_120_120.png', type: 'chat_bubble_pub', text: '公屏气泡+1天', label: true, active: true },
+        { id: 2, icon: 'sb_tsqs', type: 'voice', text: '声波+1天', label: false, active: false },
+        { id: 3, icon: 'sjssrsc_120_120.png', type: 'costume', text: '随机卓越素材+1', label: false, active: false },
+        { id: 4, icon: 'dlh_120_120.png', type: '', text: '礼物赠送权+1天', label: false, price: 328, active: false },
+        { id: 5, icon: 'hydm_120_120.png', type: 'ring', text: '戒指+1', label: true, price: 888, active: false },
         { id: 6, icon: 'ljs_120_120.png', type: '', text: '绿晶石+15', label: false, active: false },
         { id: 7, icon: 'sjmg_120_120.png', type: '', text: '水晶玫瑰+1', label: false, active: false },
         { id: 8, icon: 'cbt_120_120.png', type: '', text: '藏宝图+1', label: false, active: false },
         { id: 9, icon: 'fsjc_120_120.png', type: '', text: '符石精粹+100', label: false, active: false },
-        { id: 10, icon: '', type: '', text: '随机SR素材+1', label: true, active: false }
+        { id: 10, icon: '', type: '', text: '随机珍品素材+1', label: true, active: false }
       ], // 轮盘数据
       rollTime: undefined, // 轮盘计时器
       nowRewardIndex: 0, // 当前第几
@@ -252,7 +198,7 @@ export default {
 
 <style scoped lang="scss">
 .wheelDisc{
-  height: 1202px;
+  height: 1239px;
   .redDot{
     width: 14px;
     height: 14px;
@@ -262,19 +208,19 @@ export default {
   }
   .ruleBtn{
     z-index: 2;
-    top: -24px;
-    left: -12px;
+    top: -21px;
+    left: -15px;
     width: 162px;
     height: 68px;
-    background: url('@/pages/520/assets/mk6_49.png') no-repeat left top/100% 100%;
+    background: url('@/pages/summerParty/assets/mk5_49.png') no-repeat left top/100% 100%;
   }
   .taskBtn{
     z-index: 2;
-    top: 40px;
-    left: -12px;
+    top: 41px;
+    left: -15px;
     width: 162px;
     height: 68px;
-    background: url('@/pages/520/assets/mk6_50.png') no-repeat left top/100% 100%;
+    background: url('@/pages/summerParty/assets/mk5_50.png') no-repeat left top/100% 100%;
     .redDot{
       right: 10px;
       left: auto;
@@ -285,53 +231,53 @@ export default {
     z-index: 2;
     width: 157px;
     height: 56px;
-    background: url('@/pages/520/assets/mk6_1.png') no-repeat left top/100% 100%;
-    right: -12px;
-    top: -23px;
+    background: url('@/pages/summerParty/assets/mk5_1.png') no-repeat left top/100% 100%;
+    right: -15px;
+    top: -15px;
   }
   .inviteBtn{
     z-index: 2;
     width: 157px;
     height: 96px;
-    background: url('@/pages/520/assets/mk6_2.png') no-repeat left top/100% 100%;
-    right: -12px;
-    top: 46px;
+    background: url('@/pages/summerParty/assets/mk5_2.png') no-repeat left top/100% 100%;
+    right: -15px;
+    top: 54px;
   }
   .recordBtn{
     z-index: 2;
-    right: 4px;
-    top: 789px;
+    right: 0;
+    top: 794px;
     width: 178px;
     height: 68px;
-    background: url('@/pages/520/assets/mk6_48.png') no-repeat left top/100% 100%;
+    background: url('@/pages/summerParty/assets/mk5_48.png') no-repeat left top/100% 100%;
   }
   .previewBtn{
     z-index: 2;
     right: -9px;
-    bottom: -7px;
+    bottom: -6px;
     width: 170px;
     height: 60px;
-    background: url('@/pages/520/assets/mk6_32.png') no-repeat left top/100% 100%;
+    background: url('@/pages/summerParty/assets/mk5_57.png') no-repeat left top/100% 100%;
   }
   .skipAnArea{
     z-index: 2;
-    left: 32px;
-    top: 790px;
+    left: 27px;
+    top: 793px;
     width: 87px;
     height: 70px;
     &.skipSp{
-      background: url('@/pages/520/assets/mk6_51_1.png') no-repeat left top/100% 100%;
+      background: url('@/pages/summerParty/assets/mk5_51_1.png') no-repeat left top/100% 100%;
     }
     &.noSkipSp{
-      background: url('@/pages/520/assets/mk6_51.png') no-repeat left top/100% 100%;
+      background: url('@/pages/summerParty/assets/mk5_51.png') no-repeat left top/100% 100%;
     }
   }
   .lotteryBox{
     z-index: 1;
     width: 671px;
     height: 768px;
-    background: url('@/pages/520/assets/mk6_3.png') no-repeat left top/100% 100%;
-    top: 49px;
+    background: url('@/pages/summerParty/assets/mk5_3.png') no-repeat left top/100% 100%;
+    top: 57px;
     .wheelDiscArea {
       top: 75px;
       right: 14px;
@@ -382,7 +328,7 @@ export default {
         .rewardItem {
           width: 206px;
           height: 144px;
-          background: url('@/pages/520/assets/mk6_4.png') no-repeat left top/100% 100%;
+          background: url('@/pages/summerParty/assets/mk5_4.png') no-repeat left top/100% 100%;
           position: relative;
           .label1{
             z-index: 3;
@@ -404,7 +350,7 @@ export default {
           }
           &:last-child {
             width: 642px;
-            background: url('@/pages/520/assets/mk6_5.png') no-repeat left top/100% 100%;
+            background: url('@/pages/summerParty/assets/mk5_5.png') no-repeat left top/100% 100%;
             padding: 3px;
           }
           .rewardIcon {
@@ -447,7 +393,7 @@ export default {
               right: -$stroke;
               padding: $stroke; /*保持与inner大小相同 方便定位*/
               -webkit-text-stroke: $stroke transparent; /*字体描边 为渐变背景占位 背景会覆盖在描边上*/
-              background-image: -webkit-linear-gradient(0deg, #E66C47, #E66C47); /*描边颜色*/
+              background-image: -webkit-linear-gradient(0deg, #4591DF, #4591DF); /*描边颜色*/
               -webkit-background-clip: text;
               background-repeat: no-repeat;
               box-sizing: border-box;
@@ -470,7 +416,7 @@ export default {
             transform: translate(-50%, -50%);
             width: 266px;
             height: 194px;
-            background: url('@/pages/520/assets/mk6_6.png') no-repeat left top/100% 100%;
+            background: url('@/pages/summerParty/assets/mk5_6.png') no-repeat left top/100% 100%;
           }
           &:last-child{
             .active::after {
@@ -482,7 +428,7 @@ export default {
               transform: translate(-50%, -50%);
               width: 710px;
               height: 194px;
-              background: url('@/pages/520/assets/mk6_7.png') no-repeat left top/100% 100%;
+              background: url('@/pages/summerParty/assets/mk5_7.png') no-repeat left top/100% 100%;
             }
           }
         }
@@ -491,15 +437,14 @@ export default {
   }
   .lotteryNum{
     z-index: 2;
-    bottom: 353px;
-    // right: 236px;
+    bottom: 387px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 24px;
     color: #FFFFFF;
     min-width: 256px;
     height: 48px;
-    background: #D7655F;
+    background: #73B1FB;
     padding: 0 7px 0 23px;
     .nums{
       max-width: 300px;
@@ -508,35 +453,35 @@ export default {
       margin-left: 13px;
       width: 32px;
       height: 32px;
-      background: url('@/pages/520/assets/mk6_52.png') no-repeat left top/100% 100%;
+      background: url('@/pages/summerParty/assets/mk5_52.png') no-repeat left top/100% 100%;
     }
   }
   .buttons{
-    bottom: 201px;
+    bottom: 235px;
     &>div{
       width: 242px;
       height: 128px;
       &:nth-of-type(1){
-        background: url('@/pages/520/assets/mk6_8_1.png') no-repeat left top/100% 100%;
+        background: url('@/pages/summerParty/assets/mk5_8_1.png') no-repeat left top/100% 100%;
         &.free{
-          background: url('@/pages/520/assets/mk6_8.png') no-repeat left top/100% 100%;
+          background: url('@/pages/summerParty/assets/mk5_8.png') no-repeat left top/100% 100%;
         }
       }
       &:nth-of-type(2){
         margin: 0 -19px;
-        background: url('@/pages/520/assets/mk6_9.png') no-repeat left top/100% 100%;
+        background: url('@/pages/summerParty/assets/mk5_9.png') no-repeat left top/100% 100%;
         &.half{
-          background: url('@/pages/520/assets/mk6_9_1.png') no-repeat left top/100% 100%;
+          background: url('@/pages/summerParty/assets/mk5_9_1.png') no-repeat left top/100% 100%;
         }
       }
       &:nth-of-type(3){
-        background: url('@/pages/520/assets/mk6_10.png') no-repeat left top/100% 100%;
+        background: url('@/pages/summerParty/assets/mk5_10.png') no-repeat left top/100% 100%;
       }
     }
   }
   .rules-text{
     position: absolute;
-    top: 1000px;
+    bottom: 49px;
     left: 50%;
     transform: translateX(-50%);
   }

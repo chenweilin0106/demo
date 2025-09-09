@@ -1,6 +1,6 @@
 <template>
   <div class="rankCom">
-    <div class="rankArea2 margin-row-center position-relative overflow-y-scroll overflow-x-hidden" ref="rankRef">
+    <div class="rankArea5 margin-row-center position-relative overflow-y-scroll overflow-x-hidden" ref="rankRef">
       <div class="topArea">
         <lazy-component class="champion margin-row-center position-relative flex align-center justify-center">
           <div v-if="rankListShow[0].uid==0" class="emptyBox position-relative"></div>
@@ -22,6 +22,10 @@
             <div class="rankUserInfoCommon">
               <img :src="IconPath(rankListShow[0].profile_image||avatarDefault)" class="avatarCommon" @error="imgAtError" />
               <div class="usernameCommon">{{rankListShow[0].username}}</div>
+              <div class="difference position-absolute justify-between flex-column line-height-1 align-center">
+                <div class="p1">{{ valueName }}</div>
+                <div class="p2 flex"><i class="ellipsis">{{rankListShow[0].num}}</i></div>
+              </div>
             </div>
           </div>
         </lazy-component>
@@ -45,8 +49,8 @@
                 <img :src="IconPath(item.profile_image||avatarDefault)" class="avatarCommon" @error="imgAtError" />
                 <div class="usernameCommon">{{item.username}}</div>
                 <div class="difference position-absolute justify-between flex-column line-height-1 align-center">
-                  <div class="p1">距离上一名</div>
-                  <div class="p2 flex"><i class="ellipsis">{{item.diff}}</i>{{valueName}}</div>
+                  <div class="p1">{{ valueName }}</div>
+                  <div class="p2 flex"><i class="ellipsis">{{item.num}}</i></div>
                 </div>
               </div>
             </div>
@@ -59,8 +63,8 @@
           <img class="totalRankItemAvatar fit-cover radius-50 position-absolute position-column-center" :src="IconPath(item.profile_image||avatarDefault)" @error="imgAtError" />
           <div class="totalRankItemName status1 position-absolute ellipsis">{{item.username}}</div>
           <div class="totalRankItemTime position-absolute position-column-center">
-            <p>距离上一名</p>
-            <span>{{item.diff}}{{valueName}}</span>
+            <p>{{ valueName }}</p>
+            <span>{{item.num}}</span>
           </div>
         </lazy-component>
       </div>
@@ -79,12 +83,12 @@
 </template>
 
 <script>
-import Person from '../../wardrobe/components/person.vue'
+import Person from './person.vue'
 import { textLengthLimit, imgAtError } from '@/utils/tool'
 import { toUserMain } from '@/utils/toApp'
 
 export default {
-  name: 'rankCom2', // 神豪榜 示例：20250312白情活动
+  name: 'rankCom5', // 人气榜 基于神豪榜改造（rankCom2）
   components: { Person },
   props: {
     rankListShow: { type: Array, default: () => [] },
@@ -94,7 +98,7 @@ export default {
   },
   data() {
     return {
-      valueName: Object.freeze('神豪值'),
+      valueName: Object.freeze('人气值'),
       defaultBg: Object.freeze('https://cdn-image.dandan818.com/activity/normal/virtual/scene/phbbj_001.png'),
       personClassMap: Object.freeze({ 0: 'boy', 1: 'girl' }),
       avatarDefault: Object.freeze('avatarDefault.png')
@@ -126,19 +130,19 @@ export default {
     pointer-events: none;
     &.status1{
       color: transparent;
-      background: url('@/pages/618/assets/mk6_16.png') no-repeat left top/100% 100%;
+      background: url('@/pages/nationalDay/assets/mk6_16.png') no-repeat left top/100% 100%;
     }
     &.status2{
       width: 54px;
       height: 63px;
       color: transparent;
-      background: url('@/pages/618/assets/mk6_17.png') no-repeat left top/100% 100%;
+      background: url('@/pages/nationalDay/assets/mk6_17.png') no-repeat left top/100% 100%;
     }
     &.status3{
       width: 54px;
       height: 63px;
       color: transparent;
-      background: url('@/pages/618/assets/mk6_18.png') no-repeat left top/100% 100%;
+      background: url('@/pages/nationalDay/assets/mk6_18.png') no-repeat left top/100% 100%;
     }
     &.status4{
       width: 54px;
@@ -147,7 +151,7 @@ export default {
       font-size: 26px;
       color: #FFFFFF;
       line-height: 1;
-      background: url('@/pages/618/assets/mk6_20.png') no-repeat left top/100% 100%;
+      background: url('@/pages/nationalDay/assets/mk6_35.png') no-repeat left top/100% 100%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -175,7 +179,7 @@ export default {
       color: #FFFFFF;
       line-height: 35px;
       text-align: center;
-      background: url('@/pages/618/assets/mk5_13.png') no-repeat left top/100% 100%;
+      background: url('@/pages/nationalDay/assets/mk5_13.png') no-repeat left top/100% 100%;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -189,28 +193,53 @@ export default {
         margin-top: 5px;
       }
     }
+    .difference{
+      width: 214px;
+      height: 56px;
+      background: #FFFFFF;
+      border-radius: 28px;
+      padding: 7px 15px;
+      left: 50%;
+      bottom: 1px;
+      transform: translateX(-50%) translateY(100%);
+      .p1{
+        font-weight: 500;
+        font-size: 20px;
+        color: #A9A9A9;
+      }
+      .p2{
+        font-weight: 500;
+        font-size: 20px;
+        color: #ED6F4D;
+        >i{
+          color: #ED6F4D;
+          max-width: 130px;
+        }
+      }
+    }
   }
 }
 .defaultPerson{
   &.boy{
-    background: url('@/pages/618/assets/nan_mr.png') no-repeat left top/100% 100%;
+    background: url('@/pages/nationalDay/assets/nan_mr.png') no-repeat left top/100% 100%;
   }
   &.girl{
-    background: url('@/pages/618/assets/nv_mr.png') no-repeat left top/100% 100%;
+    background: url('@/pages/nationalDay/assets/nv_mr.png') no-repeat left top/100% 100%;
   }
 }
-.rankArea2{
+.rankArea5{
   z-index: 1;
-  height: 1400px;
+  height: 1430px;
+  padding-bottom: 43px;
   .champion{
     width: 683px;
     height: 420px;
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     z-index: 1;
     .emptyBox{
       width: 259px;
       height: 380px;
-      background: url('@/pages/618/assets/dr_mr.png') no-repeat left top/100% 100%;
+      background: url('@/pages/nationalDay/assets/dr_mr.png') no-repeat left top/100% 100%;
       &::after{
         content: '';
         position: absolute;
@@ -220,7 +249,7 @@ export default {
         bottom: -9px;
         width: 448px;
         height: 369px;
-        background: url('@/pages/618/assets/mk6_43.png') no-repeat left top/100% 100%;
+        background: url('@/pages/nationalDay/assets/mk6_43.png') no-repeat left top/100% 100%;
       }
     }
     .leftBox{
@@ -237,12 +266,12 @@ export default {
           left: -86px;
           width: 218px;
           height: 369px;
-          background: url('@/pages/618/assets/mk6_22.png') no-repeat left top/100% 100%;
+          background: url('@/pages/nationalDay/assets/mk6_22.png') no-repeat left top/100% 100%;
         }
         .rightWings{
           left: auto;
           right: -86px;
-          background: url('@/pages/618/assets/mk6_23.png') no-repeat left top/100% 100%;
+          background: url('@/pages/nationalDay/assets/mk6_23.png') no-repeat left top/100% 100%;
         }
         .defaultPerson{
           bottom: 4px;
@@ -272,11 +301,11 @@ export default {
       }
     }
     .rankInfo{
-      bottom: 15px;
+      bottom: 50px;
       .rankIconCommon{
         &.status1{
           top: 17px;
-          left: -42px;
+          left: -43px;
           transform: none;
         }
       }
@@ -294,7 +323,7 @@ export default {
         bottom: 4px;
         width: 221px;
         height: 324px;
-        background: url('@/pages/618/assets/dr_mr.png') no-repeat left top/100% 100%;
+        background: url('@/pages/nationalDay/assets/dr_mr.png') no-repeat left top/100% 100%;
       }
       .topItemScene{
         z-index: 1;
@@ -338,30 +367,6 @@ export default {
     .usernameCommon{
       margin-top: 1px;
     }
-    .difference{
-      width: 214px;
-      height: 56px;
-      background: #FFFFFF;
-      border-radius: 28px;
-      padding: 7px 15px;
-      left: 50%;
-      bottom: 1px;
-      transform: translateX(-50%) translateY(100%);
-      .p1{
-        font-weight: 500;
-        font-size: 20px;
-        color: #EB8FE6;
-      }
-      .p2{
-        font-weight: 500;
-        font-size: 20px;
-        color: #747EFF;
-        >i{
-          color: #747eff;
-          max-width: 130px;
-        }
-      }
-    }
     .rankIconCommon{
       &.status2, &.status3{
         top: 26px;
@@ -382,7 +387,7 @@ export default {
     .remainItem{
       width: 664px;
       height: 143px;
-      background: url('@/pages/618/assets/mk6_36.png') no-repeat left top/100% 100%;
+      background: url('@/pages/nationalDay/assets/mk6_36.png') no-repeat left top/100% 100%;
       margin: 0 auto 7px;
       .totalRankItemIcon{
         width: 68px;
@@ -391,7 +396,7 @@ export default {
         font-size: 26px;
         color: #FFE683;
         left: 20px;
-        background: url('@/pages/618/assets/mk6_37.png') no-repeat left top/100% 100%;
+        background: url('@/pages/nationalDay/assets/mk6_37.png') no-repeat left top/100% 100%;
       }
       .totalRankItemAvatar{
         width: 88px;
@@ -418,7 +423,7 @@ export default {
         right: 40px;
         p{
           font-size: 22px;
-          color: #2F5BA3;
+          color: #D35E36;
         }
         img{
           width: 35px;
@@ -429,10 +434,11 @@ export default {
   }
 }
 .userRankArea2{
+  z-index: 2;
   width: 715px;
   height: 147px;
-  background: url('@/pages/618/assets/mk6_38.png') no-repeat left top/100% 100%;
-  margin: 0 auto 10px;
+  background: url('@/pages/nationalDay/assets/mk6_38.png') no-repeat left top/100% 100%;
+  margin: -43px auto 10px;
   .totalRankIcon{
     width: 68px;
     height: 67px;
@@ -440,7 +446,7 @@ export default {
     font-size: 22px;
     color: #FFF2A9;
     left: 42px;
-    background: url('@/pages/618/assets/mk6_39.png') no-repeat left top/100% 100%;
+    background: url('@/pages/nationalDay/assets/mk6_39.png') no-repeat left top/100% 100%;
   }
   .totalRankAvatar{
     width: 88px;
@@ -483,9 +489,9 @@ export default {
     .isShowBtn{
       width: 58px;
       height: 29px;
-      background: url('@/pages/qixi/assets/mk6_40.png') no-repeat left top/100% 100%;
+      background: url('@/pages/nationalDay/assets/mk6_40.png') no-repeat left top/100% 100%;
       &.statusShow{
-        background: url('@/pages/qixi/assets/mk6_41.png') no-repeat left top/100% 100%;
+        background: url('@/pages/nationalDay/assets/mk6_41.png') no-repeat left top/100% 100%;
       }
     }
   }

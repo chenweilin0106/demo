@@ -1,15 +1,16 @@
 <template>
-  <PopupBox title="title_34.png" @clickClose="clickClose">
+  <PopupBox title="title_26.png" @clickClose="clickClose">
     <div class="cardsList position-relative w-100 flex-column align-center">
-      <PublicCard v-for="(task,taskIndex) in list" size="3" :key="taskIndex" class="rowCard align-center flex position-relative margin-row-center line-height-1">
+      <PublicCard v-for="(task,taskIndex) in list" size="1" :key="taskIndex" class="rowCard align-center flex position-relative margin-row-center line-height-1">
         <div class="desc flex-column justify-between h-100 overflow-hidden">
           <p class="p1 flex">{{task.text}}<span v-if="!noNeedStatusMap.includes(taskIndex)" class="span1 text-indent-left text-indent-right">（{{task.now_num}}/{{task.need_num}}）</span></p>
           <p class="p2 flex align-center">冒险次数+1<span v-if="taskIndex==0" class="pSpan">&nbsp;系统自动派发，无需手动领取</span></p>
           <p v-if="taskIndex==0" class="p3">目前已消费钻石：{{task.now_num}}</p>
           <p v-if="taskIndex==1" class="p4 text-wrap">购买礼包、会员（含超值兑换中兑换会员）、活力卡不计入充值</p>
         </div>
-        <PublicButton v-if="taskIndex!=0" :disabled="[2]" :hasRight="task.has_right" class="cardBtn flex-shrink-0" @click="receive(task,taskIndex)">
-          {{special[task.id]?.[task.has_right]||common[task.has_right]}}</PublicButton>
+        <div v-if="taskIndex!=0" class="cardBtn flex-shrink-0" :class="`status${task.has_right}`" @click="receive(task,taskIndex)">
+          {{special[task.id]?.[task.has_right]||common[task.has_right]}}
+        </div>
       </PublicCard>
     </div>
   </PopupBox>
@@ -108,9 +109,42 @@ export default {
     }
     .cardBtn{
       margin-left: auto;
-      width: 126px;
-      height: 66px;
-      font-size: 28px;
+      $width: 108px;
+      $height: 54px;
+      $border: 3px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      white-space: nowrap;
+      font-size: 26px;
+      font-weight: normal;
+      width: $width + $border;
+      height: $height + $border;
+      // 渐变
+      border: $border solid transparent;
+      border-radius: 99999px;
+      -webkit-background-clip: padding-box, border-box;
+      -webkit-background-origin: padding-box, border-box;
+      // color: #ffffff;
+      // background-image: linear-gradient(0deg, #9d9d9d, #e7e7e7), linear-gradient(#fff, #fff);
+      // 没有状态变化 删除下方代码
+      &.status0{
+        color: #4d7ddd;
+        background-image: linear-gradient(0deg, #cae7ff, #ffffff), linear-gradient(#fff, #fff);
+      }
+      &.status1{
+        pointer-events: auto;
+        color: #a9792c;
+        background-image: linear-gradient(0deg, #fff5b0, #ffffff), linear-gradient(#fff, #fff);
+      }
+      &.status2{
+        pointer-events: none;
+        color: #ffffff;
+        background-image: linear-gradient(0deg, #9d9d9d, #e7e7e7), linear-gradient(#fff, #fff);
+      }
     }
   }
 }

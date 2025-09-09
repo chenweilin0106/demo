@@ -8,7 +8,7 @@
     <div v-else-if="step==3" class="topTip flex justify-center align-center text-nowrap margin-row-center line-height-100">绑定已提交，请提醒对方前往活动页面提交</div>
     <div v-else-if="step==4" class="topTip row-2 flex justify-center align-center text-nowrap margin-row-center line-height-100">绑定失效，对方已被绑定</div>
     <!--输入框-->
-    <input v-if="step==1||step==2" v-model="uid" :readonly="step==2" class="bindInput margin-row-center text-center line-height-100 text-nowrap" placeholder="点击输入对方ID" maxlength="8" @input="inputUid" />
+    <input v-if="step==1||step==2" v-model="uid" :readonly="step==2" class="bindInput margin-row-center text-center line-height-100 text-nowrap" placeholder="点击输入对方ID" maxlength="8" @input="inputUid" @blur="handleBlur" />
     <template v-if="step==1">
       <div class="errorTip position-absolute position-row-center text-nowrap line-height-100">{{errTip}}</div>
       <PublicButton hasRight="0" class="searchBtn flex align-center justify-center line-height-100 margin-row-center" @click="searchUserInfo">查找</PublicButton>
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import { isIOS } from '@/utils/toApp'
 import { imgAtError } from '@/utils/tool'
 import { getPageData } from '@/api'
 
@@ -112,6 +113,9 @@ export default {
     inputUid() {
       this.uid = this.uid.replace(/\D/g, '').slice(0, 8) // 只能输入8位数字
       this.errTip = '' // 清除错误提示
+    },
+    handleBlur() {
+      if (isIOS()) return window.scrollTo(0, 0)
     },
     clickClose() {
       if (this.step == 2) this.$emit('update')

@@ -9,10 +9,10 @@
 
 <script>
 import { appPay, isIOS } from '@/utils/toApp'
-import ChoosePaymentPopup from './choosePaymentPopup.vue'
-import ConfirmBuyPopup from './confirmBuyPopup.vue'
-import ReceivePopup from './receivePopup.vue'
-import GiftPopup from './giftPopup.vue'
+import ChoosePaymentPopup from '../popups/choosePaymentPopup.vue'
+import ConfirmBuyPopup from '../popups/confirmBuyPopup.vue'
+import ReceivePopup from '../popups/receivePopup.vue'
+import GiftPopup from '../popups/giftPopup.vue'
 
 // <Buy ref="buy" :config="configBuy" @update="getPageData" />
 // configBuy: {
@@ -67,11 +67,16 @@ export default {
     },
     /**
      * 打开恭喜获得弹窗
+     * @param {Object} res 接口返回数据
+     * @param {Array | Object} res.data 接口返回数据
+     * @param {Array} [res.data.awards] 接口返回数据
+     * @param {Object} [res.data.award] 接口返回数据
+     * @param {boolean} [isUpdate=true] 是否更新页面数据
      */
-    openReceivePopup(arr, isUpdate = true) {
+    openReceivePopup(res, isUpdate = true) {
       if (this.isShowReceivePopup) this.isShowReceivePopup = false
       this.$nextTick(() => {
-        this.configReceivePopup = arr
+        this.configReceivePopup = Object.freeze(this.getType(res.data) == 'Array' ? res.data : this.getType(res.data?.awards) == 'Array' ? res.data.awards : res.data?.award ? [res.data.award] : [])
         this.isShowReceivePopup = true
         if (isUpdate) this.$emit('update')
       })
@@ -96,7 +101,7 @@ export default {
       if (!this.config.cashApi) return this.$toast('现金购买接口不存在')
       const res = await this.config.cashApi(this.config.goods) // todo 现金购买接口
       if (res.errno) return this.$toast(res.errmsg)
-      this.openReceivePopup(res.data.awards)
+      this.openReceivePopup(res)
     },
     /**
      * 内购 前端不需要拦截支付 由校验支付接口统一校验
@@ -109,11 +114,11 @@ export default {
         if (res) return
         try {
           appPay({ price: cloneGoods.price, apple_id: cloneGoods.apple_id, goods_type: cloneGoods.goods_type, id: cloneGoods.gift_id })
+          this.judgeBuySuccess(cloneGoods)
         } catch (e) {
           console.log('请确认运行环境')
           console.log(e)
         }
-        this.judgeBuySuccess(cloneGoods)
       } else {
         this.$nextTick(() => {
           this.configChoosePaymentPopup = cloneGoods
@@ -131,11 +136,11 @@ export default {
       if (res) return
       try {
         appPay({ price: goods.price, goods_type: goods.goods_type, id: goods.gift_id, pay_type })
+        this.judgeBuySuccess(goods)
       } catch (e) {
         console.log('请确认运行环境')
         console.log(e)
       }
-      this.judgeBuySuccess(goods)
     },
     /**
      * 创建/获取购买定时器
@@ -172,7 +177,7 @@ export default {
         const res = await this.config.inPollApi(goods) // todo 轮询校验接口
         if (!res.errno) {
           this.offBuyTimer(timerId)
-          this.openReceivePopup(res.data)
+          this.openReceivePopup(res)
           if (this.buyToast.success) this.$toast(this.buyToast.success)
         }
       }, 1000)
@@ -228,6 +233,13 @@ export default {
         acc[key] = source.hasOwnProperty(key) ? source[key] : params[key]
         return acc
       }, {})
+    },
+    /**
+     * 获取类型
+     * @returns {'Array' | 'Object' | 'String' | 'Number' | 'Boolean' | 'Function' | 'Null' | 'Undefined'}
+     */
+    getType(value) {
+      return Object.prototype.toString.call(value).slice(8, -1) // 结果首字符大写
     }
   },
   beforeDestroy() {

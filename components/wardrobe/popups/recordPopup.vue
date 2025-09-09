@@ -1,5 +1,5 @@
 <template>
-  <PopupBox title="title_35.png" @clickClose="clickClose">
+  <PopupBox title="title_19.png" @clickClose="clickClose">
     <template v-if="list.length">
       <div class="head flex line-height-1 margin-row-center"><div class="head1">奖励</div><div class="head2 line-height-100">时间</div></div>
       <div class="scrollList" ref="scrollDiv" @scroll="handleScroll">
@@ -24,7 +24,11 @@ export default {
   data() {
     return {
       list: [
-        // { desc: '稀有', create_time: '2021-02-02 12:00:00', is_rare: 1 },
+        // { desc: '稀有', create_time: '02-02 12:00', is_rare: 1 },
+        // { desc: '稀有', create_time: '02-02 12:00', is_rare: 1 },
+        // { desc: '稀有', create_time: '02-02 12:00', is_rare: 1 },
+        // { desc: '稀有', create_time: '02-02 12:00', is_rare: 1 },
+        // { desc: '稀有', create_time: '02-02 12:00', is_rare: 1 }
       ], // 奖品记录数组
       lastPage: 0, // 最后一次请求时的页数
       page: 1, // 页数
@@ -76,10 +80,11 @@ export default {
 
 <style scoped lang="scss">
 .head {
-  width: 565px;
+  width: 585px; // todo
   margin-bottom: 15px;
   font-size: 26px;
   font-weight: bold;
+  color: #FFFFFF;
   .head1 {
     margin-left: 90px;
   }
@@ -94,12 +99,12 @@ export default {
   text-align: -webkit-center;
   overflow-y: scroll;
   .listItem {
-    width: 565px;
+    width: 585px; // todo
     height: 70px;
     position: relative;
     color: #fff;
     &:nth-child(odd) {
-      background: rgba(214, 94, 62, 0.3);
+      background: rgba(40, 131, 172, 0.3); // todo
     }
     .text1 {
       position: absolute;
@@ -132,7 +137,7 @@ export default {
 .noData {
   font-size: 28px;
   color: #fff;
-  height: 754px;
+  height: 761px;
   padding-top: 340px;
 }
 </style>

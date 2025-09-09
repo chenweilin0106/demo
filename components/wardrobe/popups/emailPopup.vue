@@ -1,15 +1,15 @@
 <template>
-  <PopupBox title="title_30.png" @clickClose="clickClose">
+  <PopupBox title="title_23.png" @clickClose="clickClose">
     <template v-if="list.length">
       <div class="head flex line-height-1 margin-row-center"><div class="head1">好友</div><div class="head2 line-height-100">状态</div></div>
       <div ref="scrollDiv" class="list overscroll-none margin-row-center overflow-x-hidden overflow-y-scroll" @scroll="handleScroll">
         <div v-for="(item, index) in list" :key="`${item.inviter}_${item.username}_${index}`" class="item margin-row-center flex align-center justify-between">
-          <img :src="IconPath(item.profile_image)" class="avatar fit-cover radius-50" @click="toUserMain(item.inviter)" @error="imgAtError" />
+          <img v-lazy="IconPath(item.profile_image)" class="avatar fit-cover radius-50" @click="toUserMain(item.inviter)" @error="imgAtError" />
           <div class="userInfo position-relative flex align-center">
             <div class="username ellipsis line-height-100">{{item.username}}</div>&nbsp;
             <div class="label position-absolute" :class="`status_${item.user_type}`"></div>
           </div>
-          <PublicButton :hasRight="item.status == 1 ? 1 : 2" :disabled="[2]" class="join" @click="confirmJoin(item.inviter,index)">{{ item.status == 1 ? '助力' : '已助力' }}</PublicButton>
+          <div class="join" :class="`status${item.status}`" @click="confirmJoin(item.inviter,index)">{{ item.status == 1 ? '助力' : '已助力' }}</div>
         </div>
         <div class="noMoreData flex justify-center line-height-1 text-nowrap">没有更多邀请了</div>
       </div>
@@ -30,7 +30,11 @@ export default {
       configPreJoinPopup: '', // 准备加入的队伍id
       // isShowPreJoinPopup: false,
       list: [
-        // { inviter: 1, username: 'usernameusernameusernameusernameusernameusername', profile_image: 'profile_image', status: 1, user_type: 1 }
+        // { inviter: 1, username: 'usernameusernameusernameusernameusernameusername', profile_image: 'profile_image', status: 1, user_type: 1 },
+        // { inviter: 2, username: 'usernameusernameusernameusernameusernameusername', profile_image: 'profile_image', status: 1, user_type: 2 },
+        // { inviter: 3, username: 'usernameusernameusernameusernameusernameusername', profile_image: 'profile_image', status: 1, user_type: 3 },
+        // { inviter: 4, username: 'usernameusernameusernameusernameusernameusername', profile_image: 'profile_image', status: 1, user_type: 4 },
+        // { inviter: 5, username: 'usernameusernameusernameusernameusernameusername', profile_image: 'profile_image', status: 1, user_type: 5 }
       ], // 奖品记录数组
       lastPage: 0, // 最后一次请求时的页数
       page: 1, // 页数
@@ -98,7 +102,7 @@ export default {
 
 <style scoped lang="scss">
 .head {
-  width: 571px; // todo
+  width: 585px; // todo
   margin-bottom: 10px;
   font-size: 24px;
   color: #FFFFFF;
@@ -112,11 +116,11 @@ export default {
 .list {
   height: 800px;
  .item {
-   width: 571px; // todo
+   width: 585px; // todo
    height: 110px;
    padding: 0 9px 0 18px;
    &:nth-child(odd) {
-     background: rgba(107, 63, 190, 0.3); // todo
+     background: rgba(40, 131, 172, 0.3); // todo
    }
    .avatar {
      width: 80px;
@@ -151,13 +155,45 @@ export default {
         }
       }
     }
-   .join {
-     margin-left: auto;
-     width: 124px;
-     height: 64px;
-     &.button-finish {
-       pointer-events: none;
-     }
+    .join {
+      margin-left: auto;
+      $width: 120px;
+      $height: 60px;
+      $border: 3px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      white-space: nowrap;
+      font-size: 28px;
+      font-weight: normal;
+      width: $width + $border;
+      height: $height + $border;
+      // 渐变
+      border: $border solid transparent;
+      border-radius: 99999px;
+      -webkit-background-clip: padding-box, border-box;
+      -webkit-background-origin: padding-box, border-box;
+      // color: #ffffff;
+      // background-image: linear-gradient(0deg, #9d9d9d, #e7e7e7), linear-gradient(#fff, #fff);
+      // 没有状态变化 删除下方代码
+      &.status0{
+        pointer-events: none;
+        color: #4d7ddd;
+        background-image: linear-gradient(0deg, #cae7ff, #ffffff), linear-gradient(#fff, #fff);
+      }
+      &.status1{
+        pointer-events: auto;
+        color: #a9792c;
+        background-image: linear-gradient(0deg, #fff5b0, #ffffff), linear-gradient(#fff, #fff);
+      }
+      &.status2{
+        pointer-events: none;
+        color: #ffffff;
+        background-image: linear-gradient(0deg, #9d9d9d, #e7e7e7), linear-gradient(#fff, #fff);
+      }
    }
  }
 }

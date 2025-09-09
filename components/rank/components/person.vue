@@ -34,10 +34,12 @@ export default {
         '2_94': [{ component_id: 2, material_id: '2_94_1', original_id: '2_94', source_file: 'fzscnv_t_010_1.png', zIndex: 290 }], // 幽夜星裙 女 套装 裙摆
         '1_119': [{ component_id: 1, material_id: '1_119_1', original_id: '1_119', source_file: 'mrscnv_014_1.png', zIndex: 610 }], // 墨韵仙姿 女 面容 两侧头发
         '2_124': [{ component_id: 2, material_id: '2_124_1', original_id: '2_124', source_file: 'fzscnv_t_013_1.png', zIndex: 290 }], // 童话悠蓝 女 套装 裙摆
-        '2_158': [{ component_id: 2, material_id: '2_158_1', original_id: '2_158', source_file: 'fzscnv_t_017_1.png', zIndex: 290 }] // 冰绡仙裙 女 套装 裙摆
+        '2_158': [{ component_id: 2, material_id: '2_158_1', original_id: '2_158', source_file: 'fzscnv_t_017_1.png', zIndex: 290 }], // 冰绡仙裙 女 套装 裙摆
+        '2_188': [{ component_id: 2, material_id: '2_188_1', original_id: '2_188', source_file: 'fzscnv_t_023_1.png', zIndex: 290 }], // 惊鸿照影 女 套装 裙摆
+        '1_179': [{ component_id: 1, material_id: '1_179_1', original_id: '1_179', source_file: 'mrscnan_023_1.png', zIndex: 610 }] // 龙吟彻霄 男 面容 两侧头发
       }), // 部分装备分图片展示 比如头部中的头发 头部在服装背后 但是部分头发在服装前面
       whiteList: Object.freeze(['0', '1', '2', '3', '5']), // 白名单 component_id 参与person组件渲染
-      blacklist: Object.freeze(['5_29', '5_30', '5_145', '5_144', '5_169']), // 黑名单 component_id_material_id 不参与person组件渲染
+      blacklist: Object.freeze(['5_29', '5_30', '5_145', '5_144', '5_169', '5_200']), // 黑名单 component_id_material_id 不参与person组件渲染
       defaultZIndexMap: Object.freeze({
         0: 300, // 通用身体
         1: 500, // 面容
@@ -57,6 +59,8 @@ export default {
         '5_64': 800, // 小熊 其他配饰
         '5_143': 800, // 松果萌趣 其他配饰
         '5_170': 800, // 笺波鱼尾 其他配饰
+        '5_201': 800, // 仙鹤 其他配饰
+        '5_202': 800, // 侍从小兔 其他配饰
         '5_114': 160, // 狮子 其他配饰
         '5_142': 160 // 紫韵花环 其他配饰
       }) // 自定义/配饰 zIndex 'component_id'_'material_id'

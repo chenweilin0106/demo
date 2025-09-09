@@ -1,3 +1,5 @@
+import { isIOS } from '@/unit/toApp'
+
 /**
  * 高亮显示文本
  * @param {string} text - 需要处理的文本内容
@@ -60,9 +62,9 @@ export function getNowFormatDate() {
 }
 
 /**
- * 滚动页面到顶部/底部/指定dom对象的getBoundingClientRect().top
+ * 滚动页面到顶部/底部/固定距离
  *
- * @param {string|number} position - 滚动到的位置。可以是 'top'、'bottom' 或指定dom对象的getBoundingClientRect().top。
+ * @param {string|number} position - 滚动到的位置。可以是 'top'、'bottom'、固定距离。
  * @param {boolean} [smooth=false] - 是否需要平滑滚动。
  */
 export function scrollToHeight(position, smooth = false) {
@@ -90,13 +92,13 @@ export function scrollToHeight(position, smooth = false) {
 /**
  * 在指定的时间执行回调函数
  *
- * @param {Object} options - 参数对象
+ * @param {{targetHour?: number, targetMinute?: number, targetSecond?: number, callback?: Function}} options - 参数对象
  * @param {number} [options.targetHour=0] - 要执行回调的目标小时（0-23），默认为0
  * @param {number} [options.targetMinute=0] - 要执行回调的目标分钟（0-59），默认为0
  * @param {number} [options.targetSecond=1] - 要执行回调的目标秒（0-59），默认为1
- * @param {Function} [options.callback=() => {}] - 在目标时间执行的回调函数，必传
+ * @param {Function} [options.callback=() => {}] - 在目标时间执行的回调函数，默认() => {}
  */
-export function executeAtTime({ targetHour = 0, targetMinute = 0, targetSecond = 1, callback = () => { } }) {
+export function executeAtTime({ targetHour = 0, targetMinute = 0, targetSecond = 1, callback = () => {} }) {
   const now = new Date()
   let targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), targetHour, targetMinute, targetSecond)
   if (targetTime - now < 0) targetTime.setDate(targetTime.getDate() + 1) // 如果目标时间已经过去，则将目标时间设置为第二天的同一时间
@@ -167,4 +169,48 @@ export function scrollCenter(element, container, direction = 'h', behavior = 'sm
     [direction === 'h' ? 'left' : 'top']: scrollPosition,
     behavior
   })
+}
+
+/**
+ * 判断元素是否可滚动
+ * @param {HTMLElement} element - 需要检查的DOM元素
+ * @param {string} direction - 滚动方向，可选值: 'vertical'(垂直), 'horizontal'(水平), 'both'(两个方向)
+ * @returns {boolean} 如果元素在指定方向可滚动，返回true，否则返回false
+ */
+export function isScrollable(element, direction = 'vertical') {
+  if (!element) return false
+
+  // 获取元素的滚动高度/宽度和客户区高度/宽度
+  const hasVerticalScroll = element.scrollHeight > element.clientHeight
+  const hasHorizontalScroll = element.scrollWidth > element.clientWidth
+
+  // 检查元素的overflow样式
+  const style = window.getComputedStyle(element)
+  const verticalScrollable =
+    ['auto', 'scroll'].includes(style.overflowY) && hasVerticalScroll
+  const horizontalScrollable =
+    ['auto', 'scroll'].includes(style.overflowX) && hasHorizontalScroll
+
+  // 根据指定方向返回结果
+  switch (direction.toLowerCase()) {
+    case 'vertical':
+      return verticalScrollable
+    case 'horizontal':
+      return horizontalScrollable
+    case 'both':
+      return verticalScrollable || horizontalScrollable
+    default:
+      return false
+  }
+}
+
+/**
+ * 将px转换为vw
+ * @param {number} px - 需要转换的px值
+ * @param {number} baseWidth - 基准宽度，默认为750
+ * @param {number} fixed - 保留的小数位数，默认为2
+ * @returns {string} 转换后的vw值
+ */
+export function pxToVw({ px, baseWidth = 750, fixed = 2 }) {
+  return (px / baseWidth * 100).toFixed(fixed) + 'vw'
 }

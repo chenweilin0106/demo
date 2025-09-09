@@ -42,7 +42,7 @@ export default {
     },
     // 一些活动单独定制角标
     popupTypeName() {
-      return { ...this.typeToNameMap, 226: '超级道具礼物' }
+      return { ...this.typeToNameMap }
     }
   },
   methods: {

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { commonShare } from '@/utils/toApp'
+import { commonShare, isIOS } from '@/utils/toApp'
 
 export default {
   props: ['config'],
@@ -14,7 +14,7 @@ export default {
   },
   mounted() {
     try {
-      const param = { shareImage: this.config, type: 1 }
+      const param = { shareImage: this.config, type: 1, platforms: isIOS() ? ['3', '4'] : ['1', '2', '3', '4'] }
       commonShare(param) // type: 1 为分享图片 shareImage: 图片base64
     } catch (e) {
       console.dir(e)

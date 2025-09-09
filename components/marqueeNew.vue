@@ -1,6 +1,6 @@
 <template>
   <div class="marquee">
-    <ul class="scrollBox">
+    <ul ref="scrollBox" class="scrollBox">
       <li v-for="(item, index) in list.concat(list)" :key="index">
         <div class="box">
           <div class="inner">
@@ -19,36 +19,40 @@
 /**
  * @name: marquee.vue
  * @description: 跑马灯组件
+ * @example:
+ * <Marquee :list="list" />
  */
+
 export default {
   name: 'marqueeVue',
   props: ['list'],
   data() {
     return {
-      ul: null,
       spa: '', // 每帧移动距离
       rafId: null, // requestAnimationFrame ID
       translateX: 0 // 当前位移值
     }
   },
+  created() {
+    this.spa = this.px2vw(-1) // 滚动速度 正数向右，负数向左，默认向左滚动
+  },
   mounted() {
-    this.$nextTick(() => {
-      this.ul = document.querySelector('.scrollBox')
-      // 每次滚动的跨度（正数向右，负数向左，默认向左滚动）
-      this.spa = this.px2vw(-1.5) // 滚动速度
-      this.translateX = 0
-      this.startAnimation() // 使用requestAnimationFrame实现
-      document.addEventListener('visibilitychange', this.hiddenFn)
-    })
+    this.startMove()
+    document.addEventListener('visibilitychange', this.hiddenFn)
   },
   methods: {
+    /**
+     * 将设计稿px转换为vw
+     * @param {number} px 设计稿px值
+     * @returns {number} 通过vw计算后的px值
+     */
     px2vw(px) {
-      const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-      return (Number(px) / 750) * vw
+      const vw = Number(Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0))
+      return Number((px / 750 * vw).toFixed(2))
     },
-    startAnimation() {
+    startMove() {
       this.move()
-      this.rafId = requestAnimationFrame(this.startAnimation)
+      this.rafId = requestAnimationFrame(this.startMove)
     },
     // 监听页面呼出回调函数
     hiddenFn() {
@@ -56,24 +60,19 @@ export default {
         cancelAnimationFrame(this.rafId)
       } else {
         // 页面呼出
-        this.startAnimation()
+        this.startMove()
         document.removeEventListener('visibilitychange', this.hiddenFn)
       }
     },
     move() {
       this.translateX += this.spa
-      // 向左走时，判断图片是否走完，走完时重新开始
-      if (this.translateX < -this.ul.offsetWidth / 2) this.translateX = 0
-      if (this.translateX > 0) {
-        this.translateX = -this.ul.offsetWidth / 2 // 向右走时，判断图片是否走完
-      }
-      // 使用transform替代left
-      this.ul.style.transform = `translate3d(${this.translateX}px, 0, 0)`
+      if (this.translateX < -this.$refs.scrollBox.offsetWidth / 2) this.translateX = 0 // 向左走时，判断图片是否走完，走完时重新开始
+      if (this.translateX > 0) this.translateX = -this.$refs.scrollBox.offsetWidth / 2 // 向右走时，判断图片是否走完
+      this.$refs.scrollBox.style.transform = `translate3d(${this.translateX}px, 0, 0)`
     }
   },
   beforeDestroy() {
     cancelAnimationFrame(this.rafId)
-    this.ul = null
     document.removeEventListener('visibilitychange', this.hiddenFn)
   }
 }

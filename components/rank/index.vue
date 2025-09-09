@@ -22,12 +22,13 @@
           <div class="rewardPreview position-row-center position-absolute" v-if="item.previewImg"></div>
           <div class="rewardMark position-absolute radius-999" v-if="item.mark">{{item.mark}}<img :src="IconPath('zs_27_20.png')" /></div>
           <div v-if="item.mark1" class="doublePersonMark position-absolute"></div>
+          <div v-if="item.isNew" class="newMark flex align-center justify-center position-absolute pointer-none">新</div>
         </div>
         <!--<div class="rewardsDetail" @click="rewardsDetailCk"></div>-->
       </div>
       <!-- 日期选择 -->
       <div v-if="tagChosen==1" class="dayBox position-absolute flex-column align-center">
-        <div class="rb_dateDiv flex align-center position-relative line-height-1" @click.stop="exchangeDateShow">
+        <div class="rb_dateDiv justify-center flex align-center position-relative line-height-1" @click.stop="exchangeDateShow">
           <div v-for="(item, index) in day_list" :key="index + item">
             <span v-if="selectDate[rankChosen]==index">{{item}}</span>
           </div>
@@ -37,7 +38,7 @@
           <div class="rb_dateListDiv position-relative flex-column align-center">
             <div v-for="(item, index) in day_list" :key="index + item" class="rb_dateListItem flex align-center justify-center line-height-1 flex-shrink-0 position-relative" @click.stop="selectChosen(rankChosen, tagChosen, index)">
               <span>{{item}}</span>
-              <div class="rb_dateListItemChosen position-absolute position-column-center" v-if="index==selectDate[rankChosen]"></div>
+              <div class="rb_dateListItemChosen position-absolute" v-if="index==selectDate[rankChosen]"></div>
             </div>
           </div>
         </div>
@@ -59,15 +60,18 @@
           <li><span></span><i>详细榜单规则和奖励可查看页面【奖励详情】</i></li>
           <li><span></span>活动期间收到钻石礼物，可获得双倍经验值和双倍</li>
           <li>基础魅力值，魅力值上限提高50%</li>
-          <!-- <li v-show="rankChosen==1&&tagChosen==1"><span></span>魔力榜日榜为每日用户单人/组队新增魔力值排行</li>
-          <li v-show="rankChosen==1&&tagChosen==1">榜，榜单分服统计</li>
-          <li v-show="rankChosen==1&&tagChosen==2"><span></span>魔力榜总榜为活动期间单人/组队累计魔力值排行</li>
-          <li v-show="rankChosen==1&&tagChosen==2">榜，榜单分服统计</li>
-          <li v-show="rankChosen==2"><span></span>风云榜为活动期间<i>本服用户赠送钻石礼物</i>排行榜，</li>
-          <li v-show="rankChosen==2">榜单分服统计，自己赠送自己计算在内</li>
-          <li><span></span><i>详细榜单规则和奖励可查看页面【奖励详情】</i></li>
-          <li v-show="rankChosen==2"><span></span>活动期间收到钻石礼物，可获得双倍经验值和双倍</li>
-          <li v-show="rankChosen==2">基础魅力值，魅力值上限提高50%</li> -->
+          <!-- <li v-show="rankChosen==1&&tagChosen==1"><span></span>人气榜日榜为用户获赠钻石礼物总价值排行榜，榜</li> -->
+          <!-- <li v-show="rankChosen==1&&tagChosen==1">单分服统计，自己赠送自己计算在内</li> -->
+          <!-- <li v-show="rankChosen==1&&tagChosen==2"><span></span>人气榜总榜为用户获赠钻石礼物总价值排行榜，榜</li> -->
+          <!-- <li v-show="rankChosen==1&&tagChosen==2">单分服统计，自己赠送自己计算在内</li> -->
+          <!-- <li v-show="rankChosen==1&&tagChosen==1"><span></span>魔力榜日榜为每日用户单人/组队新增魔力值排行</li> -->
+          <!-- <li v-show="rankChosen==1&&tagChosen==1">榜，榜单分服统计</li> -->
+          <!-- <li v-show="rankChosen==1&&tagChosen==2"><span></span>魔力榜总榜为活动期间单人/组队累计魔力值排行</li> -->
+          <!-- <li v-show="rankChosen==1&&tagChosen==2">榜，榜单分服统计</li> -->
+          <!-- <li v-show="rankChosen==2"><span></span>风云榜为活动期间<i>本服用户赠送钻石礼物</i>排行榜，</li> -->
+          <!-- <li v-show="rankChosen==2">榜单分服统计，自己赠送自己计算在内</li> -->
+          <!-- <li v-show="rankChosen==2"><span></span>购买礼包、会员（含超值兑换中兑换会员）、活力</li> -->
+          <!-- <li v-show="rankChosen==2">卡不计算在内</li> -->
         </ul>
       </div>
     </OutBox>
@@ -340,6 +344,18 @@ export default {
             margin: 0 0 0 2px;
           }
         }
+        .newMark{
+          z-index: 3;
+          top: -18px;
+          left: -13px;
+          width: 46px;
+          height: 38px;
+          background: linear-gradient(-90deg, #FF7FA6, #FD5AB6);
+          border-radius: 19px 19px 0 19px;
+          font-weight: 500;
+          font-size: 22px;
+          color: #FFFFFF;
+        }
         .doublePersonMark{
           width: 56px;
           height: 32px;
@@ -358,8 +374,7 @@ export default {
       .rb_dateDiv{
         width: 220px;
         height: 75px;
-        background: url('@/pages/618/assets/mk6_9.png') no-repeat left top/100% 100%;
-        padding-left: 63px;
+        background: url('@/pages/nationalDay/assets/mk6_9.png') no-repeat left top/100% 100%;
         font-weight: bold;
         font-size: 26px;
         color: #AD7E1A;
@@ -370,10 +385,10 @@ export default {
           right: 23px;
           top: 29px;
           &.statusfalse{
-            background: url('@/pages/618/assets/mk6_12.png') no-repeat left top/100% 100%;
+            background: url('@/pages/nationalDay/assets/mk6_12.png') no-repeat left top/100% 100%;
           }
           &.statustrue{
-            background: url('@/pages/618/assets/mk6_11.png') no-repeat left top/100% 100%;
+            background: url('@/pages/nationalDay/assets/mk6_11.png') no-repeat left top/100% 100%;
           }
         }
       }
@@ -389,15 +404,18 @@ export default {
           transform: translateX(-50%);
           top: 60px;
           width: 168px;
-          height: calc(100% - 67px);
+          height: calc(100% - 75px + 20px + 5px);
           border-radius: 20px;
-          border: 10px solid #FFC62D;
+          border: 8px solid #FFC62D;
+          border-top-width: 10px;
+          border-bottom-width: 10px;
+          box-sizing: border-box;
           background: linear-gradient(0deg, #FFF7D6, #FFFFFF);
           box-shadow: 0px 0px 13px 0px #FFC62D;
         }
         .rb_dateListDiv{
           z-index: 2;
-          width: 170px;
+          width: 152px;
           border-radius: 18px;
           .rb_dateListItem{
             width: 141px;
@@ -411,9 +429,10 @@ export default {
               border-bottom: none;
             }
             .rb_dateListItemChosen{
+              top: 5px;
               width: 45px;
               height: 35px;
-              background: url('@/pages/618/assets/mk6_10.png') no-repeat left top/100% 100%;
+              background: url('@/pages/nationalDay/assets/mk6_10.png') no-repeat left top/100% 100%;
               right: -28px;
               z-index: 2;
             }

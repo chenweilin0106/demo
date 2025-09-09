@@ -128,11 +128,11 @@ export const toVip = (vipStatus) => {
 
 /**
  * 跳转充值页
- * 
+ *
  * @param {Function} fn 回调函数
  */
 export const recharge = (fn) => {
-  document.addEventListener('visibilitychange', fn)
+  if (fn && typeof fn === 'function') document.addEventListener('visibilitychange', fn)
   try {
     const params = { tuid: store.state.uid }
     if (isIOS() || window.navigator.userAgent.indexOf('Safari') === -1) {
@@ -154,10 +154,14 @@ export const recharge = (fn) => {
  */
 export const diamondRechargePart = (caratNum, callBack) => {
   if (callBack && typeof callBack === 'function') window.jsBridge = (res) => { if (JSON.parse(res).name == 'refreshUserResource') callBack() }
-  if (isIOS()) {
-    window.webkit.messageHandlers.DDRechargeAlert.postMessage({ uid: store.state.uid, carat: caratNum })
-  } else {
-    window.external.action('/shortDiamond?tuid=' + store.state.uid + '&carat=' + caratNum + '')
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.DDRechargeAlert.postMessage({ uid: store.state.uid, carat: caratNum })
+    } else {
+      window.external.action('/shortDiamond?tuid=' + store.state.uid + '&carat=' + caratNum + '')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
   }
 }
 
@@ -516,3 +520,50 @@ export const toCourtyard = () => {
   }
 }
 
+/**
+ * 跳转家族广场（5.6.2）
+ */
+export const toFamilyList = () => {
+  if (compareVersions('5.6.2') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://family/list' })
+    } else {
+      window.external.dispatch('dandan://family/list')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
+
+/**
+ * 跳转充值页面（6.0.8）和recharge方法一致
+ */
+export const toWealthPurchase = () => {
+  if (compareVersions('6.0.8') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://wealth/purchase' })
+    } else {
+      window.external.dispatch('dandan://wealth/purchase')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
+
+/**
+ * 跳转现金提现页面（6.1.0）
+ */
+export const toWealthWithdraw = () => {
+  if (compareVersions('6.1.0') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://wealth/withdraw' })
+    } else {
+      window.external.dispatch('dandan://wealth/withdraw')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}

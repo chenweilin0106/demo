@@ -1,5 +1,5 @@
 <template>
-  <PopupBox title="title_36.png" @clickClose="clickClose">
+  <PopupBox title="title_24.png" @clickClose="clickClose">
     <div class="list">
       <div v-for="(item,index) in config.list" :key="index" class="award flex-column align-center">
         <div class="icon position-relative">
@@ -10,10 +10,8 @@
       </div>
     </div>
     <p class="p1 flex align-center justify-center line-height-1 text-indent-right">限购（{{config.status==1?0:1}}/1）</p>
-    <div class="button" :class="`status${config.status}`" @click="buy('in')">
-      {{config.status==1?`${config.price}元购买`:'已购买'}}
-    </div>
-    <p class="p2 flex align-center justify-center line-height-1" :class="`status${config.status}`" @click="buy('cash')">现金兑换</p>
+    <div class="button" :class="`status${config.status}`" @click="buy('in')">{{config.status==1?`${config.price}元购买`:'已购买'}}</div>
+    <p class="p2 line-height-1" :class="`status${config.status}`" @click="buy('cash')">现金兑换</p>
   </PopupBox>
 </template>
 
@@ -36,16 +34,22 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .popupContent {
+  .main {
+    margin-top: 108px;
+    margin-bottom: 57px;
+  }
+}
 .list {
   $listWidth: 100%; /*列表宽度*/
   $itemIconSize: 128px; /*图标大小*/
-  $colNum: 3; /*列数*/
+  $colNum: 2; /*列数*/
   $gapNum: calc($colNum * 2 + 2); /*间隔数*/
   $gap: calc(($listWidth - $itemIconSize * $colNum) / $gapNum);
-  $textHeight: 2 * 14 + 21px; /*文本距离图标位置 文字距离图标距离 * 2 + 文本高度*/
+  $textHeight: 2 * 21 + 21px; /*文本距离图标位置 文字距离图标距离 * 2 + 文本高度*/
   $itemWidth: calc($itemIconSize + 2 * $gap); /*每个item的宽度*/
   //$listPadding: 15px $gap calc(15px - ($textHeight - 25px - 15px)) $gap; /*顶部：距离顶部的距离 底部间距：顶部间距-(顶部间距-文字高度-文字距离图标距离)*/
-  $listPadding: 70px $gap 0; // 距离顶部的距离确保label展示完整
+  $listPadding: 60px $gap 0; // 距离顶部的距离确保label展示完整
   width: $listWidth;
   height: fit-content;
   min-height: calc($itemIconSize + $textHeight); /*最小展示一行： 图标高度 + 文字高度*/
@@ -60,7 +64,7 @@ export default {
   margin: 0 auto;
   .award {
     $borderWidth: 4px; /*边框粗细*/
-    $radius: 20px; /*圆角*/
+    $radius: 12px; /*圆角*/
     $borderColor: #FBE0A7;
     $bgc: linear-gradient(0deg, #fff, #fff);
     $fontSize: 28px; /*文本字体大小*/
@@ -94,18 +98,21 @@ export default {
   color: #FFFFFF; /*角标字体颜色*/
 }
 .p1{
-  margin-top: 30px;
+  margin-top: 18px;
   font-size: 26px;
-  color: #FFFA76;
+  color: #279ADB;
 }
 .p2{
-  margin-top: 26px;
   font-size: 28px;
-  color: #3A74DF;
-  text-decoration: underline;
+  color: #F62F4B;
+  width: 112px;
+  margin: 26px auto 0;
+  border-bottom: 2px solid #F62F4B;
+  padding-bottom: 4px;
   &.status2{
     color: #8D8D8D;
     pointer-events: none;
+    border-bottom: 2px solid #8D8D8D;
   }
 }
 .button{

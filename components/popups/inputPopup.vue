@@ -3,7 +3,7 @@
     <p class="line-height-100 flex justify-center">请许下你的心愿或者对蛋蛋部落的祝福吧</p>
     <p class="line-height-100 flex justify-center">（20字以内）</p>
     <div class="inputBox position-relative width-fit margin-row-center">
-      <input v-model="content" class="flex align-center line-height-100" placeholder="输入祝福" @input="onInput" @keydown="handleKeyDown" />
+      <input v-model="content" class="flex align-center line-height-100" placeholder="输入祝福" @input="onInput" @keydown="onKeyDown" @blur="onBlur" />
       <img :src="IconPath('tk_48.png')" class="refreshBtn position-absolute position-column-center" @click="refresh" />
     </div>
     <p class="errTipBox line-height-100 flex justify-center">{{ errTip }}</p>
@@ -15,6 +15,7 @@
 // weekly/2024/src/pages/celebration/views/m2/views/fireWorks/popups/sendPopup.vue
 // import { calculateContentLength } from '@/utils/tool'
 import { getPageData } from '@/api'
+import { isIOS } from '@/utils/toApp'
 
 export default {
   props: ['config'],
@@ -61,7 +62,10 @@ export default {
       // }
       this.errTip = ''
     },
-    handleKeyDown(e) {
+    onBlur() {
+      if (isIOS()) return window.scrollTo(0, 0)
+    },
+    onKeyDown(e) {
       if (e.key === 'Enter' || e.keyCode == 13) e.preventDefault()
     },
     clickClose() {

@@ -1,5 +1,5 @@
 <template>
-  <PopupBox title="title_37.png" @clickClose="clickClose">
+  <PopupBox title="title_25.png" @clickClose="clickClose">
     <div class="list">
       <div v-for="(item,index) in config.list" :key="index" class="award flex-column align-center">
         <div class="icon position-relative">
@@ -10,7 +10,7 @@
       </div>
     </div>
     <p class="p1 flex align-center justify-center line-height-1 text-indent-right">花费现金：{{config.price}}元</p>
-    <PublicButton has-right="1" class="button" @click="confirm">立即兑换</PublicButton>
+    <div class="button" @click="confirm">立即兑换</div>
   </PopupBox>
 </template>
 
@@ -33,16 +33,22 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .popupContent {
+  .main {
+    margin-top: 108px;
+    margin-bottom: 57px;
+  }
+}
 .list {
   $listWidth: 100%; /*列表宽度*/
   $itemIconSize: 128px; /*图标大小*/
-  $colNum: 3; /*列数*/
+  $colNum: 2; /*列数*/
   $gapNum: calc($colNum * 2 + 2); /*间隔数*/
   $gap: calc(($listWidth - $itemIconSize * $colNum) / $gapNum);
-  $textHeight: 2 * 14 + 21px; /*文本距离图标位置 文字距离图标距离 * 2 + 文本高度*/
+  $textHeight: 2 * 21 + 21px; /*文本距离图标位置 文字距离图标距离 * 2 + 文本高度*/
   $itemWidth: calc($itemIconSize + 2 * $gap); /*每个item的宽度*/
   //$listPadding: 15px $gap calc(15px - ($textHeight - 25px - 15px)) $gap; /*顶部：距离顶部的距离 底部间距：顶部间距-(顶部间距-文字高度-文字距离图标距离)*/
-  $listPadding: 70px $gap 0; // 距离顶部的距离确保label展示完整
+  $listPadding: 60px $gap 0; // 距离顶部的距离确保label展示完整
   width: $listWidth;
   height: fit-content;
   min-height: calc($itemIconSize + $textHeight); /*最小展示一行： 图标高度 + 文字高度*/
@@ -57,7 +63,7 @@ export default {
   margin: 0 auto;
   .award {
     $borderWidth: 4px; /*边框粗细*/
-    $radius: 20px; /*圆角*/
+    $radius: 12px; /*圆角*/
     $borderColor: #FBE0A7;
     $bgc: linear-gradient(0deg, #fff, #fff);
     $fontSize: 28px; /*文本字体大小*/
@@ -93,18 +99,30 @@ export default {
 .p1{
   margin-top: 30px;
   font-size: 26px;
-  color: #FFFA76;
-}
-.p2{
-  margin-top: 26px;
-  font-size: 28px;
-  color: #3A74DF;
-  text-decoration: underline;
+  color: #279ADB; // todo
 }
 .button {
   margin: 7px auto 0;
-  width: 326px;
-  height: 78px;
-  font-size: 32px !important;
+  $width: 320px;
+  $height: 72px;
+  $border: 3px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  white-space: nowrap;
+  font-size: 32px;
+  font-weight: normal;
+  width: $width + $border;
+  height: $height + $border;
+  // 渐变
+  border: $border solid transparent;
+  border-radius: 99999px;
+  -webkit-background-clip: padding-box, border-box;
+  -webkit-background-origin: padding-box, border-box;
+  color: #a9792c;
+  background-image: linear-gradient(0deg, #fff5b0, #ffffff), linear-gradient(#fff, #fff);
 }
 </style>

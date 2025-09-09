@@ -1,10 +1,9 @@
 // 提取表情符号正则的主体模式
 // eslint-disable-next-line no-misleading-character-class
 const emojiPattern = String.raw`\ud83c[\udffb-\udfff](?=\ud83c[\udffb-\udfff])|(?:[^\ud800-\udfff][\u0300-\u036f\ufe20-\ufe2f\u20d0-\u20ff\u1ab0-\u1aff\u1dc0-\u1dff]?|[\u0300-\u036f\ufe20-\ufe2f\u20d0-\u20ff\u1ab0-\u1aff\u1dc0-\u1dff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe2f\u20d0-\u20ff\u1ab0-\u1aff\u1dc0-\u1dff]|\ud83c[\udffb-\udfff])?(?:\u200d(?:[^\ud800-\udfff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe2f\u20d0-\u20ff\u1ab0-\u1aff\u1dc0-\u1dff]|\ud83c[\udffb-\udfff])?)*`
-
-
+// eslint-disable-next-line no-misleading-character-class
 const unicodeRegex = new RegExp(emojiPattern, 'g'); // 用于分割字符串
-
+// eslint-disable-next-line no-misleading-character-class
 const emojiRegex = new RegExp(`^(${emojiPattern})$`); // 用于检测是否为表情符号
 
 /**

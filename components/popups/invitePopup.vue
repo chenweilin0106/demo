@@ -3,7 +3,7 @@
     <template v-if="list.length">
       <p class="flex justify-center text-center">30分钟内无法向同一人发出重复邀请<br>好友每天可为你完成助力1次</p>
       <div class="searchInput flex align-center justify-center">
-        <input v-model="uid" class="text-center line-height-100 text-nowrap" placeholder="输入ID搜索好友" maxlength="8" @keydown="handleKeyDown" @input="inputUid" />
+        <input v-model="uid" class="text-center line-height-100 text-nowrap" placeholder="输入ID搜索好友" maxlength="8" @keydown="onKeyDown" @input="onInput" @blur="onBlur" />
         <PublicButton class="search" hasRight="0" @click="search">搜索</PublicButton>
       </div>
       <div class="list overscroll-none margin-row-center overflow-x-hidden overflow-y-scroll">
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { toUserMain } from '@/utils/toApp'
+import { toUserMain, isIOS } from '@/utils/toApp'
 import { imgAtError } from '@/utils/tool'
 import { getPageData } from '@/api'
 
@@ -68,12 +68,15 @@ export default {
         this.checkedList.push(uid)
       }
     },
-    inputUid(e) {
+    onInput() {
       this.uid = this.uid.replace(/\s+/g, '') // 删除空格
       this.uid = this.uid.replace(/[\r\n]/g, '') // 删除回车换行符
       this.uid = this.uid.replace(/[^0-9]/g, '') // 只能输入数字
     },
-    handleKeyDown(e) {
+    onBlur() {
+      if (isIOS()) return window.scrollTo(0, 0)
+    },
+    onKeyDown(e) {
       if (e.key === 'Enter' || e.keyCode == 13) e.preventDefault()
     },
     clickClose() {
