@@ -353,7 +353,7 @@
       this.executeAtTime({ targetHour: 23, targetMinute: 59, targetSecond: 59, callback: this.getPageData })
     }
     ```
-    
+
 25. ```vue
     // 内购/现金购买
     <template>
@@ -567,18 +567,6 @@
     ```
 
 26. ```js
-    // 生成唯一ID
-    guid() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-          const string = (Math.random() * 16) | 0
-          const v = c == 'x' ? string : (string & 0x3) | 0x8
-          return v.toString(16)
-        }
-      )
-    }
-    ```
-
-27. ```js
     // 滑动指令
     
     export default {
@@ -625,7 +613,7 @@
     <div v-swipe="(direction, distance) => fn(direction, distance)"></div>
     ```
 
-28. ```js
+27. ```js
     /**
      * @description: 获取最接近的时间
      * @param {number[]} thresholds 时间阈值
@@ -649,7 +637,7 @@
     this.startIndex = this.getClosestTime([0, 8, 14, 21]).index
     ```
 
-29. ```
+28. ```
     Vue2中使用cdn加速第三方库
     vue.config.js
     
@@ -718,7 +706,7 @@
 
     上方加粗的就是默认变量名
 
-30. vue.config.js分包记录：https://juejin.cn/post/6844904103848443912；
+29. vue.config.js分包记录：https://juejin.cn/post/6844904103848443912；
 
     ```js
     // isProd 生产环境进行分包
@@ -743,7 +731,7 @@
     })
     ```
 
-31. ```js
+30. ```js
     // rem适配 蓝湖上配套使用rem单位 像素设置为100
     (function (doc, win) {
         var docEl = doc.documentElement,
@@ -759,7 +747,7 @@
     })(document, window);
     ```
 
-32. ```js
+31. ```js
     // 切换浏览器指定标签：当该页面已经开启时，会切换至该页面
     // 需要切换到的页面
     window.name = 'home' // 设置标签页名称
@@ -767,7 +755,7 @@
     window.open('index.html', "home"); // 第一个参数为目标地址 第二个为标签页name open 方法在异步事件中会有兼容问题导致无法打开
     ```
 
-33. Vue2-keep-alive
+32. Vue2-keep-alive
 
     ```
     1.包裹缓存的组件或者路由后，该组件嵌套的子路由同样都会缓存
@@ -775,4 +763,45 @@
     3.max设置的数量同样包括嵌套组件，A组件中有A1,A2，这样算3个组件而不是1个
     ```
 
+33. | HTML 实体  | Unicode  | 描述       | 实际使用 |
+    | ---------- | -------- | ---------- | -------- |
+    | `&nbsp;`   | `U+00A0` | 非换行空格 | `\u00A0` |
+    | `&ensp;`   | `U+2002` | 半宽空格   | `\u2002` |
+    | `&emsp;`   | `U+2003` | 宽空格     | `\u2003` |
+    | `&thinsp;` | `U+2009` | 细空格     | `\u2009` |
+
+34. ponyfill
+
+    | 名称（网址）                                                 | 功能                                                         |
+    | ------------------------------------------------------------ | :----------------------------------------------------------- |
+    | **[browser-fs-access](https://github.com/GoogleChromeLabs/browser-fs-access)** | 该模块允许您轻松使用 在支持的浏览器上[启用文件系统访问 API](https://wicg.github.io/file-system-access/) ，并透明地回退到 `<input type="file">` 和 `<a download>` 旧方法。 |
+
+35. [Vue组件生命周期监听语法](Vue组件生命周期监听语法)
+
+    ```html
+    <!-- vue2 -->
+    <child-component @hook:updated="handleChildUpdated"></child-component>
     
+    <script>
+    export default {
+      methods: {
+        handleChildUpdated() {
+          // 子组件更新后执行的逻辑
+        }
+      }
+    }
+    </script>
+    
+    <!-- vue3 -->
+    <child-component @vue:updated="handleChildUpdated"></child-component>
+    
+    <script>
+    export default {
+      methods: {
+        handleChildUpdated() {
+          // 子组件更新后执行的逻辑
+        }
+      }
+    }
+    </script>
+    ```

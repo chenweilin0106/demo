@@ -457,7 +457,7 @@
     - 百分比值表示颜色停止的位置。
     - 颜色在这些位置之间平滑过渡或突然变化。
     - 使用多个颜色停止点可以创建复杂的渐变效果。
-    
+
 26. 条纹渐变
 
     ```CSS
@@ -520,3 +520,31 @@
     ```
 
 28. 黑暗模式：https://juejin.cn/post/7490602578011570202
+
+29. 顶部安全区/底部安全区
+
+    ```css
+    /* meta标签需要添加 viewport-fit=cover 目前没有测试过 谨慎使用 */
+    .safe-area-top {
+      padding-top: constant(safe-area-inset-top);
+      padding-top: env(safe-area-inset-top);
+    }
+    
+    .safe-area-bottom {
+      padding-bottom: constant(safe-area-inset-bottom);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    ```
+
+30. 伪元素使用注意：
+
+    ```scss
+     // 伪元素使用边框时要注意：伪元素不继承 * 选择器的公共样式，所以需要加上box-sizing属性
+    ::after {
+        content: '';
+        border: 1px solid #000;
+    	box-sizing: border-box;
+    }
+    ```
+
+31. [IOS，软键盘收回，可能会出现底部安全区域留白](https://cloud.tencent.com/developer/article/1484448?policyId=1004)；
