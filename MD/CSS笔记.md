@@ -548,3 +548,79 @@
     ```
 
 31. [IOS，软键盘收回，可能会出现底部安全区域留白](https://cloud.tencent.com/developer/article/1484448?policyId=1004)；
+
+32. IOS，H5上，透明边框可能会导致圆角失效；
+
+33. IOS，H5，position: absolute;可能会和width: fit-content;冲突，导致width: fit-content失效。解决方案：position: absolute;之后就不需要使用width: fit-content;了；
+
+34. 字体回退设置：
+
+    ```css
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    ```
+
+35. 优秀按钮模板
+
+    ```scss
+    <div class="apple-button">按钮</div>  
+    /* 苹果风格的按钮 */
+      .apple-button {
+        margin: 50px;
+        display: inline-block;
+        padding: 12px 22px;
+        border-radius: 30px;
+        background: linear-gradient(to bottom, #42a1ec, #0070c9);
+        color: white;
+        font-size: 17px;
+        font-weight: 400;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        outline: none;
+        transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+      }
+    
+      .apple-button:hover {
+        background: linear-gradient(to bottom, #2d92e8, #0068b8);
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(0, 112, 201, 0.3);
+      }
+    
+      .apple-button:active {
+        transform: scale(0.98);
+        background: linear-gradient(to bottom, #1b7fd1, #005ea3);
+      }
+    
+      .apple-button::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%, -50%);
+        transform-origin: 50% 50%;
+      }
+    
+      .apple-button:focus:not(:active)::after {
+        animation: ripple 1s ease-out;
+      }
+    
+      @keyframes ripple {
+        0% {
+          transform: scale(0, 0);
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(20, 20);
+          opacity: 0;
+        }
+      }
+    ```
+
+    

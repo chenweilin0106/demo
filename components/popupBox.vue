@@ -1,5 +1,5 @@
 <template>
-  <van-popup v-model="isShowPo" :close-on-click-overlay="false" get-container="body" @click-overlay="clickClose">
+  <van-popup v-model="isShowPo" :close-on-click-overlay="false" transition-appear get-container="body" @click-overlay="clickClose">
     <template v-if="isLight">
       <div class="topLight"></div>
       <div class="bottomLight"></div>
@@ -105,38 +105,22 @@ export default {
   &.popupSize-1 {
     width: 544px;
     min-height: 564px;
-    border-image-source: url('@/pages/valentineDay/assets/tk_2.png');
-    border-image-slice: 134 0 163 0 fill;
-    border-image-width: 134px 0 163px 0;
-    &::after{
-      content: '';
-      position: absolute;
-      width: 517px; /*拉伸处图片宽度*/
-      top: 132px; /*border-image-slice top - 4px*/
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 161px; /*border-image-slice bottom - 4px*/
-      z-index: -1; /*todo 父元素不能使用z-index 否则伪元素将不能放置底部 如果弹框背后还有特殊遮盖 要注意层级 伪元素只能在弹框下1层*/
-      background: url('@/pages/valentineDay/assets/tk_2_1.png') no-repeat left top/100% 100%; /*todo 如果有透明边框就让UI去掉 不然两个透明边框叠加会出现问题*/
-    }
+    border-image-source: url('@/pages/celebration/assets/tk_2.png');
+    $sliceTop: 155; // 顶部切割位置
+    $sliceBottom: 106; // 底部切割位置
+    border-image-slice: $sliceTop 0 $sliceBottom 0 fill;
+    border-image-width: #{$sliceTop}px 0 #{$sliceBottom}px 0;
+    background: url('@/pages/celebration/assets/tk_2_1.png') no-repeat center #{$sliceTop - 4}px/544px calc(100% - #{$sliceTop}px - #{$sliceBottom}px + 8px); // 解决部分安卓机上border-image切割后出现缝隙
   }
   &.popupSize-2 {
-    width: 644px;
-    min-height: 575px;
-    border-image-source: url('@/pages/valentineDay/assets/tk_1.png');
-    border-image-slice: 159 0 193 0 fill;
-    border-image-width: 159px 0 193px 0;
-    &::after{
-      content: '';
-      position: absolute;
-      width: 612px;
-      top: 157px;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 191px;
-      z-index: -1;
-      background: url('@/pages/valentineDay/assets/tk_1_1.png') no-repeat left top/100% 100%;
-    }
+    width: 632px;
+    min-height: 604px;
+    border-image-source: url('@/pages/celebration/assets/tk_1.png');
+    $sliceTop: 179; // 顶部切割位置
+    $sliceBottom: 122; // 底部切割位置
+    border-image-slice: $sliceTop 0 $sliceBottom 0 fill;
+    border-image-width: #{$sliceTop}px 0 #{$sliceBottom}px 0;
+    background: url('@/pages/celebration/assets/tk_1_1.png') no-repeat center #{$sliceTop - 4}px/632px calc(100% - #{$sliceTop}px - #{$sliceBottom}px + 8px); // 解决部分安卓机上border-image切割后出现缝隙
   }
   &.size_1{
     width: 580px;

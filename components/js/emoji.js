@@ -69,10 +69,10 @@ function textLength({ content, emojiLength = 2, normalCharLength = 1 }) {
     const char = charArray[i]
     if (isEmoji(char)) {
       length += emojiLength
-      console.log('emoji', char, emojiLength)
+      // console.log('emoji', char, emojiLength)
     } else {
       length += normalCharLength
-      console.log('normalChar', char, normalCharLength)
+      // console.log('normalChar', char, normalCharLength)
     }
   }
   return length

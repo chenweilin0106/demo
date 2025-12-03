@@ -175,7 +175,7 @@ export default {
     /**
      * 切换榜单
      */
-    selectChosen(r, t, date) {
+    selectChosen(r, t, date, isThinking = false) {
       this.isShowDateList = false
       const rankStrategies = {
         // 1: () => getPageData({ type: 'white_love_daily_rank', mark: { rank_type: r, date: date || this.todaySelectDate } }), // 日榜 多个榜单需要mark字段
@@ -183,6 +183,7 @@ export default {
         // 2: () => getPageData({ type: 'white_love_tot_rank', mark: r }) // 总榜 多个榜单需要mark字段
         2: () => getPageData({ type: 'lovetop_tot_rank' }) // 总榜
       }
+      if (isThinking) this.$thinking.track('WebClick', { module: '问鼎江山', element: this.tabsArray[r - 1].tabName })
       if (!rankStrategies[t]) return console.log('切换榜单数据错误')
       rankStrategies[t]().then((res) => {
         if (res.errno) return this.$toast(res.errmsg)
@@ -294,7 +295,7 @@ export default {
     }
     .rewardsShowArea{
       margin: 0 auto 20px;
-      padding: 23px 0 36px;
+      padding: 18px 0 27px;
       background: url('@/pages/520/assets/mk7_6.png') no-repeat left top/100% 100%;
       width: 625px;
       height: 193px;
@@ -330,31 +331,31 @@ export default {
           background: url('@/pages/520/assets/mk7_49.png') no-repeat left top/100% 100%;
           top: 74px;
         }
-        .rewardMark{
-          background: linear-gradient(-90deg, #75B9FF, #FF84F8);
+        .rewardMark {
+          background: linear-gradient(-90deg, #75b9ff, #ff84f8);
           font-size: 20px;
-          color: #FFFFFF;
+          color: #ffffff;
           padding: 4px 5px 4px 10px;
-          right: -20px;
-          top: 0;
-          transform: translateY(-50%);
-          img{
+          right: -11px;
+          top: -13px;
+          // transform: translateY(-50%);
+          img {
             width: 27px;
             height: 20px;
             margin: 0 0 0 2px;
           }
         }
-        .newMark{
+        .newMark {
           z-index: 3;
-          top: -18px;
-          left: -13px;
-          width: 46px;
-          height: 38px;
-          background: linear-gradient(-90deg, #FF7FA6, #FD5AB6);
-          border-radius: 19px 19px 0 19px;
+          top: -13px;
+          left: -12px;
+          width: 44px;
+          height: 36px;
+          background: linear-gradient(-90deg, #ff7fa6, #fd5ab6);
+          border-radius: 18px 19px 0px 18px;
           font-weight: 500;
           font-size: 22px;
-          color: #FFFFFF;
+          color: #ffffff;
         }
         .doublePersonMark{
           width: 56px;
@@ -367,7 +368,7 @@ export default {
       }
     }
     .dayBox{
-      top: 360px;
+      top: 370px;
       left: -9px;
       z-index: 3;
       width: 220px;
@@ -393,18 +394,17 @@ export default {
         }
       }
       .rb_dateListArea{
-        margin-top: -5px;
         width: 240px;
         max-height: 300px;
-        &::after{
+        &::after {
           content: '';
           position: absolute;
           z-index: 1;
           left: 50%;
           transform: translateX(-50%);
-          top: 60px;
+          top: 64px;
           width: 168px;
-          height: calc(100% - 75px + 20px + 5px);
+          height: calc(100% - 75px + 20px);
           border-radius: 20px;
           border: 8px solid #FFC62D;
           border-top-width: 10px;

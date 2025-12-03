@@ -1,133 +1,161 @@
 <template>
-  <PopupBox title="mk1_title_10.png" size="1" @clickClose="clickClose">
-    <slot name="listTop"></slot>
-    <div class="list">
-      <div v-for="(item,index) in config" :key="index" class="award flex-column align-center">
-        <div class="icon position-relative" :class="item.type=='title'&&config.length==1?'titleClass':''">
-          <div v-if="popupTypeName[item.type]||popupTypeName[item.id]" class="typeLabel line-height-1 flex align-center justify-center radius-999 position-absolute">{{popupTypeName[item.type]||popupTypeName[item.id]}}</div>
-          <PublicImg :imgName="item.icon" :imgType="item.type" />
+  <transition name="popup-fade" appear>
+    <div class="popupOverly position-fixed flex align-center justify-center" @click.self="$emit('clickClose')">
+      <div class="popupContent position-relative" :class="`size_${size}`">
+        <img v-if="title" :src="IconPath(title)" class="titleIcon position-absolute position-row-center" />
+        <div class="leftIcon1 position-absolute pointer-none"></div>
+        <div class="leftIcon2 position-absolute pointer-none"></div>
+        <div class="rightIcon1 position-absolute pointer-none"></div>
+        <div class="rightIcon2 position-absolute pointer-none"></div>
+        <slot name="topSlot"></slot>
+        <div class="main overflow-y-scroll overflow-x-hidden">
+          <slot></slot>
         </div>
-        <div class="text w-100 flex align-center justify-center line-height-1 text-nowrap">{{formatName(item)}}</div>
+        <slot name="bottomSlot"></slot>
       </div>
     </div>
-    <slot name="listBottom"></slot>
-    <PublicButton has-right="4" class="button" @click="clickConfirm">{{buttonText}}</PublicButton>
-  </PopupBox>
+  </transition>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { nowEquip } from '@/api'
+import { isIOS } from '@/utils/toApp'
 
 export default {
-  props: ['config'],
+  props: {
+    title: { type: String, default: '' },
+    size: { type: String, default: '' },
+    son: { type: Boolean, default: false }
+  },
   data() {
     return {
-      // config: [
-      //   { icon: 'ljs_120_120.png', text: '+10', type: 'costume' }
-      //   { icon: 'ljs_120_120.png', text: '+10' },
-      //   { icon: 'ljs_120_120.png', text: '+10' }
-      // ],
+      sonPopup: this.son,
+      isShowPo: true,
+      pageScroll: undefined
     }
   },
-  computed: {
-    ...mapState(['typeToNameMap', 'nowEquipText', 'needNowEquipList']),
-    // 是否装扮
-    isEquip() {
-      return this.config.length == 1 && this.needNowEquipList.includes(this.config[0].type)
-    },
-    // 按钮文案
-    buttonText() {
-      return this.isEquip ? `立即${this.nowEquipText[this.config[0].type]}` : '我知道了'
-    },
-    // 一些活动单独定制角标
-    popupTypeName() {
-      return { ...this.typeToNameMap }
-    }
+  created() {
+    if (!this.sonPopup) this.sonPopup = Boolean(document.querySelectorAll('.popupContent').length)
+  },
+  mounted() {
+    document.querySelector('body').append(this.$el)
+    if (this.sonPopup) return
+    if (!isIOS()) this.stopScroll()
+  },
+  beforeDestroy() {
+    if (this.sonPopup) return
+    if (!isIOS()) this.autoScroll()
   },
   methods: {
-    formatName(info) {
-      if (info.type == 'vip') return `加赠天数+${info.nums}天`
-      return this.$toShowText(info)
+    /**
+     * 阻止滚动条滚动
+     */
+    stopScroll() {
+      const scrollTop = window.scrollY
+      this.pageScroll = scrollTop
+      document.body.style.width = '100%'
+      document.body.style.position = 'fixed'
+      document.body.style.top = '-' + scrollTop + 'px'
+      // console.log('stop')
     },
-    async clickConfirm() {
-      if (this.isEquip) {
-        const { type, tool_id = '', id = '' } = this.config[0]
-        this.$toast((await nowEquip({ type, id: tool_id || id })).errmsg)
-      }
-      this.clickClose()
-    },
-    clickClose() {
-      this.$emit('clickClose')
+    /**
+     * 恢复滚动条滚动
+     */
+    autoScroll() {
+      document.body.style.position = 'static'
+      window.scrollTo(0, this.pageScroll)
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.list{
-  $listWidth: 100%; /*列表宽度*/
-  $itemIconSize: 128px; /*图标大小*/
-  $colNum: 3; /*列数*/
-  $gapNum: calc($colNum * 2 + 2); /*间隔数*/
-  $gap: calc(($listWidth - $itemIconSize * $colNum) / $gapNum);
-  $textHeight: 2 * 18 + 28px; /*文本距离图标位置 文字距离图标距离 * 2 + 文本高度*/
-  $itemWidth: calc($itemIconSize + 2 * $gap); /*每个item的宽度*/
-  $listTopPadding: 30px; /*列表顶部距离*/
-  width: $listWidth;
-  height: fit-content;
-  min-height: calc($itemIconSize + $textHeight); /*最小展示一行： 图标高度 + 文字高度*/
-  max-height: calc(($itemIconSize + $textHeight) * 3 + (($itemIconSize + $textHeight) / 9) + $listTopPadding); /*最多展示三行： 图标高度 + 文字高度 +  1/6（图标高度 + 文字高度）*/
-  overflow-y: scroll;
-  overflow-x: hidden;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  align-content: start;
-  padding: $listTopPadding $gap 0;
-  margin: 0 auto;
-  .award{
-    $borderWidth: 4px; /*边框粗细*/
-    $radius: 20px; /*圆角*/
-    $borderColor: #81D1F6;
-    $bgc: linear-gradient(0deg, #fff, #fff);
-    $fontSize: 28px; /*文本字体大小*/
-    $color: #fff;
-    width: $itemWidth;
-    .icon{
-      width: $itemIconSize;
-      height: $itemIconSize;
-      border-radius: $radius + $borderWidth;
-      border: $borderWidth solid $borderColor;
-      background:$bgc;
-      &.titleClass{
-        width: 244px;
-      }
-    }
-    .text{
-      width: $itemIconSize;
-      height: $textHeight;
-      font-size: $fontSize;
-      color: $color;
-    }
+.popup-fade-enter-active,
+.popup-fade-leave-active {
+  transition: opacity 0.3s ease-in-out;
+  .popupContent {
+    transition: transform 0.3s ease-in-out;
   }
 }
-.typeLabel{
-  z-index: 1;
-  transform: translateY(-50%);
-  top: 0;
-  right: -8px; /*角标距离右边距离*/
-  padding: 0 8px;
-  height: 28px;
-  background: #C25E94; /*角标背景色*/
-  font-weight: 500;
-  font-size: 18px; /*角标字体大小*/
-  color: #FFFFFF; /*角标字体颜色*/
+.popup-fade-enter,
+.popup-fade-leave-to {
+  opacity: 0;
+  .popupContent {
+    transform: scale(0.7);
+  }
 }
-::v-deep .button{
-  margin: 25px auto 0;
-  width: 320px;
-  height: 72px;
-  font-size: 32px;
+.popupOverly {
+  z-index: 1999;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  .popupContent {
+    width: 637px;
+    min-height: 941px;
+    border-image-source: url('@/assets/tk_1.png');
+    border-image-slice: 118 0 167 0 fill;
+    border-image-width: 118px 0 167px 0;
+    padding-top: 55px;
+    padding-bottom: 86px;
+    will-change: transform;
+    background: url('@/assets/tk_1_1.png') no-repeat center 114px/610px calc(100% - 118px - 167px + 8px);
+    .main {
+      // max-height: 70vh;
+      // overflow-y: scroll;
+      // overflow-x: hidden;
+    }
+    .titleIcon {
+      z-index: 1;
+      top: -111px;
+      width: auto;
+      height: 168px;
+    }
+    &.size_1 {
+      width: 550px;
+      min-height: 496px;
+      padding-top: 71px;
+      padding-bottom: 93px;
+      border-image-source: none;
+      border-image-source: url('@/assets/tk_2.png');
+      border-image-slice: 88 0 140 0 fill;
+      border-image-width: 88px 0 140px 0;
+      background: url('@/assets/tk_2_1.png') no-repeat center 84px/520px calc(100% - 88px - 140px + 8px);
+      .leftIcon2 {
+        display: none;
+      }
+      .rightIcon2 {
+        display: none;
+      }
+    }
+    .leftIcon1 {
+      left: -40px;
+      top: 93px;
+      width: 97px;
+      height: 399px;
+      background: url('@/assets/tk_3.png') no-repeat left top/100% 100%;
+    }
+    .leftIcon2 {
+      left: -31px;
+      bottom: -2px;
+      width: 199px;
+      height: 380px;
+      background: url('@/assets/tk_5.png') no-repeat left top/100% 100%;
+    }
+    .rightIcon1 {
+      right: -47px;
+      top: -78px;
+      width: 164px;
+      height: 600px;
+      background: url('@/assets/tk_4.png') no-repeat left top/100% 100%;
+    }
+    .rightIcon2 {
+      right: -57px;
+      bottom: 3px;
+      width: 196px;
+      height: 332px;
+      background: url('@/assets/tk_6.png') no-repeat left top/100% 100%;
+    }
+  }
 }
 </style>

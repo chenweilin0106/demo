@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>蛇形进度条</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: "Arial", sans-serif;
+      }
+
+      .container {
+        /* background: rgba(255, 255, 255, 0.95); */
+        background: #000;
+        border-radius: 20px;
+        /* padding: 40px; */
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        width: 800px;
+        height: 800px;
+      }
+
+      .title {
+        text-align: center;
+        color: #333;
+        margin-bottom: 40px;
+        font-size: 2.5em;
+        font-weight: 300;
+      }
+
+      .snake-progress {
+        position: relative;
+        width: 800px;
+        height: 800px;
+        /* margin: 40px 0; */
+      }
+
+      .snake-path {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      /* 进度条背景层：天蓝色描边（最外层） */
+      .path-line-outline {
+        fill: none;
+        stroke: skyblue;         /* 描边颜色 */
+        stroke-width: 12;        /* 描边宽度 */
+        stroke-linecap: round;   /* 线条端点样式：圆角 */
+      }
+      
+      /* 进度条背景层：粉色填充（中间层） */
+      .path-line {
+        fill: none;
+        stroke: pink;            /* 描边颜色 */
+        stroke-width: 8;         /* 描边宽度 */
+        stroke-linecap: round;   /* 线条端点样式：圆角 */
+      }
+
+      /* 白色发光层（当前未启用） */
+      .progress-line-glow {
+        fill: none;
+        stroke: #fff;            /* 白色描边 */
+        stroke-width: 12;        /* 描边宽度，影响发光粗细 */
+        stroke-linecap: round;
+        opacity: 0.9;           /* 透明度，控制发光强度（0-1） */
+      }
+
+      /* 蓝色发光层：与进度条同步的发光效果 */
+      .progress-line-glow-blue {
+        fill: none;
+        stroke: #0080ff;         /* 蓝色描边 */
+        stroke-width: 8;        /* 描边宽度，值越大发光越粗 */
+        stroke-linecap: round;
+        opacity: 0.9;           /* 透明度，控制发光强度（0-1） */
+      }
+
+      /* 主进度条：彩色渐变（最上层） */
+      .progress-line {
+        fill: none;
+        stroke: url(#progressGradient); /* 使用渐变定义 */
+        stroke-width: 8;         /* 描边宽度 */
+        stroke-linecap: round;   /* 线条端点样式：圆角 */
+        /* stroke-linecap: butt; */  /* 可选：平头端点 */
+        /* stroke-linejoin: round; */ /* 可选：圆角连接 */
+        /* filter: drop-shadow(0 0 2px #000) drop-shadow(0 0 1px #000); */ /* 可选：阴影效果 */
+        /* transition: stroke-dashoffset 0.5s ease-in-out; */ /* 过渡动画在 JS 中设置 */
+      }
+      .controls {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .progress-slider {
+        width: 300px;
+        margin: 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- <h1 class="title">🐍 蛇形进度条</h1> -->
+      <div class="snake-progress">
+        <svg class="snake-path" viewBox="0 0 800 800">
+          <!-- 定义渐变 -->
+          <defs>
+            <!-- 基础渐变 -->
+            <linearGradient
+              id="progressGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              <stop offset="0%" style="stop-color: #ff6b6b; stop-opacity: 1" />
+              <stop offset="25%" style="stop-color: #ffd93d; stop-opacity: 1" />
+              <stop offset="50%" style="stop-color: #6bcf7f; stop-opacity: 1" />
+              <stop offset="75%" style="stop-color: #4d9de0; stop-opacity: 1" />
+              <stop
+                offset="100%"
+                style="stop-color: #9b59b6; stop-opacity: 1"
+              />
+            </linearGradient>
+
+            <!-- 彩虹渐变 -->
+            <linearGradient
+              id="rainbowGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              <stop offset="0%" style="stop-color: #ff0000; stop-opacity: 1" />
+              <stop
+                offset="16.66%"
+                style="stop-color: #ff8000; stop-opacity: 1"
+              />
+              <stop
+                offset="33.33%"
+                style="stop-color: #ffff00; stop-opacity: 1"
+              />
+              <stop offset="50%" style="stop-color: #00ff00; stop-opacity: 1" />
+              <stop
+                offset="66.66%"
+                style="stop-color: #0080ff; stop-opacity: 1"
+              />
+              <stop
+                offset="83.33%"
+                style="stop-color: #8000ff; stop-opacity: 1"
+              />
+              <stop
+                offset="100%"
+                style="stop-color: #ff0080; stop-opacity: 1"
+              />
+            </linearGradient>
+
+            <!-- 蓝色渐变 -->
+            <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color: #74b9ff; stop-opacity: 1" />
+              <stop offset="50%" style="stop-color: #0984e3; stop-opacity: 1" />
+              <stop
+                offset="100%"
+                style="stop-color: #2d3436; stop-opacity: 1"
+              />
+            </linearGradient>
+
+            <!-- 白色外发光滤镜 -->
+            <!-- 
+              滤镜工作原理：
+              1. feGaussianBlur: 对路径进行高斯模糊，产生光晕效果
+              2. feMerge: 将模糊层和原始图形合并，模糊层在下，原图在上
+              3. 最终效果：原始路径保持清晰，周围产生发光光晕
+              
+              参数说明：
+              - id="glow": 滤镜标识符，通过 filter="url(#glow)" 引用
+              - x/y: 滤镜区域起点，-100% 表示向左上扩展，防止发光被裁剪
+              - width/height: 滤镜区域大小，300% 确保有足够空间容纳模糊效果
+              - stdDeviation: 模糊半径（像素），数值越大发光范围越大（推荐 4-12）
+              - result: 为中间结果命名，供后续步骤使用
+              - in: 指定输入源（coloredBlur=模糊结果，SourceGraphic=原始图形）
+            -->
+            <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+              <!-- 高斯模糊：stdDeviation 控制发光强度，值越大发光越扩散 -->
+              <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+              <!-- 合并图层：先放模糊层（发光），再放原图（清晰路径） -->
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>      <!-- 模糊层（底层）：产生发光效果 -->
+                <feMergeNode in="SourceGraphic"/>    <!-- 原图层（顶层）：保持路径清晰 -->
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- 白色发光层 -->
+          <path class="progress-line-glow" filter="url(#glow)" />
+          <!-- 淡蓝色发光层 -->
+          <path class="progress-line-glow-blue" filter="url(#glow)" />
+          <!-- 进度条背景 蓝色描边 -->
+          <path class="path-line-outline" />
+          <!-- 进度条背景 灰色背景 -->
+          <path class="path-line" />
+          <!-- 当前进度条 彩色渐变 -->
+          <path class="progress-line" />
+        </svg>
+      </div>
+      <div class="controls">
+        效果：外发光，渐变，描边，背景，进度条。
+        <label for="progress-slider"
+          >进度: <span id="progress-value">0%</span></label
+        >
+        <input
+          type="range"
+          id="progress-slider"
+          class="progress-slider"
+          min="0"
+          max="100"
+          value="0"
+        />
+      </div>
+    </div>
+    <script>
+      // ========== 路径定义 ==========
+      // SVG 路径命令说明：
+      // M = MoveTo (移动到起点)
+      // L = LineTo (直线到)
+      // Q = Quadratic Bezier (二次贝塞尔曲线，用于圆角)
+      // 格式：Q 控制点x 控制点y 终点x 终点y
+      const pathArray = [
+        "M 100 50",        // 起点
+        "L 300 50",        // 水平直线
+        "L 500 50",
+        "L 650 50",
+        "Q 700 50 700 100", // 向下圆角
+        "L 700 150",
+        "Q 700 200 650 200", // 向左圆角
+        "L 500 200",
+        "L 300 200",
+        "L 150 200",
+        "Q 100 200 100 250", // 向下圆角
+        "L 100 300",
+        "Q 100 350 150 350", // 向右圆角
+        "L 300 350",
+        "L 500 350",
+        "L 700 350",
+      ];
+      // 将路径数组拼接成完整路径字符串
+      const pathString = pathArray.map((item) => item).join(" ");
+
+      // ========== 获取所有路径元素并设置路径 ==========
+      const pathGlow = document.querySelector(".progress-line-glow");    // 白色发光层（当前未启用）
+      pathGlow.setAttribute("d", pathString);
+      const pathLine = document.querySelector(".path-line");              // 进度条背景层（粉色）
+      pathLine.setAttribute("d", pathString);
+      const pathLineOutline = document.querySelector(".path-line-outline"); // 背景描边（天蓝色）
+      pathLineOutline.setAttribute("d", pathString);
+      const pathGlowBlue = document.querySelector(".progress-line-glow-blue"); // 蓝色发光层
+      pathGlowBlue.setAttribute("d", pathString);
+      const path = document.querySelector(".progress-line");             // 主进度条（彩色渐变）
+      path.setAttribute("d", pathString);
+
+      // ========== 路径动画初始化 ==========
+      // 获取路径总长度（用于 stroke-dasharray 和 stroke-dashoffset 计算）
+      const totalLength = path.getTotalLength();
+
+      // 设置初始状态：进度条从中间开始（50%）
+      // strokeDasharray: 虚线模式，设置为路径总长度（一条实线）
+      // strokeDashoffset: 虚线偏移，设置为总长度的一半（显示 50%）
+      path.style.strokeDasharray = totalLength;
+      path.style.strokeDashoffset = totalLength / 2;
+      // 同步发光层的进度
+      pathGlowBlue.style.strokeDasharray = totalLength;
+      pathGlowBlue.style.strokeDashoffset = totalLength / 2;
+
+      // 使用 requestAnimationFrame 确保 DOM 更新后再设置过渡动画
+      // 这样可以避免初始状态触发不必要的动画
+      requestAnimationFrame(() => {
+        path.style.transition = "stroke-dashoffset 0.5s ease-in-out";
+        pathGlowBlue.style.transition = "stroke-dashoffset 0.5s ease-in-out";
+        // pathGlow.style.transition = "stroke-dashoffset 0.5s ease-in-out";
+      });
+
+      // ========== 进度控制 ==========
+      const slider = document.getElementById("progress-slider");
+      const progressValue = document.getElementById("progress-value");
+
+      // 监听滑块变化，实时更新进度条
+      slider.addEventListener("input", function () {
+        const percentage = this.value; // 获取百分比（0-100）
+        const progress = (percentage / 100) * totalLength; // 计算实际进度长度
+        const offset = totalLength - progress; // 计算偏移量（从右到左填充）
+        
+        // 更新进度条和发光层的偏移量
+        path.style.strokeDashoffset = offset;
+        pathGlowBlue.style.strokeDashoffset = offset;
+        // pathGlow.style.strokeDashoffset = offset;
+        
+        // 更新显示文本
+        progressValue.textContent = percentage + "%";
+      });
+    </script>
+  </body>
+</html>

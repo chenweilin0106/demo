@@ -62,7 +62,6 @@
         stroke: #e0e0e0;
         stroke-width: 8;
         stroke-linecap: round;
-
       }
 
       .progress-line {
@@ -83,6 +82,31 @@
       .progress-slider {
         width: 300px;
         margin: 0 10px;
+      }
+
+      .marker-controls {
+        margin-top: 15px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+      }
+
+      .marker-controls label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      .radio-label {
+        display: inline-block !important;
+        margin-right: 15px;
+        margin-bottom: 5px !important;
+        font-weight: normal !important;
+        cursor: pointer;
+      }
+
+      .radio-label input[type="radio"] {
+        margin-right: 5px;
       }
     </style>
   </head>
@@ -110,52 +134,11 @@
                 style="stop-color: #9b59b6; stop-opacity: 1"
               />
             </linearGradient>
-
-            <!-- 彩虹渐变 -->
-            <linearGradient
-              id="rainbowGradient"
-              x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="0%"
-            >
-              <stop offset="0%" style="stop-color: #ff0000; stop-opacity: 1" />
-              <stop
-                offset="16.66%"
-                style="stop-color: #ff8000; stop-opacity: 1"
-              />
-              <stop
-                offset="33.33%"
-                style="stop-color: #ffff00; stop-opacity: 1"
-              />
-              <stop offset="50%" style="stop-color: #00ff00; stop-opacity: 1" />
-              <stop
-                offset="66.66%"
-                style="stop-color: #0080ff; stop-opacity: 1"
-              />
-              <stop
-                offset="83.33%"
-                style="stop-color: #8000ff; stop-opacity: 1"
-              />
-              <stop
-                offset="100%"
-                style="stop-color: #ff0080; stop-opacity: 1"
-              />
-            </linearGradient>
-
-            <!-- 蓝色渐变 -->
-            <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style="stop-color: #74b9ff; stop-opacity: 1" />
-              <stop offset="50%" style="stop-color: #0984e3; stop-opacity: 1" />
-              <stop
-                offset="100%"
-                style="stop-color: #2d3436; stop-opacity: 1"
-              />
-            </linearGradient>
           </defs>
           <path class="path-line-outline" />
           <path class="path-line" />
           <path class="progress-line" />
+          <circle id="progress-marker" r="8" fill="#ff6b6b" style="opacity: 0;" />
         </svg>
       </div>
       <div class="controls">
@@ -170,10 +153,21 @@
           max="100"
           value="0"
         />
+        
+        <div class="marker-controls">
+          <label>标点显示:</label>
+          <label class="radio-label">
+            <input type="radio" name="marker-display" value="always" checked>
+            始终显示
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="marker-display" value="progress-only">
+            仅进度时显示
+          </label>
+        </div>
       </div>
     </div>
     <script>
-      // M 100 50 L 300 50 L 500 50 L 700 50 Q 750 50 750 100 L 750 150 Q 750 200 700 200 L 500 200 L 300 200 L 100 200 Q 50 200 50 250 L 50 300 Q 50 350 100 350 L 300 350 L 500 350 L 700 350"
       const pathArray = [
         "M 100 50",
         "L 300 50",
@@ -204,7 +198,7 @@
 
       // 设置初始状态
       path.style.strokeDasharray = totalLength;
-      path.style.strokeDashoffset = totalLength / 2;
+      path.style.strokeDashoffset = totalLength;
       requestAnimationFrame(() => {
         path.style.transition = "stroke-dashoffset 0.5s ease-in-out";
       });
@@ -212,6 +206,77 @@
       // 进度控制
       const slider = document.getElementById("progress-slider");
       const progressValue = document.getElementById("progress-value");
+      const marker = document.getElementById("progress-marker");
+      const markerDisplayRadios = document.querySelectorAll('input[name="marker-display"]');
+
+      // 动画控制变量
+      let currentMarkerProgress = 0;
+      let targetMarkerProgress = 0;
+      let markerAnimationId = null;
+      const markerAnimationDuration = 500; // 与进度条动画时长一致
+      let markerAnimationStartTime = 0;
+      let markerAnimationStartProgress = 0; // 动画开始时的进度值
+
+      // 路径追踪动画函数
+      function animateMarkerAlongPath() {
+        const currentTime = Date.now();
+        const elapsed = currentTime - markerAnimationStartTime;
+        const progress = Math.min(elapsed / markerAnimationDuration, 1);
+        
+        // 使用缓动函数 (ease-in-out)
+        const easeProgress = progress < 0.5 
+          ? 2 * progress * progress 
+          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        // 计算当前应该到达的路径位置
+        const currentProgress = markerAnimationStartProgress + (targetMarkerProgress - markerAnimationStartProgress) * easeProgress;
+        const pathLength = (currentProgress / 100) * totalLength;
+        
+        // TODO 获取路径上的精确位置（getPointAtLength 获取路径上的精确位置）
+        const point = path.getPointAtLength(pathLength);
+        marker.setAttribute("cx", point.x);
+        marker.setAttribute("cy", point.y);
+        
+        // 如果动画未完成，继续下一帧
+        if (progress < 1) {
+          markerAnimationId = requestAnimationFrame(animateMarkerAlongPath);
+        } else {
+          // 动画完成，更新当前进度
+          currentMarkerProgress = Number(targetMarkerProgress);
+          markerAnimationId = null;
+        }
+      }
+
+      // 更新标点位置的函数
+      function updateMarkerPosition(percentage) {
+        // 如果当前有动画在进行，取消它
+        if (markerAnimationId) {
+          cancelAnimationFrame(markerAnimationId);
+          markerAnimationId = null;
+        }
+        
+        // 设置新的目标进度和动画起始点
+        targetMarkerProgress = Number(percentage);
+        markerAnimationStartProgress = Number(currentMarkerProgress);
+        markerAnimationStartTime = Date.now();
+        
+        // 开始新的动画
+        animateMarkerAlongPath();
+      }
+
+      // 更新标点可见性
+      function updateMarkerVisibility(percentage) {
+        const displayMode = document.querySelector('input[name="marker-display"]:checked').value;
+        
+        if (displayMode === "always") {
+          marker.style.opacity = "1";
+        } else if (displayMode === "progress-only") {
+          if (percentage > 0) {
+            marker.style.opacity = "1";
+          } else {
+            marker.style.opacity = "0";
+          }
+        }
+      }
 
       slider.addEventListener("input", function () {
         const percentage = this.value;
@@ -219,7 +284,23 @@
         const offset = totalLength - progress;
         path.style.strokeDashoffset = offset;
         progressValue.textContent = percentage + "%";
+        
+        // 更新标点位置和可见性
+        updateMarkerPosition(percentage);
+        updateMarkerVisibility(percentage);
       });
+
+      // 监听单选按钮变化
+      markerDisplayRadios.forEach(radio => {
+        radio.addEventListener("change", function() {
+          const percentage = parseInt(slider.value);
+          updateMarkerVisibility(percentage);
+        });
+      });
+
+      // 初始化标点位置和可见性
+      updateMarkerPosition(0);
+      updateMarkerVisibility(0);
     </script>
   </body>
 </html>

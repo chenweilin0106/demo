@@ -1,3 +1,8 @@
+:root {
+    --startDeg: 0deg;
+    --endDeg: 0deg;
+}
+
 *{
     margin: 0;
     padding: 0;
@@ -21,10 +26,18 @@ body{
     position: absolute;
     top: 150px;
     left: 175px;
-    /* transform: translate(-50%, -50%); */
     width: 50px;
     height: 100px;
     background-color: white;
-    /* transform: rotate(1800deg); */
-    transition: transform 1s;
+}
+.arrowAnimation{
+    animation: rotate 2s ease-in-out;
+}
+@keyframes rotate {
+    0% {
+        transform: rotate(var(--startDeg));
+    }
+    100% {
+        transform: rotate(var(--endDeg));
+    }
 }

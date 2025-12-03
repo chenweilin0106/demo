@@ -69,7 +69,7 @@ export default {
      * 阻止滚动条滚动
      */
     stopScroll() {
-      let scrollTop = window.scrollY
+      const scrollTop = window.scrollY
       this.pageScroll = scrollTop
       document.body.style.width = '100%'
       document.body.style.position = 'fixed'
@@ -89,9 +89,9 @@ export default {
 <style scoped lang="scss">
 .moveTopFade-enter-active,
 .moveTopFade-leave-active {
-  transition: all 0.3s;
+  transition: opacity 0.3s ease-in-out;
   .popupContent {
-    transition: all 0.3s;
+    transition: transform 0.3s ease-in-out;
   }
 }
 .moveTopFade-enter,
@@ -102,7 +102,7 @@ export default {
   }
 }
 .popupOverly {
-  z-index: 1999;
+  z-index: 9999;
   width: 100%;
   height: 100%;
   top: 0;

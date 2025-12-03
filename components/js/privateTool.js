@@ -98,9 +98,9 @@ export function scrollToHeight(position, smooth = false) {
  * @param {number} [options.targetSecond=1] - 要执行回调的目标秒（0-59），默认为1
  * @param {Function} [options.callback=() => {}] - 在目标时间执行的回调函数，默认() => {}
  */
-export function executeAtTime({ targetHour = 0, targetMinute = 0, targetSecond = 1, callback = () => {} }) {
+export function executeAtTime({ targetHour = 0, targetMinute = 0, targetSecond = 1, callback = () => { } }) {
   const now = new Date()
-  let targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), targetHour, targetMinute, targetSecond)
+  const targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), targetHour, targetMinute, targetSecond)
   if (targetTime - now < 0) targetTime.setDate(targetTime.getDate() + 1) // 如果目标时间已经过去，则将目标时间设置为第二天的同一时间
   const diff = targetTime - now
   let timer = setTimeout(() => { callback(); clearTimeout(timer) }, diff) // 设置定时器
@@ -213,4 +213,103 @@ export function isScrollable(element, direction = 'vertical') {
  */
 export function pxToVw({ px, baseWidth = 750, fixed = 2 }) {
   return (px / baseWidth * 100).toFixed(fixed) + 'vw'
+}
+
+/**
+ * 获取类型
+ * @returns {'Array' | 'Object' | 'String' | 'Number' | 'Boolean' | 'Function' | 'Null' | 'Undefined' } type 类型
+ */
+export function getType(value) {
+  return Object.prototype.toString.call(value).slice(8, -1)
+}
+
+/**
+ * 把对象转为formData，支持嵌套结构
+ * @param obj 要转换的对象
+ * @param formData 可选的已存在FormData实例
+ * @param parentKey 用于递归时的父级键名
+ * @returns FormData实例
+ */
+export function objToFormData(obj, formData, parentKey) {
+  const form = formData || new FormData()
+
+  // 如果值为空，直接返回表单
+  if (obj === null || obj === undefined) {
+    return form
+  }
+
+  // 如果已经是FormData实例，直接返回
+  if (obj instanceof FormData) {
+    return obj
+  }
+
+  // 处理对象类型（非null）
+  if (typeof obj === 'object') {
+    if (Array.isArray(obj)) {
+      // 处理数组
+      obj.forEach((item, index) => {
+        const key = parentKey ? `${parentKey}[]` : `${index}`
+
+        if (item === null || item === undefined) {
+          form.append(key, '')
+        } else if (typeof item === 'object' && !(item instanceof File) && !(item instanceof Blob) && !(item instanceof Date)) {
+          this.objToFormData(item, form, key)
+        } else {
+          form.append(key, item instanceof Date ? item.toISOString() : String(item))
+        }
+      })
+    } else if (obj instanceof File || obj instanceof Blob || obj instanceof Date) {
+      // 处理File、Blob或Date
+      const key = parentKey || 'file'
+      form.append(key, obj instanceof Date ? obj.toISOString() : obj)
+    } else {
+      // 处理普通对象
+      Object.keys(obj).forEach((key) => {
+        const value = obj[key]
+        const newKey = parentKey ? `${parentKey}[${key}]` : key
+
+        if (value === null || value === undefined) {
+          form.append(newKey, '')
+        } else if (typeof value === 'object') {
+          if (value instanceof File || value instanceof Blob) {
+            form.append(newKey, value)
+          } else if (value instanceof Date) {
+            form.append(newKey, value.toISOString())
+          } else if (Array.isArray(value)) {
+            // 数组项处理
+            value.forEach((item) => {
+              const arrayKey = `${newKey}[]`
+
+              if (item === null || item === undefined) {
+                form.append(arrayKey, '')
+              } else if (typeof item === 'object' && !(item instanceof File) && !(item instanceof Blob) && !(item instanceof Date)) {
+                this.objToFormData(item, form, arrayKey)
+              } else {
+                form.append(arrayKey, item instanceof Date ? item.toISOString() : String(item))
+              }
+            })
+          } else {
+            // 递归处理嵌套对象
+            this.objToFormData(value, form, newKey)
+          }
+        } else {
+          // 基本类型直接添加
+          form.append(newKey, String(value))
+        }
+      })
+    }
+  } else {
+    // 处理基本类型
+    const key = parentKey || 'value'
+    form.append(key, String(obj))
+  }
+
+  // 防止递归层级过深导致栈溢出
+  try {
+    JSON.stringify(obj)
+  } catch (e) {
+    console.warn('objToFormData: 检测到可能的循环引用', e)
+  }
+
+  return form
 }

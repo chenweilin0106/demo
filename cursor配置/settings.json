@@ -1,0 +1,99 @@
+{
+  "window.commandCenter": true,
+  "editor.cursorBlinking": "expand",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "workbench.reduceMotion": "off",
+  "terminal.integrated.smoothScrolling": true,
+  "search.followSymlinks": false,
+  "workbench.list.smoothScrolling": true,
+  "html-css-class-completion.excludeGlobPattern": "{node_modules,doc,docs,.bundle,vendor,dist}/**",
+  "html-css-class-completion.includeGlobPattern": "**/common.scss",
+  "editor.wordWrap": "on",
+  "workbench.tree.expandMode": "doubleClick",
+  "editor.tabSize": 2,
+  "gitlens.views.scm.grouped.views": {
+    "commits": true,
+    "branches": true,
+    "remotes": true,
+    "stashes": true,
+    "tags": true,
+    "worktrees": true,
+    "contributors": true,
+    "fileHistory": true,
+    "repositories": true,
+    "searchAndCompare": false,
+    "launchpad": false
+  },
+  "gitlens.views.commits.files.layout": "list",
+  "gitlens.graph.layout": "editor",
+  "gitlens.currentLine.enabled": false,
+  "gitlens.currentLine.pullRequests.enabled": false,
+  "cursor.cpp.disabledLanguages": [
+    "plaintext"
+  ],
+  "editor.wordSeparators": "`~!@$%^&*()=+[{]}\\|;:'\",.<>/?",
+  "eslint.format.enable": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  // ESLint 自动修复（针对 script 和 template）
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "vetur.format.enable": true,
+  "vetur.format.defaultFormatter.html": "prettier", // 使用 Prettier 格式化 template
+  "vetur.format.defaultFormatter.js": "prettier", // 使用 Prettier 格式化 script
+  "vetur.format.defaultFormatter.css": "prettier", // 使用 Prettier 格式化 style (css)
+  "vetur.format.defaultFormatter.scss": "prettier", // 使用 Prettier 格式化 style (scss)
+  "vetur.format.defaultFormatter.less": "prettier", // 使用 Prettier 格式化 style (less) 
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "liveServer.settings.useLocalIp": true,
+  "workbench.productIconTheme": "macos-modern",
+  "workbench.iconTheme": "file-icons",
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+  },
+  "diffEditor.ignoreTrimWhitespace": false,
+  "CSSNavigation.excludeGlobPatterns": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/coverage/**",
+    "**/dist/**",
+    "**/.idea/**"
+  ],
+  "editor.smoothScrolling": true,
+  "errorLens.statusBarColorsEnabled": true,
+  "editor.scrollBeyondLastLine": false,
+  "http.proxy": "http://127.0.0.1:7890",
+  "http.proxyStrictSSL": false,
+  "http.proxySupport": "override",
+  "http.noProxy": [],
+  "editor.stickyScroll.enabled": false,
+  "workbench.activityBar.orientation": "vertical",
+  "errorLens.enabled": true,
+  "errorLens.messageTemplate": "$message [$source]",
+  "editor.fontFamily": "Fira Code, 'Courier New', monospace",
+  "window.menuBarVisibility": "compact",
+  "switch2idea.ideaPath": "E:\\WebStorm 2024.3\\bin\\webstorm64.exe",
+  "editor.bracketPairColorization.enabled": false,
+  "update.mode": "none",
+  "update.enableWindowsBackgroundUpdates": false
+}

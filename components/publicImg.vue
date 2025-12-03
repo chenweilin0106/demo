@@ -2,7 +2,10 @@
   <div class="imgCompo">
     <!-- pic -->
     <template v-if="imgPattern === 1">
-      <img class="picImg" :src="imgPath" @error="imgError" />
+      <div :class="['micAvatar', imgType == 'mic' ? 'micA' : imgType == 'voice' ? 'voiceA' : null]" v-if="imgType == 'mic' || imgType == 'voice'">
+        <img :src="userAvatar || $store.state.userInfo.profile_image || $store.state.user_icon" @error="imgAtError" />
+      </div>
+      <img class="picImg" :class="[imgType == 'mic' ? 'micImg' : imgType == 'voice' ? 'voiceImg' : '']" :src="imgPath" @error="imgError" />
     </template>
     <!-- svga -->
     <template v-else-if="imgPattern === 2">
@@ -321,6 +324,12 @@ export default {
     max-width: 100%;
     max-height: 100%;
     object-fit: cover; // cover保持原有尺寸比例，内容可被剪裁
+    &.micImg {
+      position: relative;
+    }
+    &.voiceImg {
+      position: relative;
+    }
   }
   .micAvatar {
     position: absolute;

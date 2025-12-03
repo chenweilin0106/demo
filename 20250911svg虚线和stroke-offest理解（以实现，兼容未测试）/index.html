@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+      }
+      .container {
+        width: 300px;
+        height: 300px;
+        background-color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- 控制面板 -->
+      <div
+        style="
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          background: rgba(255, 255, 255, 0.9);
+          padding: 10px;
+          border-radius: 5px;
+          font-size: 12px;
+        "
+      >
+        <div style="margin-bottom: 5px">
+          <label>虚线长度: <span id="dash-length">10</span>px</label><br />
+          <input
+            type="range"
+            id="dashLength"
+            min="1"
+            max="30"
+            value="10"
+            style="width: 100px"
+          />
+        </div>
+        <div style="margin-bottom: 5px">
+          <label>间隔长度: <span id="gap-length">5</span>px</label><br />
+          <input
+            type="range"
+            id="gapLength"
+            min="1"
+            max="20"
+            value="5"
+            style="width: 100px"
+          />
+        </div>
+        <div>
+          <label>动画速度: <span id="speed">2</span>s</label><br />
+          <input
+            type="range"
+            id="animationSpeed"
+            min="0.5"
+            max="5"
+            value="2"
+            step="0.5"
+            style="width: 100px"
+          />
+        </div>
+      </div>
+
+      <svg width="100%" height="100%" viewBox="0 0 300 300">
+        <!-- 基础虚线：10px实线，5px间隔 -->
+        <path
+          d="M 50 50 L 250 50"
+          stroke="pink"
+          stroke-width="2"
+          stroke-dasharray="10,5"
+        />
+
+        <!-- 密集虚线：5px实线，3px间隔 -->
+        <path
+          d="M 50 80 L 250 80"
+          stroke="blue"
+          stroke-width="2"
+          stroke-dasharray="5,3"
+        />
+
+        <!-- 稀疏虚线：20px实线，10px间隔 -->
+        <path
+          d="M 50 110 L 250 110"
+          stroke="green"
+          stroke-width="2"
+          stroke-dasharray="20,10"
+        />
+
+        <!-- 点线效果：2px实线，8px间隔 -->
+        <path
+          d="M 50 140 L 250 140"
+          stroke="orange"
+          stroke-width="2"
+          stroke-dasharray="2,8"
+        />
+
+        <!-- 复杂虚线：长短交替 -->
+        <path
+          d="M 50 170 L 250 170"
+          stroke="purple"
+          stroke-width="2"
+          stroke-dasharray="15,5,5,5"
+        />
+
+        <!-- 点划线：长线-点-长线 -->
+        <path
+          d="M 50 200 L 250 200"
+          stroke="red"
+          stroke-width="2"
+          stroke-dasharray="20,5,5,5"
+        />
+
+        <!-- 流动虚线动画效果 -->
+        <path
+          d="M 50 230 L 250 230"
+          stroke="cyan"
+          stroke-width="3"
+          stroke-dasharray="15,10"
+          stroke-dashoffset="0"
+        >
+          <animate
+            attributeName="stroke-dashoffset"
+            values="0;-25;0"
+            dur="2s"
+            repeatCount="indefinite"
+          />
+        </path>
+
+        <!-- 反向流动虚线 -->
+        <path
+          d="M 50 260 L 250 260"
+          stroke="yellow"
+          stroke-width="2"
+          stroke-dasharray="8,4"
+          stroke-dashoffset="0"
+        >
+          <animate
+            attributeName="stroke-dashoffset"
+            values="0;12;0"
+            dur="1.5s"
+            repeatCount="indefinite"
+          />
+        </path>
+
+        <!-- 可调节的虚线示例 -->
+        <path
+          id="interactive-dash"
+          d="M 50 290 L 250 290"
+          stroke="white"
+          stroke-width="5"
+          stroke-dasharray="10,5"
+          stroke-dashoffset="0"
+        >
+          <animate
+            id="interactive-animate"
+            attributeName="stroke-dashoffset"
+            values="0;-15;0"
+            dur="2s"
+            repeatCount="indefinite"
+          />
+        </path>
+      </svg>
+    </div>
+
+    <script>
+      // 获取控制元素
+      const dashLengthSlider = document.getElementById("dashLength");
+      const gapLengthSlider = document.getElementById("gapLength");
+      const speedSlider = document.getElementById("animationSpeed");
+      const dashLengthDisplay = document.getElementById("dash-length");
+      const gapLengthDisplay = document.getElementById("gap-length");
+      const speedDisplay = document.getElementById("speed");
+      const interactiveDash = document.getElementById("interactive-dash");
+      const interactiveAnimate = document.getElementById("interactive-animate");
+
+      // 更新虚线样式
+      function updateDashStyle() {
+        const dashLength = dashLengthSlider.value;
+        const gapLength = gapLengthSlider.value;
+        const dashArray = `${dashLength},${gapLength}`;
+
+        interactiveDash.setAttribute("stroke-dasharray", dashArray);
+        interactiveAnimate.setAttribute(
+          "values",
+          `0;-${parseInt(dashLength) + parseInt(gapLength)};0`
+        );
+
+        // 更新显示值
+        dashLengthDisplay.textContent = dashLength;
+        gapLengthDisplay.textContent = gapLength;
+      }
+
+      // 更新动画速度
+      function updateAnimationSpeed() {
+        const speed = speedSlider.value;
+        interactiveAnimate.setAttribute("dur", `${speed}s`);
+        speedDisplay.textContent = speed;
+      }
+
+      // 绑定事件监听器
+      dashLengthSlider.addEventListener("input", updateDashStyle);
+      gapLengthSlider.addEventListener("input", updateDashStyle);
+      speedSlider.addEventListener("input", updateAnimationSpeed);
+
+      // 初始化
+      updateDashStyle();
+      updateAnimationSpeed();
+    </script>
+  </body>
+</html>

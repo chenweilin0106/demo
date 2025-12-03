@@ -14,32 +14,32 @@ import ConfirmBuyPopup from '../popups/confirmBuyPopup.vue'
 import ReceivePopup from '../popups/receivePopup.vue'
 import GiftPopup from '../popups/giftPopup.vue'
 
-// <Buy ref="buy" :config="configBuy" @update="getPageData" />
+// <Buy ref="buyRef" :config="configBuy" @getHomePage="getHomePage" />
 // configBuy: {
 //   money: 0, // app内部现金
-//   goods: {} // 商品信息
-//   cashApi: (goods) => getPageData({ type: 'magic_closet_money_buy', mark: goods.gift_id }), // 现金购买接口
-//   inApi: (goods) => getPageData({ type: 'magic_closet_bug_before', mark: goods.gift_id }), // 内购接口
-//   inPollApi: (goods) => getPageData({ type: 'magic_closet_buy_poll', mark: goods.gift_id }), // 内购轮询接口
+//   goods: {}, // 商品信息
+//   cashApi: (goods) => getPageData({ type: 'magic_closet_money_buy', mark: goods.id }), // 现金购买接口 id-礼包id
+//   inApi: (goods) => getPageData({ type: 'magic_closet_bug_before', mark: goods.id }), // 内购接口 id-礼包id
+//   inPollApi: (goods) => getPageData({ type: 'magic_closet_buy_poll', mark: goods.id, buy_nums: goods.buy_times }), // 内购轮询接口 id-礼包id buy_nums-当前购买次数 跨天购买，轮询接口必传
 // }
 
 // this.configBuy.money = this.money // 现金购买必要参数
-// this.configBuy.goods = object // 商品信息必要参数
+// this.configBuy.goods = { ...params.goods_info, id: params.id, buy_times: params.buy_times } // 商品信息必要参数
 // 内购
-// this.$refs.buy.preBuy('in')
+// this.$refs.buyRef.preBuy('in')
 // 现金购买
-// this.$refs.buy.confirmCashBuy()
+// this.$refs.buyRef.confirmCashBuy()
 // 现金购买 带有确认购买弹框
-// this.$refs.buy.preBuy('cash')
+// this.$refs.buyRef.preBuy('cash')
 // 礼包弹框-内购/现金购买
-// this.$refs.buy.openGiftPopup()
+// this.$refs.buyRef.openGiftPopup()
 export default {
   name: 'buyVue',
   props: {
     config: {
       type: Object,
       default: () => {
-        return { money: 0, cashApi: '', inApi: '', inPollApi: '', goods: { apple_id: '', goods_type: '', gift_id: '', price: '', status: '' } }
+        return { money: 0, cashApi: '', inApi: '', inPollApi: '', goods: { apple_id: '', goods_type: '', gift_id: '', price: '', id: '', buy_times: 0 } }
       }
     }
   },
@@ -78,16 +78,16 @@ export default {
       this.$nextTick(() => {
         this.configReceivePopup = Object.freeze(this.getType(res.data) == 'Array' ? res.data : this.getType(res.data?.awards) == 'Array' ? res.data.awards : res.data?.award ? [res.data.award] : [])
         this.isShowReceivePopup = true
-        if (isUpdate) this.$emit('update')
+        if (isUpdate) this.$emit('getHomePage')
       })
     },
     /**
      * 购买礼包前置操作
-     * @param {'in'|'cash'} buyType 购买类型 in:内购 cash:现金购买
+     * @param {'in' | 'cash'} buyType 购买类型 in:内购 cash:现金购买
      */
     preBuy(buyType) {
       if (buyType == 'in') return this.inBuy()
-      if (this.config.goods.status != 1) return this.$toast('已售空') // todo 购买状态字段更新
+      // if (this.config.goods.status != 1) return this.$toast('已售空') // todo 购买状态字段更新
       if (parseFloat(this.config.money) < this.config.goods.price) return this.$toast('现金不足')
       this.$nextTick(() => {
         this.configConfirmBuyPopup = this.config.goods
@@ -109,7 +109,7 @@ export default {
     async inBuy() {
       if (Object.values(this.config.goods).includes('')) return this.$toast('购买失败，缺少购买信息')
       const cloneGoods = JSON.parse(JSON.stringify(this.config.goods))
-      if (this.getBuyTimer(cloneGoods.gift_id || 'only').judgeBuySuccessTimer) return this.$toast('请刷新页面后重试')
+      // if (this.getBuyTimer(cloneGoods.gift_id || 'only').judgeBuySuccessTimer) return this.$toast('请刷新页面后重试')
       if (isIOS()) {
         const res = await this.payApi(cloneGoods)
         if (res) return
@@ -129,7 +129,7 @@ export default {
     },
     /**
      * 确认支付方式
-     * @param {'wx'|'alipay'} pay_type 支付类型 wx:微信 alipay:支付宝
+     * @param {'wx' | 'alipay'} pay_type 支付类型 wx:微信 alipay:支付宝
      * @param {Object} goods 商品信息
      */
     async confirmPayment(pay_type, goods) {
@@ -145,7 +145,7 @@ export default {
     },
     /**
      * 创建/获取购买定时器
-     * @param {string|number} id 商品id 当商品只有一个时 可以自己定义传入
+     * @param {string | number} id 商品id 当商品只有一个时 可以自己定义传入
      * @return {Object} resTimer 定时器对象
      * @return {number|string} resTimer.id 商品id 用于区分定时器对象
      * @return {number} resTimer.maxPollTimer 最大轮询次数定时器
@@ -160,7 +160,7 @@ export default {
     },
     /**
      * 关闭并清除购买定时器 用于购买成功或者购买失败后清除定时器对象
-     * @param {string|number} id 商品id 当商品只有一个时 可以自己定义传入
+     * @param {string | number} id 商品id 当商品只有一个时 可以自己定义传入
      */
     offBuyTimer(id) {
       this.clearJudgeBuySuccessTimer(id)
@@ -171,7 +171,7 @@ export default {
      * 清除所有定时器
      */
     offAllTimer() {
-      let end = setInterval(() => {}, 100)
+      const end = setInterval(() => {}, 100)
       for (let i = 1; i <= end; i++) {
         clearInterval(i)
         clearTimeout(i)
@@ -190,7 +190,7 @@ export default {
         const res = await this.config.inPollApi(goods) // todo 轮询校验接口
         if (!res.errno) {
           this.offBuyTimer(timerId) // 清除对应定时器
-          // this.offAllTimer() // 清除所有定时器 注意：如果能同时购买多个礼包 第一个礼包购买成功后 第二个礼包的轮询也会清除
+          // this.offAllTimer() // 清除所有setInterval/setTimeout 注意：如果能同时购买多个礼包 第一个礼包购买成功后 第二个礼包的轮询也会清除；toast也会无法关闭 因为原理是setTimeout实现
           this.openReceivePopup(res)
           if (this.buyToast.success) this.$toast(this.buyToast.success)
         }
@@ -202,7 +202,7 @@ export default {
     },
     /**
      * 清除最大轮询次数定时器
-     * @param {string|number} id 定时器id 具体看getBuyTimer
+     * @param {string | number} id 定时器id 具体看getBuyTimer
      */
     clearMaxPollTimer(id) {
       const res = this.getBuyTimer(id)
@@ -212,7 +212,7 @@ export default {
     },
     /**
      * 清除判断购买成功定时器
-     * @param {string|number} id 定时器id 具体看getBuyTimer
+     * @param {string | number} id 定时器id 具体看getBuyTimer
      */
     clearJudgeBuySuccessTimer(id) {
       const res = this.getBuyTimer(id)

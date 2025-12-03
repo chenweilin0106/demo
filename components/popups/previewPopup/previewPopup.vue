@@ -1,0 +1,130 @@
+<template>
+  <PopupBox title="title_38.png" @clickClose="clickClose">
+    <div :class="['previewImg', config.type == 'pst_privilege' || config.type == 'car' ? 'gift' : config.type == 'title' ? 'titleSp' : config.type == 'CP_card' ? 'cpCardSp' : config.type == 'world_msg_skins' ? 'wmsSp' : config.type == 'room_dec_suit' ? 'roomSp' : config.type == 'costume' ? 'userMainSp' : 'other']">
+      <PublicImg :imgName="config.img" :imgType="config.type"></PublicImg>
+      <div class="cpIcon" v-if="config.type == 'CP_card'"></div>
+      <div class="roomSuitIcon" v-if="config.type == 'room_dec_suit'"></div>
+    </div>
+    <div class="tip1Text" v-html="config.tip1"></div>
+    <div class="tip2Text" v-html="config.tip2"></div>
+    <div class="tip2Text" v-if="config.type == 'pst_privilege'">仅静态效果展示，礼物动效惊喜等你来体验</div>
+    <!-- <div class="tip2Text" v-if="config.type=='car'">仅静态效果展示，座驾动效惊喜等你来体验</div> -->
+  </PopupBox>
+</template>
+
+<script>
+export default {
+  name: 'previewPopup',
+  props: ['config'],
+  components: {},
+  data() {
+    return {}
+  },
+  created() {},
+  mounted() {},
+  computed: {},
+  watch: {},
+  methods: {
+    /**
+     * 关闭弹窗(必需)
+     */
+    clickClose() {
+      this.$emit('clickClose')
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+::v-deep .popupContent {
+  // min-height: 410px;
+  .main {
+    margin-bottom: 94px;
+    .previewImg {
+      margin: 0 auto 0 auto;
+      overflow: hidden;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 4px solid #dbc1ff;
+      &.gift {
+        width: 427px;
+        height: 740px;
+        background: url('@/assets/chat_room_bg.png') no-repeat left top/100% 100%;
+        border: none;
+        border-radius: 0;
+      }
+      &.titleSp {
+        width: 210px * 1.4;
+        height: 96px * 1.4;
+      }
+      &.cpCardSp {
+        width: 455px;
+        height: 217px;
+        position: relative;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        .cpIcon {
+          width: 394px;
+          height: 180px;
+          background: url('@/assets/cp_card_bg.png') no-repeat left top/100% 100%;
+          position: absolute;
+          left: 50%;
+          top: 46%;
+          transform: translate(-50%, -50%);
+        }
+      }
+      &.wmsSp {
+        width: 520px;
+        height: 155px;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        margin-top: 40px;
+      }
+      &.roomSp {
+        width: 340px;
+        height: 736px;
+        border: none;
+        border-radius: 0;
+        .roomSuitIcon {
+          width: 340px;
+          height: 736px;
+          background: url('@/assets/room_suit_bg.png') no-repeat left top/100% 100%;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          top: 0;
+        }
+      }
+      &.userMainSp {
+        width: 414px;
+        height: 740px;
+        border: none;
+        border-radius: 0;
+        background: url('@/assets/user_main_bg.png') no-repeat left top/100% 100%;
+      }
+      &.other {
+        width: 120px * 1.4;
+        height: 120px * 1.4;
+      }
+    }
+    .tip1Text {
+      font-size: 28px;
+      color: #FFFFFF;
+      text-align: center;
+      margin: 26px auto 0;
+      white-space: pre-wrap;
+      line-height: 1;
+    }
+    .tip2Text {
+      font-size: 24px;
+      color: #FFEC69;
+      text-align: center;
+      margin: 15px auto 0;
+      white-space: pre-wrap;
+      line-height: 1;
+    }
+  }
+}
+</style>

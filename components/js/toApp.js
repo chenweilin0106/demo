@@ -109,11 +109,10 @@ export const toVipShop = () => {
 
 /**
  * 跳转到会员中心（5.4.4）
- * 
+ *
  * @param {-1 | 0 | 1 | 2} vipStatus Android参数 会员状态 -1: 未开通 0: 银卡 1: 金卡 2: 黑卡
  */
 export const toVip = (vipStatus) => {
-  if (!Number(vipStatus)) return console.log('无效vipStatus', vipStatus)
   if (compareVersions('5.4.4') == -1) return Vue.prototype.$toast('请更新至最新版本')
   try {
     if (isIOS()) {
@@ -248,7 +247,7 @@ export const quitView = () => {
 
 /**
  * url跳转(通过app)
- * 
+ *
  * @param {string} router 路由
  * @example urlRouterWithApp(`dandan-${window.location.origin}/vue/normal/friendsBeCash/index.html?show_full=0&uid=${this.$store.state.uid}&access_token=${this.$store.state.access_token}#/invite?a=1`)
  * 尾部的?a=1是因为客户端并不会判断是否有问号，手动拼接防止路由错误
@@ -562,6 +561,55 @@ export const toWealthWithdraw = () => {
       window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://wealth/withdraw' })
     } else {
       window.external.dispatch('dandan://wealth/withdraw')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
+
+/**
+ * 跳转家族主页（5.5.8）
+ */
+export const toFamilyHome = (family_id) => {
+  if (!Number(family_id)) return console.log('无效family_id')
+  if (compareVersions('5.5.8') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://family/home?family_id=' + family_id })
+    } else {
+      window.external.dispatch('dandan://family/home?family_id=' + family_id)
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
+
+/**
+ * 跳转博物馆（5.9.4）
+ * @param {number | string} [tab = 3] 选项卡 1-? 2-? 3-勋章墙
+ */
+export const toMuseum = (tab = 3) => {
+  if (compareVersions('5.9.4') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://museum/home?tab=' + tab })
+    } else {
+      window.external.dispatch('dandan://museum/home?tab=' + tab)
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
+
+/**
+ * 跳转好友列表（无需版本判断）
+ */
+export const toFriendsList = () => {
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://message/friends' })
+    } else {
+      window.external.dispatch('dandan://message/friends')
     }
   } catch (error) {
     console.log('环境错误', error)

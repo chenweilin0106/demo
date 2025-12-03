@@ -1,0 +1,64 @@
+[
+    {
+        "key": "ctrl+i",
+        "command": "composerMode.agent"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "-notebook.format",
+        "when": "notebookEditable && !editorTextFocus && activeEditor == 'workbench.editor.notebook'"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "-editor.action.formatDocument",
+        "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "-editor.action.formatDocument.none",
+        "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "-editor.action.formatSelection",
+        "when": "editorHasDocumentSelectionFormattingProvider && editorHasSelection && editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "-notebook.formatCell",
+        "when": "editorHasDocumentFormattingProvider && editorTextFocus && inCompositeEditor && notebookEditable && !editorReadonly && activeEditor == 'workbench.editor.notebook'"
+    },
+    {
+        "key": "ctrl+oem_3",
+        "command": "-workbench.action.selectTheme"
+    },
+    {
+        "key": "ctrl+p",
+        "command": "-workbench.action.quickOpen"
+    },
+    {
+        "key": "ctrl+p",
+        "command": "-workbench.action.quickOpenNavigateNextInFilePicker",
+        "when": "inFilesPicker && inQuickOpen"
+    },
+    {
+        "key": "ctrl+shift+oem_plus",
+        "command": "-editor.unfoldAll",
+        "when": "editorFocus && foldingEnabled"
+    },
+    {
+        "key": "ctrl+shift+oem_minus",
+        "command": "-editor.foldAll",
+        "when": "editorFocus && foldingEnabled"
+    },
+    // {
+    //     "key": "ctrl+alt+i",
+    //     "command": "workbench.action.tasks.runTask",
+    //     "args": "修复当前文件缩进"
+    // },
+    // {
+    //   "key": "ctrl+alt+shift+i",
+    //   "command": "workbench.action.tasks.runTask",
+    //   "args": "修复选中文本缩进"
+    // }
+]
