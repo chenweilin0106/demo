@@ -15,7 +15,7 @@
       <div class="rewardsTip position-relative"></div>
       <div :class="['rewardsShowArea flex align-center justify-center position-relative',`status${rankChosen}`]">
         <div class="rewardItem position-relative" :class="rewardsList[`${rankChosen}${tagChosen}`].length>=4?'smallMargin':''" v-for="(item) in rewardsList[`${rankChosen}${tagChosen}`]" :key="item.id" @click="previewImgCk(item)">
-          <div :class="['rewardIcon position-absolute position-row-center', item.type=='title'?'titleSp':null]">
+          <div :class="['rewardIcon position-absolute position-row-center', item.type=='title'?'titleSp':item.type == 'mic' ? 'micSp' : null]">
             <PublicImg :imgName="item.icon" :imgType="item.type" />
           </div>
           <div class="rewardText radius-999 position-absolute position-row-center w-100 text-center line-height-1 flex align-center justify-center">{{item.text}}</div>
@@ -316,6 +316,10 @@ export default {
           width: 120px;
           height: 120px;
           top: 0;
+          &.micSp{
+            width: 97px;
+            height: 97px;
+          }
         }
         .rewardText{
           height: 34px;

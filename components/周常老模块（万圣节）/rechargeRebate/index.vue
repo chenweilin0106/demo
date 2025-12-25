@@ -49,7 +49,7 @@
         <!-- <div class="resetIcon pointer-none position-absolute"></div> -->
         <!-- <div v-if="recharge_status[Object.keys(recharge_status)[0]].awards[0].text_add" class="leftUpdateIcon"></div> -->
         <!-- <div v-if="accruing_days_list[Object.keys(accruing_days_list)[0]].awards[0].text_add" class="rightUpdateIcon"></div> -->
-        <div v-for="tabItem in tabsArray" :key="tabItem.id" class="tab" @click="currentTab = tabItem"></div>
+        <div v-for="tabItem in tabsArray" :key="tabItem.id" class="tab" @click="switchTab(tabItem)">{{ tabItem.tabName }}</div>
       </div>
       <transition-group class="rechargeTaskList" :name="transitionClass" tag="ul">
         <div v-for="taskItem in rechargeListShow" :key="`${currentTab.listKey}_${taskItem.condition || taskItem.amount_cond}`" class="rechargeTaskItem" :class="{ bigAwardsTask: taskItem.bigAwardsTask }">
@@ -162,6 +162,7 @@ export default {
         5000: { awards: [{ icon: 'yb_120_120.png', name: '元宝', nums: 12000000, text_add: '', text: '1200万', tool_id: 'gamegold', type: 'property' }, { icon: 'ljs_120_120.png', id: 2, name: '绿晶石', nums: 1200, text: '1200', type: 'tool' }, { icon: '', id: 4676, name: '称号', nums: 7, text: '7天', type: 'title' }, { id: 0, name: '威望值', nums: 0.05, text: '称号属性：每次获得+基础威望值的5%，时效可叠加', type: 'prestige' }], condition: 5000, has_right: 0, is_daily: true, recharge_nums: 0 }
         // 10000: { awards: [{ icon: 'yb_120_120.png', name: '元宝', nums: 20000000, text_add: '加赠200万', text: '2000万', tool_id: 'gamegold', type: 'property' }, { icon: 'ljs_120_120.png', id: 2, name: '绿晶石', nums: 2000, text: '2000', type: 'tool' }, { icon: '', id: 4676, name: '称号', nums: 7, text: '7天', type: 'title' }, { id: 0, name: '威望值', nums: 0.05, text: '称号属性：每次获得+基础威望值的5%，时效可叠加', type: 'prestige' }], condition: 10000, has_right: 0, is_daily: true, recharge_nums: 0 }
       }, // 累计充值
+      rechargeListShow: [],
       daily_box: { is_today_open: false, open_times: 0, max_times: 3 },
       user_tickets: 0,
       user_recharges: 0,
@@ -181,23 +182,10 @@ export default {
       configGiftPopup: []
     }
   },
-  computed: {
-    rechargeListShow() {
-      const list = Object.values(this[this.currentTab.listKey])
-      return list.reduce((acc, item) => {
-        if (item.has_right < 2) {
-          acc[0].push(item)
-        } else {
-          acc[1].push(item)
-        }
-        return acc
-      }, [[], []]).flat()
-    }
-  },
-  async created() {
+  computed: {},
+  mounted() {
     axios({ url: `${process.env.VUE_APP_OSS_PATH}activity/weekly/svga/20240614_m2_lottery.svga`, method: 'get', responseType: 'arraybuffer' })
-    await this.getHomePage()
-    this.transitionClass = 'hasTransition'
+    this.getHomePage()
   },
   methods: {
     /**
@@ -224,15 +212,14 @@ export default {
      * 领取累计充值/连续充值任务奖励
      */
     receive: _throttle(async function (taskItem) {
-      if (taskItem.has_right == 0) {
-        this.handleRecharge()
-      } else {
-        const params = { mark: taskItem.condition || taskItem.amount_cond, type: taskItem.condition ? 'recharge_reward' : 'recharge_accruing_reward' }
-        const res = await getPageData(params)
-        this.$toast(res.errmsg)
-        if (res.errno) return
-        taskItem.has_right = 2
-      }
+      if (taskItem.has_right == 2) return
+      if (taskItem.has_right == 0) return this.handleRecharge()
+      const params = { mark: taskItem.condition || taskItem.amount_cond, type: taskItem.condition ? 'recharge_reward' : 'recharge_accruing_reward' }
+      const res = await getPageData(params)
+      this.$toast(res.errmsg)
+      if (res.errno) return
+      taskItem.has_right = 2
+      this.rechargeListShow = this.sortList(this[this.currentTab.listKey])
     }),
     /**
      * 抽奖动画结束
@@ -247,20 +234,12 @@ export default {
      * @param {number|string} mark 1:开启1次 2:开启10次
      */
     open: _throttle(async function (mark) {
-      const lotteryNum = mark == 1 ? 1 : 10
-      if (lotteryNum > this.user_tickets) return (this.isShowFailPopup = true)
+      if (mark == 1 ? 1 : 10 > this.user_tickets) return (this.isShowFailPopup = true)
       const res = await getPageData({ mark, type: 'comm_lottery' })
       if (res.errno) return this.$toast(res.errmsg)
       this.configReceivePopup = res.data.awards
       this.isLottery = true
     }),
-    /**
-     * 充值
-     */
-    handleRecharge() {
-      this.addVisibilityListen(this.createVisibilityFn({ showFn: this.getHomePage }))
-      recharge()
-    },
     /**
      * 获取首页数据（于连续充值3000档位征服者文本描述，因为后端无法和累计充值的人生赢家称号奖励数据格式相同，这里前端手动处理）
      */
@@ -269,8 +248,8 @@ export default {
       if (res.errno) {
         this.$toast(res.errmsg)
       } else {
-        this.accruing_days_list = res.data.accruing_days_list
-        this.recharge_status = res.data.recharge_status
+        this.accruing_days_list = this.sortList(res.data.accruing_days_list)
+        this.recharge_status = this.sortList(res.data.recharge_status)
         this.daily_box = res.data.daily_box
         this.user_tickets = res.data.user_tickets
         this.user_recharges = res.data.user_recharges
@@ -287,6 +266,35 @@ export default {
         const arr = this.recharge_status[resKey].awards
         if (arr[arr.length - 1]?.type == 'prestige') this.recharge_status[resKey].bigAwardsTask = true
       }
+      this.switchTab(this.currentTab)
+      this.transitionClass = 'hasTransition'
+    },
+    /**
+     * 切换 累计充值列表/连续充值有礼
+     */
+    switchTab(tabItem) {
+      this.currentTab = tabItem
+      this.rechargeListShow = this[this.currentTab.listKey]
+    },
+    /**
+     * 列表排序 领取-未完成-已完成
+     */
+    sortList(arr) {
+      return Object.values(arr).reduce((acc, item) => {
+        if (item.has_right < 2) {
+          acc[0].push(item)
+        } else {
+          acc[1].push(item)
+        }
+        return acc
+      }, [[], []]).flat()
+    },
+    /**
+     * 充值
+     */
+    handleRecharge() {
+      this.addVisibilityListen(this.createVisibilityFn({ showFn: this.getHomePage }))
+      recharge()
     }
   }
 }

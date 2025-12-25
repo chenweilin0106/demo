@@ -2,7 +2,7 @@
   <div class="pointReward">
     <!-- 任务列表 -->
     <OutBox class="tasksBox">
-      <div v-for="(taskItem, taskKey) in task_list" :key="taskKey" class="taskItemDiv">
+      <div v-for="(taskItem, taskKey) in task_list" :key="taskKey" class="taskItemDiv" :class="taskKey">
         <div class="taskItemAward">
           <div class="taskItemAwardIcon"><img :src="IconPath(pointIcon)" /></div>
           <div class="taskItemAwardText">{{ pointName }}+{{ taskItem.award_nums }}</div>
@@ -365,7 +365,7 @@ export default {
           background-image: linear-gradient(0deg, #8A8A8A, #D4D4D4), -webkit-linear-gradient(#fff, #fff);
         }
       }
-      &:nth-child(2){
+      &.keju{
         .taskItemDesc{
           .taskItemDescText1{
             line-height: 36px;

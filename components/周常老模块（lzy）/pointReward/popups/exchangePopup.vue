@@ -1,29 +1,29 @@
 <template>
   <PopupBox title="title_1.png" @clickClose="clickClose">
-    <div class="ownedNumText">剩余{{ pointName }}<img :src="IconPath(pointIcon)" />：{{ my_goods }}</div>
-    <PublicImg class="goodsIcon" :class="`${config.goods_type}Icon`" :imgName="config.goods_icon" :imgType="config.goods_type" />
+    <div class="ownedNumText">剩余{{ pointName }}<img :src="IconPath(pointIcon)" alt="" />：{{ my_goods }}</div>
+    <PublicImg class="goodsIcon" :class="`${config.goods_type}Icon`" :imgName="config.goods_icon_t" :imgType="config.goods_type" />
     <div class="goodsDesc">{{ config.goods_num_text }}</div>
     <div v-if="typePo == 1" class="computeDiv">
       <div class="min" @click="minCk">最小</div>
       <div class="minus" @click="minusCk">
-        <img :src="IconPath(exchangeNum == 1 ? 'pop_1_1.png' : 'pop_1.png')" />
+        <img :src="IconPath(exchangeNum == 1 ? 'pop_1_1.png' : 'pop_1.png')" alt="" />
       </div>
       <div class="exchangeNumDiv">{{ exchangeNum }}</div>
       <div class="plus" @click="plusCk">
-        <img :src="IconPath(addIcon)" />
+        <img :src="IconPath(addIcon)" alt="" />
       </div>
       <div class="max" @click="maxCk">最大</div>
     </div>
     <div v-if="typePo == 1" class="type1">
-      <div class="needNumDiv">共消耗<img :src="IconPath(pointIcon)" />：<i>{{ needPointNum }}</i></div>
+      <div class="needNumDiv">共消耗<img :src="IconPath(pointIcon)" alt="" />：<i>{{ needPointNum }}</i></div>
       <div class="exchangeBtn" @click="exchangeBtnCk">兑换</div>
     </div>
-    <div v-if="typePo == 2" class="keyDesc">首次消耗{{ Number(config.price) }}个<img :src="IconPath(pointIcon)" />&ensp;第二个半价</div>
+    <div v-if="typePo == 2" class="keyDesc">首次消耗{{ Number(config.price) }}个<img :src="IconPath(pointIcon)" alt="" />&ensp;第二个半价</div>
     <div v-if="typePo == 2" class="type2">
-      <div class="exchangeBtn1" @click="exKey1">兑1个<p>（消耗:<img :src="IconPath(pointIcon)" />{{ config.exchange_times == 0 ? Number(config.price) : Number(config.price) / 2 }}）</p></div>
-      <div class="exchangeBtn2" v-if="config.exchange_times == 0" @click="exKey2">兑2个<p>（消耗:<img :src="IconPath(pointIcon)" />{{ Number(config.price) + Number(config.price) / 2 }}）</p></div>
+      <div class="exchangeBtn1" @click="exKey1">兑1个<p>（消耗:<img :src="IconPath(pointIcon)" alt="" />{{ config.exchange_times == 0 ? Number(config.price) : Number(config.price) / 2 }}）</p></div>
+      <div class="exchangeBtn2" v-if="config.exchange_times == 0" @click="exKey2">兑2个<p>（消耗:<img :src="IconPath(pointIcon)" alt="" />{{ Number(config.price) + Number(config.price) / 2 }}）</p></div>
     </div>
-    <div v-if="typePo == 3" class="needNumType3">共消耗<img :src="IconPath(pointIcon)" />：{{ needPointNum }}</div>
+    <div v-if="typePo == 3" class="needNumType3">消耗<img :src="IconPath(pointIcon)" alt="" />：{{ needPointNum }}</div>
     <div v-if="typePo == 3" class="type2">
       <div class="exchangeBtn1" @click="exType3">兑换</div>
       <div class="exchangeBtn2" @click="exType3Wear">兑换并{{$store.state.nowEquipText[config.goods_type]}}</div>
@@ -192,18 +192,18 @@ export default {
   align-items: center;
   justify-content: center;
   img {
-    width: 40px;
-    height: auto;
+    width: auto;
+    height: 47px;
     margin-left: 5px;
   }
 }
 .goodsIcon {
-  width: 132px;
-  height: 132px;
-  background: #6D67BF;
+  width: 128px;
+  height: 128px;
+  background: #FFFFFF;
   border-radius: 16px;
-  border: 4px solid #BCC9FE;
-  margin: 26px auto 18px auto;
+  border: 4px solid #FFD782;
+  margin: 28px auto 20px auto;
   &.titleIcon {
     width: 194px;
   }
@@ -229,7 +229,7 @@ export default {
   .min {
     width: 72px;
     height: 48px;
-    background: #6D69B6;
+    background: #C8593F;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -237,7 +237,7 @@ export default {
   .minus {
     width: 48px;
     height: 48px;
-    background: #6D69B6;
+    background: #C8593F;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -249,9 +249,9 @@ export default {
   .exchangeNumDiv {
     width: 120px;
     height: 48px;
-    background: #6D69B6;
+    background: #C8593F;
     font-size: 36px;
-    color: #FFE25E;
+    color: #FFFAA6;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -259,7 +259,7 @@ export default {
   .plus {
     width: 48px;
     height: 48px;
-    background: #6D69B6;
+    background: #C8593F;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -271,7 +271,7 @@ export default {
   .max {
     width: 72px;
     height: 48px;
-    background: #6D69B6;
+    background: #C8593F;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -280,15 +280,15 @@ export default {
 .type1 {
   margin: 23px auto 0;
   position: relative;
-  width: 590px;
-  border-top: 2px solid #C0B4F4;
+  width: 585px;
+  border-top: 2px solid #FEE7B3;
   padding: 33px 24px 0 27px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   .needNumDiv {
     font-size: 32px;
-    color: #FFFFFF;
+    color: #D83A1B;
     display: flex;
     align-items: center;
     justify-content: left;
@@ -302,39 +302,39 @@ export default {
     }
   }
   .exchangeBtn {
-    width: 124px;
-    height: 64px;
+    width: 126px;
+    height: 66px;
     font-size: 32px;
     font-weight: 400;
-    color: #FFFFFF;
+    color: #4D7DDD;
     display: flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
     white-space: nowrap;
-    border: 2px solid transparent;
+    border: 3px solid transparent;
     border-radius: 99999px;
     -webkit-background-clip: padding-box, border-box;
     -webkit-background-origin: padding-box, border-box;
-    background-image: linear-gradient(0deg, #F38237, #F8DD90), -webkit-linear-gradient(#fff, #fff);
+    background-image: linear-gradient(0deg, #CAE7FF, #FFFFFF), -webkit-linear-gradient(#fff, #fff);
   }
 }
 .keyDesc {
   line-height: 1;
   font-size: 26px;
-  margin: 20px auto 0 auto;
+  margin: 21px auto 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #FFFFFF;
   img {
-    width: 40px;
-    height: auto;
+    width: auto;
+    height: 47px;
   }
 }
 .type2 {
   line-height: 1;
-  margin-top: 20px;
+  margin-top: 27px;
   display: flex;
   justify-content: center;
   text-align: center;
@@ -344,59 +344,59 @@ export default {
     align-items: center;
     justify-content: center;
     img{
-      width: 30px;
+      width: auto;
       height: 37px;
     }
   }
   .exchangeBtn1{
-    width: 244px;
-    height: 88px;
+    width: 246px;
+    height: 90px;
     font-size: 32px;
     font-weight: 400;
-    color: #FFFFFF;
+    color: #4D7DDD;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     line-height: 1;
     white-space: nowrap;
-    border: 2px solid transparent;
+    border: 3px solid transparent;
     border-radius: 99999px;
     -webkit-background-clip: padding-box, border-box;
     -webkit-background-origin: padding-box, border-box;
-    background-image: linear-gradient(0deg, #777BFF, #AFAFF2), -webkit-linear-gradient(#fff, #fff);
+    background-image: linear-gradient(0deg, #CAE7FF, #FFFFFF), -webkit-linear-gradient(#fff, #fff);
   }
   .exchangeBtn2{
-    margin-left: 20px;
-    width: 244px;
-    height: 88px;
+    margin-left: 19px;
+    width: 246px;
+    height: 90px;
     font-size: 32px;
     font-weight: 400;
-    color: #FFFFFF;
+    color: #A9792C;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     line-height: 1;
     white-space: nowrap;
-    border: 2px solid transparent;
+    border: 3px solid transparent;
     border-radius: 99999px;
     -webkit-background-clip: padding-box, border-box;
     -webkit-background-origin: padding-box, border-box;
-    background-image: linear-gradient(0deg, #F38237, #F8DD90), -webkit-linear-gradient(#fff, #fff);
+    background-image: linear-gradient(0deg, #FFF9D1, #FFFFFF), -webkit-linear-gradient(#fff, #fff);
   }
 }
 .needNumType3{
   line-height: 1;
-  font-size: 26px;
+  font-size: 32px;
   margin: 10px auto 0 auto;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
   img{
-    width: 40px;
-    height: auto;
+    width: auto;
+    height: 47px;
     margin-left: 5px;
   }
 }

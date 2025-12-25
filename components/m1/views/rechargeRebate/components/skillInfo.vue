@@ -1,12 +1,12 @@
 <template>
-  <div class="skillInfo position-relative">
+  <OutBox title="mk1_title_3.png" class="skillInfo position-relative">
     <p class="skillUpdateTip text-center">单笔充值金额≥60元，<br>可获得活动期内技能升级加成buff</p>
-    <div class="addStatus flex justify-center">当前状态：<span>{{config.skill_status?'已达标':'未达标'}}</span></div>
+    <div class="addStatus flex justify-center">当前状态：<span :class="{ 'active': config.skill_status }">{{ config.skill_status ? '已达标' : '未达标' }}</span></div>
     <div class="skillsContainer position-relative">
       <div class="skillsList flex align-center justify-center position-relative">
         <div v-for="skill in config.skill_list" :key="skill.skill_id" class="skillItem position-relative">
           <template v-if="skill.skill_id == currentSkillId">
-            <img :src="IconPath('mk2_31.png')" class="lightBg position-absolute" />
+            <img :src="IconPath('mk2_20.png')" class="lightBg position-absolute" />
             <img :src="IconPath('mk2_29.png')" class="arrow position-row-center position-absolute" />
           </template>
           <img :src="IconPath(skill.icon)" class="skillIcon position-relative" :class="{ unActive: skill.skill_id != currentSkillId }" @click="currentSkillId = skill.skill_id" />
@@ -18,8 +18,12 @@
         <!--本服世界等级-->
         <div class="serverLevel flex-column align-center width-fit position-relative">
           <div class="descTitle line-height-100 text-nowrap flex align-center">
-            本服世界等级<img :src="IconPath('mk2_27.png')" class="tip serverLevelTip" @click="bubbles[0].flag = !bubbles[0].flag" />
-            <div v-if="bubbles[0].flag" class="serverLevelBubble position-absolute flex align-center justify-center">依据当前服务器活跃玩家的平均技能等级决定，每个技能独立计算</div>
+            本服世界等级<van-popover v-model="showWorldLevelPopover" trigger="click" placement="top" :get-container="''" :close-on-click-outside="true" class="worldLevelBubble">
+              <div class="popoverMain" @click.stop>依据当前服务器活跃玩家的<br>平均技能等级决定，每个技<br>能独立计算气泡文本</div>
+              <template #reference>
+                <div class="worldLevelBubbleBtn"></div>
+              </template>
+            </van-popover>
           </div>
           <div class="serverLevelNum">{{currentSkillDesc.word_level}}</div>
         </div>
@@ -31,10 +35,12 @@
         <!--活动加成-->
         <div class="actUpPercentage flex-column align-center position-relative">
           <div class="descTitle line-height-100 text-nowrap flex align-center flex-no-wrap">
-            活动加成<img :src="IconPath('mk2_27.png')" class="tip actUpPercentageTip" @click="bubbles[1].flag = !bubbles[1].flag" />
-            <div v-if="bubbles[1].flag" class="actUpPercentageBubble flex-shrink-0 position-absolute flex align-center justify-center">
-              活动加成根据“角色技能等级”与“世界技能 等级”的差距决定，差距越大则加成越高。 每个技能独立计算；多个活动加成同时生 效时取最高加成
-            </div>
+            活动加成<van-popover v-model="showActUpPercentagePopover" trigger="click" placement="top" :get-container="''" :close-on-click-outside="true" class="actUpPercentageBubble">
+              <div class="popoverMain" @click.stop>活动加成根据"角色技能等级"与"世界技能<br>等级"的差距决定，差距越大则加成越高。<br>每个技能独立计算；多个活动加成同时生<br>效时取最高加成</div>
+              <template #reference>
+                <div class="actUpPercentageBubbleBtn"></div>
+              </template>
+            </van-popover>
           </div>
           <div class="updateStatus position-absolute line-height-100 text-nowrap">{{config.skill_status?'已生效':'未生效'}}</div>
           <div class="actUpPercentageNum deep">{{currentSkillDesc.act_add_rate}}%<img :src="IconPath('mk2_7.png')" class="upIcon" /></div>
@@ -45,7 +51,7 @@
       <!--  <li><span></span>每期活动只可激活一次加成</li>-->
       <!--</ul>-->
     </div>
-  </div>
+  </OutBox>
 </template>
 
 <script>
@@ -70,7 +76,9 @@ export default {
         { dom: null, flag: false, className: 'serverLevelTip' }, // 本服世界等级说明气泡
         { dom: null, flag: false, className: 'actUpPercentageTip' } // 活动加成说明气泡
       ],
-      currentSkillId: '1' // 当前技能id
+      currentSkillId: '1', // 当前技能id
+      showWorldLevelPopover: false, // 本服世界等级气泡
+      showActUpPercentagePopover: false // 活动加成气泡
     }
   },
   computed: {
@@ -96,33 +104,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.skillInfo{
-  .skillUpdateTip{
-    font-size: 28px;
-    color: #0767C1;
-    line-height: 36px;
-    margin-bottom: 20px;
+.skillInfo {
+  .skillUpdateTip {
+    font-size: 30px;
+    color: #DDC7FF;
+    line-height: 38px;
+    margin-bottom: 11px;
   }
-  .addStatus{
+  .addStatus {
     font-weight: bold;
     font-size: 28px;
-    color: #0767C1;
-    >span{
-      color: #EB4382;
+    color: #DDC7FF;
+    >span {
+      color: #996AFA;
+      &.active {
+        color: #FFEF69;
+      }
     }
   }
   .skillsContainer {
-    //width: 750px;
-    //height: 248px;
-    //background: url('@/assets/mk1_18.png') no-repeat top left/100% 100%;
-    //padding-top: 22px;
-    .topTip {
-      font-weight: 500;
-      font-size: 26px;
-      color: #ffffff;
-    }
     .skillsList {
-      padding-top: 21px;
+      padding-top: 40px;
       .skillItem {
         width: 96px;
         height: 96px;
@@ -133,6 +135,7 @@ export default {
         .skillIcon {
           width: 100%;
           height: 100%;
+          transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
           &.unActive {
             opacity: 0.5;
             transform: scale(0.8);
@@ -157,12 +160,13 @@ export default {
     .skillDes {
       width: 696px;
       height: 163px;
-      background: linear-gradient(180deg, #4D9DEE, #69C0D9);
+      background: linear-gradient(0deg, #8F66C7, #383978);
       border-radius: 30px;
       font-weight: 500;
       font-size: 24px;
       color: #ffffff;
       padding: 30px 50px 23px 59px;
+      box-shadow: inset 0 0 27px 15px rgba(232, 153, 255, 0.5);
       .deep {
         font-weight: 800;
         font-size: 44px;
@@ -197,23 +201,48 @@ export default {
       .serverLevel {
         .serverLevelNum {
           @extend .num;
-          background: rgba(19, 111, 181, 0.5);
+          background: rgba(67, 41, 149, 0.5);
           border-radius: 38px;
           font-weight: 800;
           font-size: 44px;
           color: #81F8FF;
           width: 152px;
         }
-        .serverLevelBubble {
-          $height: 120px;
-          top: -($height + 4);
-          left: 31px;
-          width: 270px;
-          height: $height;
-          @extend .bubbleText;
-          padding: 0 15px 15px;
-          background: url('@/pages/yearCelebration/assets/mk2_28.png') no-repeat top left/100% 100%;
-          white-space: normal;
+        .worldLevelBubble {
+          margin-left: 9px;
+          display: block;
+          width: 25px;
+          height: 25px;
+          background: url('@/pages/yearCelebration/assets/mk2_27.png') no-repeat left top/100% 100%; // 气派按钮
+        }
+        ::v-deep .van-popover {
+          top: -125px !important; // 气泡相对于按钮的顶部位置
+          max-height: none !important;
+          .van-popover__content {
+            width: fit-content;
+            height: fit-content;
+            background: none;
+            box-shadow: none;
+            overflow: visible;
+            .popoverMain {
+              margin-left: 0; // 气泡相对于按钮的左侧位置
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 20px;
+              font-weight: 500;
+              color: #FFFFFF;
+              line-height: 28px;
+              width: 270px;
+              height: 122px;
+              background: url('@/pages/yearCelebration/assets/mk2_28.png') no-repeat left top/100% 100%; // 气泡文本背景
+              padding: 0 0 15px;
+              white-space: nowrap;
+            }
+          }
+          .van-popover__arrow {
+            display: none;
+          }
         }
       }
       .mySkillLevel {
@@ -239,16 +268,41 @@ export default {
           font-size: 22px;
           color: #81F8FF;
         }
-        .actUpPercentageBubble {
-          $height: 145px;
-          top: -($height + 4);
-          right: -69px;
-          width: 405px;
-          height: $height;
-          @extend .bubbleText;
-          padding: 0 14px 15px 20px;
-          background: url('@/pages/yearCelebration/assets/mk2_30.png') no-repeat top left/100% 100%;
-          white-space: normal;
+        .actUpPercentageBubbleBtn {
+          margin-left: 9px;
+          display: block;
+          width: 25px;
+          height: 25px;
+          background: url('@/pages/yearCelebration/assets/mk2_27.png') no-repeat left top/100% 100%; // 气泡按钮
+        }
+        ::v-deep .van-popover {
+          top: -150px !important; // 气泡相对于按钮的顶部位置
+          max-height: none !important;
+          .van-popover__content {
+            width: fit-content;
+            height: fit-content;
+            background: none;
+            box-shadow: none;
+            overflow: visible;
+            .popoverMain {
+              margin-left: -240px; // 气泡相对于按钮的左侧位置
+              display: flex;
+              align-items: center;
+              // justify-content: center;
+              font-size: 20px;
+              font-weight: 500;
+              color: #FFFFFF;
+              line-height: 28px;
+              width: 405px;
+              height: 147px;
+              background: url('@/pages/yearCelebration/assets/mk2_30.png') no-repeat left top/100% 100%; // 气泡文本背景
+              padding: 0 0 18px 23px;
+              white-space: nowrap;
+            }
+          }
+          .van-popover__arrow {
+            display: none;
+          }
         }
       }
     }
