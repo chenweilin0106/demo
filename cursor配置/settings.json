@@ -1,5 +1,4 @@
 {
-  "window.commandCenter": true,
   "editor.cursorBlinking": "expand",
   "editor.cursorSmoothCaretAnimation": "on",
   "workbench.reduceMotion": "off",
@@ -28,9 +27,6 @@
   "gitlens.graph.layout": "editor",
   "gitlens.currentLine.enabled": false,
   "gitlens.currentLine.pullRequests.enabled": false,
-  "cursor.cpp.disabledLanguages": [
-    "plaintext"
-  ],
   "editor.wordSeparators": "`~!@$%^&*()=+[{]}\\|;:'\",.<>/?",
   "eslint.format.enable": true,
   "[jsonc]": {
@@ -81,19 +77,20 @@
   ],
   "editor.smoothScrolling": true,
   "errorLens.statusBarColorsEnabled": true,
-  "editor.scrollBeyondLastLine": false,
   "http.proxy": "http://127.0.0.1:7890",
   "http.proxyStrictSSL": false,
   "http.proxySupport": "override",
   "http.noProxy": [],
   "editor.stickyScroll.enabled": false,
-  "workbench.activityBar.orientation": "vertical",
   "errorLens.enabled": true,
   "errorLens.messageTemplate": "$message [$source]",
-  "editor.fontFamily": "Fira Code, 'Courier New', monospace",
-  "window.menuBarVisibility": "compact",
-  "switch2idea.ideaPath": "E:\\WebStorm 2024.3\\bin\\webstorm64.exe",
-  "editor.bracketPairColorization.enabled": false,
+  "switch2idea.ideaPath": "D:\\WebStorm 2025.2.5\\bin\\webstorm64.exe",
+  "update.enableWindowsBackgroundUpdates": false,
+  "editor.fontFamily": "JetBrains Mono, 'PingFang SC', monospace",
+  "cursor.cpp.disabledLanguages": [
+    "plaintext"
+  ],
   "update.mode": "none",
-  "update.enableWindowsBackgroundUpdates": false
+  "workbench.colorTheme": "Default Dark+",
+  "workbench.activityBar.orientation": "vertical"
 }
