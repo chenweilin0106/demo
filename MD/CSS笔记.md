@@ -547,19 +547,17 @@
     }
     ```
 
-31. [IOS，软键盘收回，可能会出现底部安全区域留白](https://cloud.tencent.com/developer/article/1484448?policyId=1004)；
+31. IOS，H5上，透明边框可能会导致圆角失效；
 
-32. IOS，H5上，透明边框可能会导致圆角失效；
+32. IOS，H5，position: absolute;可能会和width: fit-content;冲突，导致width: fit-content失效。解决方案：position: absolute;之后就不需要使用width: fit-content;了；
 
-33. IOS，H5，position: absolute;可能会和width: fit-content;冲突，导致width: fit-content失效。解决方案：position: absolute;之后就不需要使用width: fit-content;了；
-
-34. 字体回退设置：
+33. 字体回退设置：
 
     ```css
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     ```
 
-35. 优秀按钮模板
+34. 优秀按钮模板
 
     ```scss
     <div class="apple-button">按钮</div>  

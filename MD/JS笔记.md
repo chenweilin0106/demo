@@ -805,3 +805,9 @@
     }
     </script>
     ```
+
+36. [IOS，软键盘收回，可能会出现底部安全区域留白](https://cloud.tencent.com/developer/article/1484448?policyId=1004)；
+
+    ```javascript
+    window.scrollTo(0, 0)
+    ```
