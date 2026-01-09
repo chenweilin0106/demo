@@ -1,0 +1,94 @@
+{
+  "profiles": [
+    {
+      "name": "2026-valentineDay", 
+      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2026valentineDay", 
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue", 
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      }, 
+      "defaultBuildScripts": {
+        "dev": "npm run build:test", 
+        "test": "npm run build:test"
+      }, 
+      "svnDefaultTargetRel": "love2026", 
+      "svnTargetRootRel": "normal"
+    },
+    {
+      "name": "2026-weekly", 
+      "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\2026", 
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue", 
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      }, 
+      "defaultBuildScripts": {
+        "dev": "npm run build:test", 
+        "test": "npm run build:test"
+      }, 
+      "svnDefaultTargetRel": "page", 
+      "svnTargetRootRel": "weekly"
+    },
+    {
+      "name": "vipDay", 
+      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2024vipDay", 
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue", 
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      }, 
+      "defaultBuildScripts": {
+        "dev": "npm run build:test", 
+        "test": "npm run build:test"
+      }, 
+      "svnDefaultTargetRel": "vipDay", 
+      "svnTargetRootRel": "normal"
+    },
+    {
+      "name": "repeat", 
+      "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\repeat", 
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue", 
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      }, 
+      "defaultBuildScripts": {
+        "dev": "npm run build:test", 
+        "test": "npm run build:test"
+      }, 
+      "svnDefaultTargetRelFromEnv": "VUE_APP_ICON_PATH", 
+      "svnDefaultTargetRelMap": {
+        "crazyEgg": "crazyEgg", 
+        "skillGift": "skillGift", 
+        "sparParty": "sparParty", 
+        "luckyFlop": "luckyFlop"
+      }, 
+      "svnTargetRootRel": "weekly"
+    },
+    {
+      "name": "newerBenefit", 
+      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\newerBenefit", 
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue", 
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      }, 
+      "defaultBuildScripts": {
+        "dev": "npm run build:test", 
+        "test": "npm run build:test"
+      }, 
+      "svnDefaultTargetRel": "newerBenefit", 
+      "svnTargetRootRel": "normal"
+    },
+    {
+      "name": "2025-weekly", 
+      "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\2025", 
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue", 
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      }, 
+      "defaultBuildScripts": {
+        "dev": "npm run build:test", 
+        "test": "npm run build:test"
+      }, 
+      "svnDefaultTargetRel": "page", 
+      "svnTargetRootRel": "weekly"
+    }
+  ]
+}
