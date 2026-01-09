@@ -62,7 +62,7 @@ export default {
 <style scoped lang="scss">
 ::v-deep .popupContent {
   .main {
-    margin-top: 135px;
+    margin-top: 135px !important;
     .list {
       $itemHeight: 128px; /*图标高度*/
       $textHeight: 2 * 18 + 21px; /*文本距离图标位置 文字距离图标距离 * 2 + 文本高度*/

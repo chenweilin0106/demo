@@ -9,7 +9,7 @@
           <div class="topItemUsername ellipsis position-absolute position-row-center">{{ item.username }}</div>
           <template v-if="item.rank != 1">
             <div class="topItemNumText position-absolute position-row-center">距离上一名</div>
-            <div class="topItemNum position-absolute position-row-center">{{ item.num || 0 }}{{ valueName }}</div>
+            <div class="topItemNum position-absolute position-row-center">{{ item.num }}{{ valueName }}</div>
           </template>
         </div>
       </div>
@@ -20,7 +20,7 @@
           <div class="totalRankItemName position-absolute position-column-center ellipsis">{{ item.username }}</div>
           <div class="totalRankItemTime position-absolute position-column-center">
             <p>距离上一名</p>
-            <span>{{ item.diff || 0 }}{{ valueName }}</span>
+            <span>{{ item.diff }}{{ valueName }}</span>
           </div>
         </div>
       </div>

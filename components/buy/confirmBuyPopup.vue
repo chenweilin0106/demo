@@ -4,7 +4,7 @@
       <div v-for="(item,index) in config.list" :key="index" class="award flex-column align-center">
         <div class="icon position-relative">
           <!--<div v-if="popupTypeName[item.type]||popupTypeName[item.id]" class="typeLabel line-height-1 flex align-center justify-center radius-999 position-absolute">{{popupTypeName[item.type]||popupTypeName[item.id]}}</div>-->
-          <PublicImg :imgName="item.icon" />
+          <PublicImg :imgName="item.icon" :imgType="item.type" />
         </div>
         <div class="text w-100 flex align-center justify-center line-height-1 text-nowrap">{{item.text}}</div>
       </div>

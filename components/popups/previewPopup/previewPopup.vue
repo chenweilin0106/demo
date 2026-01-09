@@ -134,14 +134,13 @@ export default {
       white-space: pre-wrap;
       line-height: 1;
       position: relative;
+      display: flex;
+      align-items: center;
       .zpMark {
+        margin-right: 5px;
         width: 66px;
-        height: 34px;
+        height: 33px;
         background: url('@/pages/labaFestival/assets/tk_20.png') no-repeat left top/100% 100%;
-        position: absolute;
-        left: -68px;
-        top: 50%;
-        transform: translateY(-50%);
       }
     }
     .tip2Text {
