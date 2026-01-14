@@ -112,7 +112,7 @@ export default {
         }
       }
       .topItemUsername {
-        width: 100%;
+        width: 195px;
         font-size: 26px;
         color: #FFFFFF;
         text-align: center;
@@ -132,7 +132,7 @@ export default {
       }
       .topItemNum {
         text-align: center;
-        width: 100%;
+        width: 195px;
         font-size: 22px;
         color: #A96D28;
       }
@@ -230,6 +230,7 @@ export default {
         }
         .topItemUsername{
           top: 110px;
+          width: 170px;
         }
         .topItemUid{
           top: 140px;
@@ -239,6 +240,7 @@ export default {
         }
         .topItemNum{
           top: 213px;
+          width: 170px;
         }
         .topItemPetInfo {
           top: 24px;
@@ -277,6 +279,7 @@ export default {
         }
         .topItemUsername{
           top: 110px;
+          width: 170px;
         }
         .topItemUid{
           top: 140px;
@@ -286,6 +289,7 @@ export default {
         }
         .topItemNum{
           top: 213px;
+          width: 170px;
         }
         .topItemPetInfo {
           top: 24px;

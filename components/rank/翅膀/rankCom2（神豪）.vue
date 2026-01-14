@@ -31,9 +31,9 @@
       <div :class="['totalRankName ellipsis position-absolute position-column-center']">{{userRankShow.username}}</div>
       <div class="isShowNameDiv position-absolute flex align-center">
         <span>公开昵称&nbsp;</span>
-        <div :class="['isShowBtn', userRankShow.hide_name?null:'statusShow']" @click="$emit('isShowBtnCk')"></div>
+        <div :class="['isShowBtn', userRankShow.is_show_name == 1?null:'statusShow']" @click="$emit('isShowBtnCk')"></div>
       </div>
-      <div :class="['totalRankTime position-absolute line-height-1']">{{userRankShow.time}}<span>{{valueName}}</span></div>
+      <div :class="['totalRankTime position-absolute line-height-1']">{{userRankShow.score}}<span>{{valueName}}</span></div>
     </div>
   </div>
 </template>
@@ -82,7 +82,7 @@ export default {
         }
       }
       .topItemUsername {
-        width: 100%;
+        width: 195px;
         font-size: 26px;
         color: #FFFFFF;
         text-align: center;
@@ -93,7 +93,7 @@ export default {
       }
       .topItemNum {
         text-align: center;
-        width: 100%;
+        width: 195px;
         font-size: 22px;
         color: #A96D28;
       }
@@ -160,12 +160,14 @@ export default {
         }
         .topItemUsername{
           top: 105px;
+          width: 170px;
         }
         .topItemNumText{
           top: 142px;
         }
         .topItemNum{
           top: 170px;
+          width: 170px;
         }
       }
       &.topItem_3{
@@ -198,12 +200,14 @@ export default {
         }
         .topItemUsername{
           top: 105px;
+          width: 170px;
         }
         .topItemNumText{
           top: 142px;
         }
         .topItemNum{
           top: 170px;
+          width: 170px;
         }
       }
     }
@@ -261,7 +265,7 @@ export default {
     font-weight: 500;
     font-size: 22px;
     color: #FFF2A9;
-    left: 42px;
+    left: 22px;
     background: url('@/assets/mk6_39.png') no-repeat left top/100% 100%;
   }
   .totalRankAvatar{
@@ -271,12 +275,12 @@ export default {
     border: 4px solid transparent;
     background-color: #E89161;
     object-fit: cover;
-    left: 115px;
+    left: 95px;
   }
   .totalRankName{
     width: 220px;
     font-size: 26px;
-    left: 212px;
+    left: 197px;
   }
   .isShowNameDiv{
     font-size: 22px;
