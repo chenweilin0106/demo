@@ -179,7 +179,7 @@ function Format-Duration {
   )
 
   $totalHours = [int][Math]::Floor($Span.TotalHours)
-  return ('{0:00}:{1:00}:{2:00}' -f $totalHours, $Span.Minutes, $Span.Seconds)
+  return ('{0:00}:{1:00}:{2:00}.{3:000}' -f $totalHours, $Span.Minutes, $Span.Seconds, $Span.Milliseconds)
 }
 
 function Get-EnvValue {

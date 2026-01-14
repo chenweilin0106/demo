@@ -1,5 +1,21 @@
 ﻿[
   {
+    "Env": "dev",
+    "TargetRootRel": "normal",
+    "TargetRel": "love2026",
+    "Message": "情人节活动-最佳拍档-具体数值样式修复",
+    "BuildScript": "npm run build:test",
+    "Profile": "2026-valentineDay",
+    "ProfileHash": "6db9054ab13daaeb34d3bfc3a485a8035a55a5ebf9f782edf32a98bee67288c1",
+    "ProjectRoot": "D:\\Project\\dandan-activity-web\\normal\\2026valentineDay",
+    "StartTime": "2026-01-14 13:44:12",
+    "EndTime": "2026-01-14 13:44:29",
+    "Duration": "00:00:16.897",
+    "SvnRevision": "51253",
+    "Succeeded": true,
+    "Error": null
+  },
+  {
     "Env": "test",
     "TargetRootRel": "normal",
     "TargetRel": "love2026",
