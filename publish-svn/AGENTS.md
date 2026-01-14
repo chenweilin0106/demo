@@ -19,9 +19,16 @@ There are no submodules, tests, or source folders beyond these root files.
 
 This repo does not define its own build or test steps; builds are executed in the target project via `defaultBuildScripts` (commonly `npm run build:test`).
 
+## Sync Behavior Notes
+
+- Sync logic is file-based, not robocopy. Hash-named files are only copied when missing; non-hash files are force-overwritten.
+- Files present in the target but missing from source are deleted; empty directories are cleaned up.
+- The script prints per-file sync details plus a summary (added/overwritten/skipped/deleted + byte counts).
+- `svn commit` is skipped when `svn status` is empty and is only considered successful when output contains `Committed revision`.
+
 ## Coding Style & Naming Conventions
 
-- PowerShell style with 2-space indentation and PascalCase function names (e.g., `Invoke-SvnWithSpinner`).
+- PowerShell style with 2-space indentation and PascalCase function names (e.g., `Invoke-Svn`).
 - Parameters use PascalCase (`-ProjectRoot`) and variables use camelCase (`$lastEntries`).
 - Keep strings ASCII unless the file already uses localized text; this repo includes Chinese commit messages and prompts.
 

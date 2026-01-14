@@ -71,6 +71,12 @@ function Invoke-Svn {
 
   $output = & svn @SvnArgs 2>&1
   $output | Out-Host
+  if ($DebugSvn) {
+    $argText = ($SvnArgs | ForEach-Object { Format-ArgValue $_ }) -join ' '
+    $workDir = (Get-Location).Path
+    $exitCode = $LASTEXITCODE
+    Write-SvnDebugLog -Command ("svn {0}" -f $argText) -WorkDir $workDir -ExitCode $exitCode -Output $output
+  }
   if ($LASTEXITCODE -ne 0) {
     $details = ($output | Out-String).Trim()
     if ($details) {
@@ -108,6 +114,33 @@ function Invoke-CommandUtf8 {
   }
 }
 
+function Write-SvnDebugLog {
+  param(
+    [string]$Command,
+    [string]$WorkDir,
+    [int]$ExitCode,
+    [string[]]$Output
+  )
+
+  if (-not $DebugSvn) {
+    return
+  }
+
+  $debugPath = Join-Path $PSScriptRoot 'publish-svn.svn-debug.log'
+  $timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
+  $outputText = ($Output | Out-String).TrimEnd()
+  @(
+    "[$timestamp]",
+    "Command: $Command",
+    "WorkDir: $WorkDir",
+    "ExitCode: $ExitCode",
+    '--- OUTPUT ---',
+    $outputText,
+    '--- END ---',
+    ''
+  ) | Add-Content -Path $debugPath -Encoding UTF8
+}
+
 function Format-ArgValue {
   param(
     [string]$Value
@@ -118,6 +151,26 @@ function Format-ArgValue {
   }
 
   return $Value
+}
+
+function Format-ByteSize {
+  param(
+    [int64]$Bytes
+  )
+
+  if ($Bytes -lt 1024) {
+    return ('{0} B' -f $Bytes)
+  }
+  $kb = $Bytes / 1024
+  if ($kb -lt 1024) {
+    return ('{0:N2} KB' -f $kb)
+  }
+  $mb = $kb / 1024
+  if ($mb -lt 1024) {
+    return ('{0:N2} MB' -f $mb)
+  }
+  $gb = $mb / 1024
+  return ('{0:N2} GB' -f $gb)
 }
 
 function Format-Duration {
@@ -166,7 +219,9 @@ function Write-ResultSummary {
     [string]$ErrorMessage
   )
 
-  Write-Host '结果:'
+  Write-Host ''
+  Write-Host '--- 结果 ---'
+  Write-Host ''
   Write-Host " - 状态: $Status"
   if (-not [string]::IsNullOrWhiteSpace($ErrorMessage)) {
     Write-Host " - 错误: $ErrorMessage"
@@ -874,6 +929,9 @@ try {
     }
   }
   if (-not $NoBuild -and $BuildScript) {
+    Write-Host ''
+    Write-Host '--- 构建 ---'
+    Write-Host ''
     Write-Host "执行构建: $BuildScript"
     Push-Location $ProjectRoot
     try {
@@ -937,6 +995,9 @@ try {
   }
 
   if ($targetIsWorkingCopy) {
+    Write-Host ''
+    Write-Host '--- SVN 更新 ---'
+    Write-Host ''
     Push-Location $TargetPath
     try {
       Invoke-Svn -SvnArgs @('update') -ErrorMessage "svn update 失败: $TargetPath"
@@ -945,6 +1006,9 @@ try {
     }
   } else {
     $isNewTarget = $true
+    Write-Host ''
+    Write-Host '--- SVN 更新 ---'
+    Write-Host ''
     if ($targetExists) {
       Write-Host "目标目录存在但未加入版本控制（未 svn add/commit），先更新父目录: $TargetRoot"
     } else {
@@ -971,65 +1035,112 @@ try {
   }
 
 
-  if (Test-Path $TargetPath) {
-    $existingItems = Get-ChildItem -Force -LiteralPath $TargetPath | Where-Object { $_.Name -ne '.svn' }
-    if (-not $targetIsWorkingCopy) {
-      foreach ($item in $existingItems) {
-        Remove-Item -LiteralPath $item.FullName -Recurse -Force
-      }
-    } else {
-      $unversionedTop = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
-      $statusLines = $null
-      $statusExitCode = 0
-      Push-Location $TargetPath
-      try {
-        $statusLines = & svn status --depth immediates . 2>&1
-        $statusExitCode = $LASTEXITCODE
-      } finally {
-        Pop-Location
-      }
-      if ($statusExitCode -ne 0) {
-        $details = ($statusLines | Out-String).Trim()
-        if ($details) {
-          throw "svn status 失败: $TargetPath`n$details"
+  Write-Host ''
+  Write-Host '--- 同步 ---'
+  Write-Host ''
+  Write-Host "源路径: $SourcePath"
+  Write-Host "目标路径: $TargetPath"
+  Write-Host '同步策略: hash 文件仅按文件名同步; 非 hash 文件强制覆盖'
+
+  $sourceRoot = (Resolve-Path $SourcePath -ErrorAction Stop).Path.TrimEnd('\')
+  $targetRoot = (Resolve-Path $TargetPath -ErrorAction Stop).Path.TrimEnd('\')
+  $hashPattern = '\.[0-9a-f]{8,}\.'
+  $sourceRelSet = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+  $createdDirs = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+  $syncDetails = New-Object 'System.Collections.Generic.List[string]'
+  $addedCount = 0
+  $overwriteCount = 0
+  $skipCount = 0
+  $deleteCount = 0
+  $copiedBytes = [int64]0
+  $deletedBytes = [int64]0
+
+  $sourceFiles = Get-ChildItem -Path $sourceRoot -Recurse -File
+  foreach ($file in $sourceFiles) {
+    $relPath = $file.FullName.Substring($sourceRoot.Length + 1)
+    [void]$sourceRelSet.Add($relPath)
+
+    $targetFile = Join-Path $targetRoot $relPath
+    $isHashFile = $file.Name -match $hashPattern
+    $shouldCopy = -not $isHashFile -or -not (Test-Path $targetFile)
+    if ($shouldCopy) {
+      $targetDir = Split-Path $targetFile -Parent
+      if (-not (Test-Path $targetDir)) {
+        New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+        if (-not $createdDirs.Contains($targetDir)) {
+          [void]$createdDirs.Add($targetDir)
+          $relDir = $targetDir.Substring($targetRoot.Length + 1)
+          $syncDetails.Add(("新目录 {0}" -f $relDir))
         }
-        throw "svn status 失败: $TargetPath"
       }
-      foreach ($line in $statusLines) {
-        if ($line -match '^\?\s+(?<path>.+)$') {
-          $name = $Matches['path'].Trim()
-          if ($name) {
-            [void]$unversionedTop.Add($name)
-          }
-        }
-      }
-      foreach ($item in $existingItems) {
-        if ($unversionedTop.Contains($item.Name)) {
-          Remove-Item -LiteralPath $item.FullName -Recurse -Force
+      Copy-Item -LiteralPath $file.FullName -Destination $targetFile -Force
+      if (Test-Path $targetFile) {
+        $sizeText = Format-ByteSize $file.Length
+        if ($isHashFile) {
+          $addedCount++
+          $syncDetails.Add(("新文件 {0,12} {1}" -f $sizeText, $relPath))
         } else {
-          Invoke-Svn -SvnArgs @('delete', '--force', $item.FullName) -ErrorMessage "svn delete 失败: $($item.FullName)"
+          $overwriteCount++
+          $syncDetails.Add(("覆盖   {0,12} {1}" -f $sizeText, $relPath))
         }
       }
+      $copiedBytes += $file.Length
+    } else {
+      $skipCount++
+      $sizeText = Format-ByteSize $file.Length
+      $syncDetails.Add(("已存在 {0,12} {1}" -f $sizeText, $relPath))
     }
   }
 
-  $roboArgs = @(
-    $SourcePath,
-    $TargetPath,
-    '/E',
-    '/COPY:DAT',
-    '/DCOPY:DAT',
-    '/R:1',
-    '/W:1',
-    '/XD',
-    '.svn'
-  )
-
-  Write-Host "同步 $SourcePath -> $TargetPath"
-  & robocopy @roboArgs | Out-Host
-  if ($LASTEXITCODE -ge 8) {
-    throw "robocopy 失败，退出码: $LASTEXITCODE"
+  $targetFiles = Get-ChildItem -Path $targetRoot -Recurse -File -Force | Where-Object {
+    $_.FullName -notmatch '\\\.svn(\\|$)'
   }
+  foreach ($file in $targetFiles) {
+    $relPath = $file.FullName.Substring($targetRoot.Length + 1)
+    if (-not $sourceRelSet.Contains($relPath)) {
+      $deleteCount++
+      $deletedBytes += $file.Length
+      $sizeText = Format-ByteSize $file.Length
+      $syncDetails.Add(("删除   {0,12} {1}" -f $sizeText, $relPath))
+      Remove-Item -LiteralPath $file.FullName -Force
+    }
+  }
+
+  $targetDirs = Get-ChildItem -Path $targetRoot -Recurse -Directory -Force | Where-Object {
+    $_.FullName -notmatch '\\\.svn(\\|$)'
+  } | Sort-Object { $_.FullName.Length } -Descending
+  foreach ($dir in $targetDirs) {
+    $items = Get-ChildItem -LiteralPath $dir.FullName -Force
+    if (-not $items) {
+      Remove-Item -LiteralPath $dir.FullName -Force
+    }
+  }
+
+  if ($syncDetails.Count -gt 0) {
+    Write-Host '同步详情:'
+    foreach ($line in $syncDetails) {
+      Write-Host $line
+    }
+  } else {
+    Write-Host '同步详情: 无'
+  }
+  Write-Host ("统计: 新增 {0} 覆盖 {1} 已存在 {2} 删除 {3} 复制 {4} 删除 {5}" -f `
+    $addedCount, $overwriteCount, $skipCount, $deleteCount, (Format-ByteSize $copiedBytes), (Format-ByteSize $deletedBytes))
+
+  $forceFiles = @('index.html', 'favicon.ico')
+  foreach ($forceFile in $forceFiles) {
+    $sourceFile = Join-Path $SourcePath $forceFile
+    if (Test-Path $sourceFile) {
+      $targetFile = Join-Path $TargetPath $forceFile
+      Copy-Item -LiteralPath $sourceFile -Destination $targetFile -Force
+    }
+  }
+
+  Write-Host ''
+  Write-Host '--- SVN 状态 ---'
+  Write-Host ''
+
+  $commitSkipped = $false
 
   Push-Location $TargetPath
   try {
@@ -1043,17 +1154,56 @@ try {
       Invoke-Svn -SvnArgs @('delete', $m) -ErrorMessage "svn delete 失败: $m"
     }
 
-    & svn status | Out-Host
+    $statusLines = & svn status
+    $statusText = ($statusLines | Out-String).Trim()
+    if ($statusText) {
+      $statusLines | Out-Host
+    } else {
+      Write-Host 'svn status: 无改动'
+    }
 
     if (-not $NoCommit) {
-      $commitStart = Get-Date
-      Invoke-Svn -SvnArgs @('commit', '-m', $Message) -ErrorMessage 'svn commit 失败。'
-      $commitEnd = Get-Date
-      $commitDuration = Format-Duration ($commitEnd - $commitStart)
-      Write-Host "svn commit 耗时: $commitDuration"
-      Invoke-Svn -SvnArgs @('cleanup', $TargetPath) -ErrorMessage 'svn cleanup 失败。'
-      $svnInfo = & svn info $TargetPath 2>$null
-      $lastRev = ($svnInfo | Where-Object { $_ -match '^Revision:\s+' } | Select-Object -First 1) -replace '^Revision:\s+', ''
+      if (-not $statusText) {
+        Write-Host '无变更，跳过提交。'
+        $commitSkipped = $true
+      } else {
+        Write-Host ''
+        Write-Host '--- SVN 提交 ---'
+        Write-Host ''
+        $commitStart = Get-Date
+        $commitOutput = & svn commit -m $Message 2>&1
+        $commitOutput | Out-Host
+        $commitExitCode = $LASTEXITCODE
+        if ($DebugSvn) {
+          $argText = @('commit', '-m', $Message) | ForEach-Object { Format-ArgValue $_ }
+          $argText = $argText -join ' '
+          $workDir = (Get-Location).Path
+          Write-SvnDebugLog -Command ("svn {0}" -f $argText) -WorkDir $workDir -ExitCode $commitExitCode -Output $commitOutput
+        }
+        if ($commitExitCode -ne 0) {
+          $details = ($commitOutput | Out-String).Trim()
+          if ($details) {
+            throw "svn commit 失败。`n$details"
+          }
+          throw 'svn commit 失败。'
+        }
+        $commitText = ($commitOutput | Out-String).Trim()
+        if ($commitText -match '(?m)^Committed revision\s+(?<rev>\d+)\b') {
+          $lastRev = $Matches['rev']
+        } elseif ($commitText -match '(?m)^Committed revision:\s*(?<rev>\d+)\b') {
+          $lastRev = $Matches['rev']
+        } elseif ($commitText -match '(?m)^提交(?:修订版|版本)?\s*(?<rev>\d+)\b') {
+          $lastRev = $Matches['rev']
+        } else {
+          throw "svn commit 未返回新版本号，请检查提交日志。"
+        }
+        $commitEnd = Get-Date
+        $commitDuration = Format-Duration ($commitEnd - $commitStart)
+        Write-Host "svn commit 耗时: $commitDuration"
+        Invoke-Svn -SvnArgs @('cleanup', $TargetPath) -ErrorMessage 'svn cleanup 失败。'
+      }
+    } else {
+      $commitSkipped = $true
     }
   } finally {
     Pop-Location
@@ -1081,7 +1231,7 @@ try {
 
   $lastEntries = Update-LastHistory -NewEntry $newLast -ExistingEntries $lastEntries -Path $lastPath
 
-  $commitStatus = if ($NoCommit) { '已跳过' } else { '已完成' }
+  $commitStatus = if ($NoCommit) { '已跳过' } elseif ($commitSkipped) { '已跳过(无改动)' } else { '已完成' }
   Write-ResultSummary `
     -Status '成功' `
     -EnvValue $Env `
