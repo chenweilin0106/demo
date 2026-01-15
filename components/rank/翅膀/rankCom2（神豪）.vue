@@ -6,10 +6,10 @@
           <div class="topItemAvatarBorder position-row-center position-absolute">
             <img class="radius-50 fit-cover block position-absolute position-row-center topItemAvatar" v-lazy="IconPath(item.profile_image || avatarDefault)" @error="imgAtError" />
           </div>
-          <div class="topItemUsername ellipsis position-absolute position-row-center">{{ item.username }}</div>
+          <div class="topItemUsername ellipsis position-absolute">{{ item.username }}</div>
           <template v-if="item.rank != 1">
-            <div class="topItemNumText position-absolute position-row-center">距离上一名</div>
-            <div class="topItemNum position-absolute position-row-center">{{ item.diff }}{{ valueName }}</div>
+            <div class="topItemNumText position-absolute">距离上一名</div>
+            <div class="topItemNum position-absolute">{{ item.diff }}{{ valueName }}</div>
           </template>
         </div>
       </div>
@@ -82,7 +82,6 @@ export default {
         }
       }
       .topItemUsername {
-        width: 195px;
         font-size: 26px;
         color: #FFFFFF;
         text-align: center;
@@ -93,7 +92,6 @@ export default {
       }
       .topItemNum {
         text-align: center;
-        width: 195px;
         font-size: 22px;
         color: #A96D28;
       }
@@ -128,6 +126,8 @@ export default {
         }
         .topItemUsername{
           top: 130px;
+          left: 44px;
+          width: 181px;
         }
       }
       &.topItem_2{
@@ -160,14 +160,17 @@ export default {
         }
         .topItemUsername{
           top: 105px;
-          width: 170px;
+          left: 56px;
+          width: 159px;
         }
         .topItemNumText{
           top: 142px;
+          left: 85px;
         }
         .topItemNum{
           top: 170px;
-          width: 170px;
+          left: 56px;
+          width: 159px;
         }
       }
       &.topItem_3{
@@ -200,14 +203,17 @@ export default {
         }
         .topItemUsername{
           top: 105px;
-          width: 170px;
+          left: 56px;
+          width: 159px;
         }
         .topItemNumText{
           top: 142px;
+          left: 85px;
         }
         .topItemNum{
           top: 170px;
-          width: 170px;
+          left: 56px;
+          width: 159px;
         }
       }
     }
@@ -247,7 +253,7 @@ export default {
         p{
           font-size: 22px;
           color: #884425;
-          margin-bottom: 16px;
+          margin-bottom: 18px;
         }
       }
     }
@@ -285,8 +291,8 @@ export default {
   .isShowNameDiv{
     font-size: 22px;
     color: #FFEF85;
-    right: 55px;
-    top: 41px;
+    right: 47px;
+    top: 40px;
     .isShowBtn{
       width: 58px;
       height: 29px;
@@ -300,8 +306,8 @@ export default {
     font-size: 24px;
     color: #FFFFFF;
     text-align: right;
-    right: 57px;
-    bottom: 41px;
+    right: 49px;
+    bottom: 44px;
   }
 }
 </style>

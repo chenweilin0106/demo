@@ -6,16 +6,16 @@
           <div class="topItemAvatarBorder position-row-center position-absolute">
             <img class="radius-50 fit-cover block position-absolute position-row-center topItemAvatar" v-lazy="IconPath(item.profile_image || avatarDefault)" @error="imgAtError" @click="toUserMain(item.uid)" />
           </div>
-          <div class="topItemUsername ellipsis position-absolute position-row-center">{{ item.username }}</div>
-          <div class="position-absolute position-row-center userPrettyCode topItemUid">
+          <div class="topItemUsername ellipsis position-absolute">{{ item.username }}</div>
+          <div class="position-absolute userPrettyCode topItemUid">
             <lazy-component class="havenBg" v-if="item.pretty_type!=0">
               <PublicImg :imgName="$store.state.prettyTypeBg[item.pretty_type]" />
             </lazy-component>
             <span v-if="item.pretty_type!=0" :class="['prettyCode', `color${item.pretty_type}`]">{{item.code}}</span>
             <span v-else class="noPrettyCode">ID:{{item.code || '--'}}</span>
           </div>
-          <div class="topItemNumText position-absolute position-row-center">{{ valueName }}</div>
-          <div class="topItemNum ellipsis position-absolute position-row-center">{{ item.score }}</div>
+          <div class="topItemNumText position-absolute">{{ valueName }}</div>
+          <div class="topItemNum ellipsis position-absolute">{{ item.score }}</div>
           <div v-if="item.pet_info && Object.keys(item.pet_info).length" class="topItemPetInfo">
             <PetIcon :config="item.pet_info" :showQuality="false" />
           </div>
@@ -112,12 +112,12 @@ export default {
         }
       }
       .topItemUsername {
-        width: 195px;
         font-size: 26px;
         color: #FFFFFF;
         text-align: center;
       }
       .topItemUid {
+        left: 55px;
         font-size: 22px;
         color: #FFEF85;
         width: 160px;
@@ -132,7 +132,6 @@ export default {
       }
       .topItemNum {
         text-align: center;
-        width: 195px;
         font-size: 22px;
         color: #A96D28;
       }
@@ -182,6 +181,8 @@ export default {
         }
         .topItemUsername{
           top: 129px;
+          left: 44px;
+          width: 181px;
         }
         .topItemUid{
           top: 160px;
@@ -189,9 +190,12 @@ export default {
         }
         .topItemNumText{
           top: 206px;
+          left: 93px;
         }
         .topItemNum{
           top: 234px;
+          left: 44px;
+          width: 181px;
         }
         .topItemPetInfo {
           top: 26px;
@@ -230,17 +234,20 @@ export default {
         }
         .topItemUsername{
           top: 110px;
-          width: 170px;
+          left: 56px;
+          width: 159px;
         }
         .topItemUid{
           top: 140px;
         }
         .topItemNumText{
           top: 185px;
+          left: 94px;
         }
         .topItemNum{
           top: 213px;
-          width: 170px;
+          left: 56px;
+          width: 159px;
         }
         .topItemPetInfo {
           top: 24px;
@@ -279,17 +286,20 @@ export default {
         }
         .topItemUsername{
           top: 110px;
-          width: 170px;
+          left: 56px;
+          width: 159px;
         }
         .topItemUid{
           top: 140px;
         }
         .topItemNumText{
           top: 185px;
+          left: 94px;
         }
         .topItemNum{
           top: 213px;
-          width: 170px;
+          left: 56px;
+          width: 159px;
         }
         .topItemPetInfo {
           top: 24px;
@@ -346,7 +356,7 @@ export default {
         p{
           font-size: 22px;
           color: #884425;
-          margin-bottom: 16px;
+          margin-bottom: 18px;
         }
       }
       .totalRankItemPetInfo {
@@ -419,7 +429,7 @@ export default {
     p{
       font-size: 22px;
       color: #884425;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
   }
   .totalRankPetInfo {
