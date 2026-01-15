@@ -1,3 +1,79 @@
+// 富文本替换使用
+.swipeAvatar {
+  width: 50px;
+  height: 50px;
+  background: #FFFFFF;
+  border-radius: 50%;
+  border: 2px solid #FFDC92;
+  vertical-align: middle;
+  margin: 0 2px 0 4px;
+}
+.swipeUsername {
+  display: inline-block;
+  vertical-align: middle;
+  color: #FFF17F;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.popoverAwardItem {
+  .popoverAwardItemBg {
+    width: 220px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    .popoverAwardItemIcon {
+      width: 44px;
+      height: 44px;
+      background: #412668;
+      border-radius: 8px;
+    }
+    .popoverAwardItemText {
+      font-weight: 400;
+      font-size: 20px;
+      color: #FFFFFF;
+      margin-left: 6px;
+    }
+    .popoverAwardItemPro {
+      font-weight: 400;
+      font-size: 18px;
+      color: #77FAFF;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}
+.van-popover--dark .van-popover__content{
+  background: rgba(0,0,0,0.7);
+  padding: 10px 15px;
+}
+.van-popover--dark .van-popover__arrow {
+  color: rgba(0,0,0,0.7);
+}
+.oppo_popover {
+  max-width: 200px;
+  white-space: pre-wrap;
+  font-weight: 400;
+  font-size: 22px;
+  color: #FFFFFF;
+  line-height: 29px;
+}
+.popover_span {
+  max-width: 170px;
+  white-space: pre-wrap;
+  font-weight: 400;
+  font-size: 20px;
+  color: #FFFFFF;
+  line-height: 29px;
+  i {
+    color: #FFF54F;
+  }
+}
+
 // 重点字体颜色
 .focus-color {
   color: #FFEF85;
