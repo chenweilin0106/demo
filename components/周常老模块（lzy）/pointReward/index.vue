@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { getPageData } from '@/api/index'
+import { getPageData } from '@/api'
 import { recharge, compareVersions, urlRouterWithApp } from '@/utils/toApp'
 import { _throttle } from '@/utils/tool'
 import visibilityMixin from '@/mixins/visibilityMixin'
