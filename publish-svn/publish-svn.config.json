@@ -1,20 +1,6 @@
 {
   "profiles": [
     {
-      "name": "2026-valentineDay", 
-      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2026valentineDay", 
-      "svnRoots": {
-        "dev": "D:\\Project\\开发分支\\web\\vue", 
-        "test": "D:\\Project\\测试分支\\web\\vue"
-      }, 
-      "defaultBuildScripts": {
-        "dev": "npm run build:test", 
-        "test": "npm run build:test"
-      }, 
-      "svnDefaultTargetRel": "love2026", 
-      "svnTargetRootRel": "normal"
-    },
-    {
       "name": "2026-weekly", 
       "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\2026", 
       "svnRoots": {
@@ -40,6 +26,20 @@
         "test": "npm run build:test"
       }, 
       "svnDefaultTargetRel": "vipDay", 
+      "svnTargetRootRel": "normal"
+    },
+    {
+      "name": "2026-valentineDay", 
+      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2026valentineDay", 
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue", 
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      }, 
+      "defaultBuildScripts": {
+        "dev": "npm run build:test", 
+        "test": "npm run build:test"
+      }, 
+      "svnDefaultTargetRel": "love2026", 
       "svnTargetRootRel": "normal"
     },
     {
