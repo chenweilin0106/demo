@@ -313,3 +313,83 @@ export function objToFormData(obj, formData, parentKey) {
 
   return form
 }
+
+/**
+ * 预加载图片（用于减少切换背景图时的闪动）。
+ *
+ * - Promise 永远 resolve：单张失败/超时只会记录，不会 reject（预加载不应影响业务流程）。
+ * - resolve 的结果是创建出来的 Image 实例数组；调用方可选择保留引用（例如挂到 this 上）以提高 iOS 下不被回收的概率。
+ *
+ * @param {string[]} urls 图片 url 数组（通常来自静态 import/require 的构建产物 url）
+ * @param {Object} [options]
+ * @param {boolean} [options.decode=true] 是否在 onload 后尽量等待 img.decode()（不支持时自动跳过）
+ * @param {number} [options.timeoutMs=15000] 单张图片加载超时（毫秒），<=0 表示不设超时
+ * @param {(payload: {url: string, error: Error}) => void} [options.onError] 单张图片失败/超时回调（不提供则内部 console.log）
+ * @returns {Promise<HTMLImageElement[]>} 图片 Image 实例数组
+ *
+ * @example
+ * // 预加载 + 失败记录 + keepAlive（避免 iOS 下解码结果更易被回收导致切换闪动）
+ * const arr = ['tab_1.png', 'tab_2.png', 'tab_3.png', 'tab_4.png', 'tab_5.png', 'tab_6.png']
+ * const urls = arr.map(item => require(`@/pages/springFestival/assets/${item}`))
+ * this._tabBgPreloadKeepAlive = await this.preloadImages(urls, { decode: true, timeoutMs: 15000, onError: ({ url, error }) => console.log('[preloadImages] error:', url, error)})
+ */
+export function preloadImages(urls, options = {}) {
+  const urlList = Array.isArray(urls) ? urls.filter(Boolean) : []
+  const decode = options.decode !== false
+  const timeoutMs = Number.isFinite(options.timeoutMs) ? Number(options.timeoutMs) : 15000
+  const onError = typeof options.onError === 'function' ? options.onError : null
+
+  const images = []
+  const tasks = urlList.map(url => {
+    return new Promise(resolve => {
+      const img = new Image()
+      images.push(img)
+      let settled = false
+
+      let timer = null
+      const cleanup = () => {
+        img.onload = null
+        img.onerror = null
+        if (timer) clearTimeout(timer)
+      }
+
+      const reportError = (error) => {
+        if (onError) return onError({ url, error })
+        console.log('[preloadImages] error:', url, error)
+      }
+
+      const done = async () => {
+        if (settled) return
+        settled = true
+        try {
+          if (decode && typeof img.decode === 'function') {
+            await img.decode()
+          }
+        } catch (e) {}
+        cleanup()
+        resolve()
+      }
+
+      img.onload = () => done()
+      img.onerror = () => {
+        cleanup()
+        reportError(new Error(`preload failed: ${url}`))
+        done()
+      }
+
+      if (timeoutMs > 0) {
+        timer = setTimeout(() => {
+          cleanup()
+          reportError(new Error(`preload timeout: ${url}`))
+          done()
+        }, timeoutMs)
+      }
+
+      img.decoding = 'async'
+      img.src = url
+      if (img.complete) done()
+    })
+  })
+
+  return Promise.all(tasks).then(() => images)
+}

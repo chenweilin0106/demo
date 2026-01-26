@@ -219,7 +219,7 @@ export default {
       this.$toast(res.errmsg)
       if (res.errno) return
       taskItem.has_right = 2
-      this.rechargeListShow = this.sortList(this[this.currentTab.listKey])
+      this.rechargeListShow = this[this.currentTab.listKey] = this.sortList(this[this.currentTab.listKey])
     }),
     /**
      * 抽奖动画结束
@@ -685,6 +685,9 @@ export default {
               padding-right: 8px;
               &:last-child {
                 margin-right: 0;
+              }
+              i {
+                color: #fff;
               }
               img {
                 margin: 0 5px 0 -3px;

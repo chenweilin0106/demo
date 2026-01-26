@@ -327,7 +327,7 @@ export default {
       this.$toast(res.errmsg)
       if (res.errno) return
       taskItem.has_right = 2
-      this.rechargeListShow = this.sortList(this[this.currentTab.listKey])
+      this.rechargeListShow = this[this.currentTab.listKey] = this.sortList(this[this.currentTab.listKey])
     }),
     /**
      * 获取主页数据
@@ -510,6 +510,9 @@ export default {
               align-items: center;
               font-size: 24px;
               color: #fff;
+              i {
+                color: #fff;
+              }
               img {
                 margin: 0 0px 0 -3px;
                 width: 50px;
