@@ -1,0 +1,7 @@
+-Xms8G
+-XX:ReservedCodeCacheSize=2048m
+-XX:CICompilerCount=4
+-Xmx16G
+-Dide.managed.by.toolbox=C:\Users\dcw220\AppData\Local\JetBrains\Toolbox\bin\jetbrains-toolbox.exe
+-Dtoolbox.notification.token=3f874695-dafc-4ac2-a066-1dda5fbf7f68
+-Dtoolbox.notification.portFile=C:\Users\dcw220\AppData\Local\JetBrains\Toolbox\cache\ports\879c8b0d-6edd-4ad3-be60-edca21ad0127.port
