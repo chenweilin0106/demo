@@ -22,6 +22,14 @@ This repo does not define its own build or test steps; builds are executed in th
 
 When `-Message` is omitted (and `-NoCommit` is not set), the script tries to read the latest Git commit message from the project root (if a Git repo is detected) and uses it as the default prompt value.
 
+## 系统通知（Toast）
+
+- 脚本运行结束后会 best-effort 发送 Windows 系统通知（不影响主流程成败）。
+- 发送方默认使用 `AppId=publish-svn`；若检测到未注册，会先自动尝试注册（非管理员终端也会尝试）。
+- 注册内容位于当前用户：`%APPDATA%\Microsoft\Windows\Start Menu\Programs\publish-svn.lnk` 与 `HKCU:\Software\Classes\AppUserModelId\publish-svn`。
+- 终端输出：`-DebugNotify` 会打印注册/发送的详细过程；未开启时仅在“所有候选 AppId 均发送失败”时 `Write-Warning` 提醒。
+- 现实坑：系统“勿扰/专注助手/通知设置”可能导致不弹出但不一定报错；需要排查时请加 `-DebugNotify` 并检查 Windows 通知设置里的发送者列表。
+
 ## Sync Behavior Notes
 
 - Sync logic is file-based, not robocopy. Hash-named files are only copied when missing; non-hash files are force-overwritten.

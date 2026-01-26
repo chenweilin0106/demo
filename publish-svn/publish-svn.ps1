@@ -8,7 +8,8 @@
   [string]$BuildScript,
   [switch]$NoBuild,
   [switch]$NoCommit,
-  [switch]$DebugSvn
+  [switch]$DebugSvn,
+  [switch]$DebugNotify
 )
 
 $ErrorActionPreference = 'Stop'
@@ -203,6 +204,329 @@ function Get-EnvValue {
   return $null
 }
 
+function Test-ToastRegistration {
+  param(
+    [string]$AppId
+  )
+
+  if ([string]::IsNullOrWhiteSpace($AppId)) {
+    return $false
+  }
+
+  $startMenuDir = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'
+  $shortcutPath = Join-Path $startMenuDir 'publish-svn.lnk'
+  $regPath = "HKCU:\Software\Classes\AppUserModelId\$AppId"
+
+  return (Test-Path -LiteralPath $shortcutPath) -and (Test-Path $regPath)
+}
+
+function Ensure-ToastRegistration {
+  param(
+    [string]$AppId,
+    [string]$DisplayName
+  )
+
+  if ([string]::IsNullOrWhiteSpace($AppId)) {
+    return $null
+  }
+
+  $startMenuDir = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'
+  $shortcutPath = Join-Path $startMenuDir 'publish-svn.lnk'
+  $regPath = "HKCU:\Software\Classes\AppUserModelId\$AppId"
+
+  try {
+    if (-not (Test-Path -LiteralPath $startMenuDir)) {
+      New-Item -ItemType Directory -Path $startMenuDir -Force | Out-Null
+    }
+
+    try {
+      New-Item -Path $regPath -Force | Out-Null
+      if (-not [string]::IsNullOrWhiteSpace($DisplayName)) {
+        New-ItemProperty -Path $regPath -Name 'DisplayName' -Value $DisplayName -PropertyType String -Force | Out-Null
+      }
+      New-ItemProperty -Path $regPath -Name 'ShowInSettings' -Value 0 -PropertyType DWord -Force | Out-Null
+    } catch {
+    }
+
+    $exePath = $null
+    try {
+      $exePath = (Get-Process -Id $PID -ErrorAction Stop).Path
+    } catch {
+      $exePath = $null
+    }
+    if ([string]::IsNullOrWhiteSpace($exePath)) {
+      $exePath = Join-Path $PSHOME 'powershell.exe'
+    }
+
+    if (-not (Test-Path -LiteralPath $shortcutPath)) {
+      $wsh = New-Object -ComObject WScript.Shell
+      $lnk = $wsh.CreateShortcut($shortcutPath)
+      $lnk.TargetPath = $exePath
+      $lnk.Arguments = '-NoProfile -WindowStyle Hidden -Command "exit"'
+      $lnk.WorkingDirectory = $PSScriptRoot
+      $lnk.IconLocation = $exePath
+      $lnk.Save()
+
+      try {
+        if ($lnk) { [Runtime.InteropServices.Marshal]::FinalReleaseComObject($lnk) | Out-Null }
+      } catch {
+      }
+      try {
+        if ($wsh) { [Runtime.InteropServices.Marshal]::FinalReleaseComObject($wsh) | Out-Null }
+      } catch {
+      }
+      [GC]::Collect()
+      [GC]::WaitForPendingFinalizers()
+    }
+
+    if (-not ('PublishSvn.ShortcutHelper' -as [type])) {
+      $typeDef = @(
+        'using System;',
+        'using System.Runtime.InteropServices;',
+        'using System.Runtime.InteropServices.ComTypes;',
+        '',
+        'namespace PublishSvn {',
+        '  [StructLayout(LayoutKind.Sequential, Pack = 4)]',
+        '  public struct PropertyKey {',
+        '    public Guid fmtid;',
+        '    public uint pid;',
+        '    public PropertyKey(Guid fmtid, uint pid) {',
+        '      this.fmtid = fmtid;',
+        '      this.pid = pid;',
+        '    }',
+        '  }',
+        '',
+        '  [StructLayout(LayoutKind.Explicit)]',
+        '  public struct PropVariant {',
+        '    [FieldOffset(0)] public ushort vt;',
+        '    [FieldOffset(8)] public IntPtr pointerValue;',
+        '    public static PropVariant FromString(string value) {',
+        '      var pv = new PropVariant();',
+        '      pv.vt = 31;',
+        '      pv.pointerValue = Marshal.StringToCoTaskMemUni(value);',
+        '      return pv;',
+        '    }',
+        '    public void Clear() {',
+        '      PropVariantClear(ref this);',
+        '    }',
+        '    [DllImport("ole32.dll")]',
+        '    private static extern int PropVariantClear(ref PropVariant pvar);',
+        '  }',
+        '',
+        '  [ComImport]',
+        '  [Guid("000214F9-0000-0000-C000-000000000046")]',
+        '  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]',
+        '  public interface IShellLinkW {',
+        '    void GetPath([Out, MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pszFile, int cchMaxPath, out IntPtr pfd, int fFlags);',
+        '    void GetIDList(out IntPtr ppidl);',
+        '    void SetIDList(IntPtr pidl);',
+        '    void GetDescription([Out, MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pszName, int cchMaxName);',
+        '    void SetDescription([MarshalAs(UnmanagedType.LPWStr)] string pszName);',
+        '    void GetWorkingDirectory([Out, MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pszDir, int cchMaxPath);',
+        '    void SetWorkingDirectory([MarshalAs(UnmanagedType.LPWStr)] string pszDir);',
+        '    void GetArguments([Out, MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pszArgs, int cchMaxPath);',
+        '    void SetArguments([MarshalAs(UnmanagedType.LPWStr)] string pszArgs);',
+        '    void GetHotkey(out short pwHotkey);',
+        '    void SetHotkey(short wHotkey);',
+        '    void GetShowCmd(out int piShowCmd);',
+        '    void SetShowCmd(int iShowCmd);',
+        '    void GetIconLocation([Out, MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pszIconPath, int cchIconPath, out int piIcon);',
+        '    void SetIconLocation([MarshalAs(UnmanagedType.LPWStr)] string pszIconPath, int iIcon);',
+        '    void SetRelativePath([MarshalAs(UnmanagedType.LPWStr)] string pszPathRel, int dwReserved);',
+        '    void Resolve(IntPtr hwnd, int fFlags);',
+        '    void SetPath([MarshalAs(UnmanagedType.LPWStr)] string pszFile);',
+        '  }',
+        '',
+        '  [ComImport]',
+        '  [Guid("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99")]',
+        '  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]',
+        '  public interface IPropertyStore {',
+        '    uint GetCount([Out] out uint cProps);',
+        '    uint GetAt([In] uint iProp, out PropertyKey pkey);',
+        '    uint GetValue([In] ref PropertyKey key, out PropVariant pv);',
+        '    uint SetValue([In] ref PropertyKey key, [In] ref PropVariant pv);',
+        '    uint Commit();',
+        '  }',
+        '',
+        '  [ComImport]',
+        '  [Guid("0000010b-0000-0000-C000-000000000046")]',
+        '  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]',
+        '  public interface IPersistFile {',
+        '    void GetClassID(out Guid pClassID);',
+        '    [PreserveSig] int IsDirty();',
+        '    void Load([MarshalAs(UnmanagedType.LPWStr)] string pszFileName, uint dwMode);',
+        '    void Save([MarshalAs(UnmanagedType.LPWStr)] string pszFileName, bool fRemember);',
+        '    void SaveCompleted([MarshalAs(UnmanagedType.LPWStr)] string pszFileName);',
+        '    void GetCurFile([MarshalAs(UnmanagedType.LPWStr)] out string ppszFileName);',
+        '  }',
+        '',
+        '  [ComImport]',
+        '  [Guid("00021401-0000-0000-C000-000000000046")]',
+        '  public class ShellLink { }',
+        '',
+        '  public static class ShortcutHelper {',
+        '    private static readonly PropertyKey AppIdKey = new PropertyKey(new Guid("9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3"), 5);',
+        '    public static void SetAppUserModelId(string shortcutPath, string appId) {',
+        '      if (string.IsNullOrWhiteSpace(shortcutPath) || string.IsNullOrWhiteSpace(appId)) {',
+        '        return;',
+        '      }',
+        '      var link = (IShellLinkW)new ShellLink();',
+        '      var persist = (IPersistFile)link;',
+        '      persist.Load(shortcutPath, 2);',
+        '      var store = (IPropertyStore)link;',
+        '      var pv = PropVariant.FromString(appId);',
+        '      try {',
+        '        var key = AppIdKey;',
+        '        store.SetValue(ref key, ref pv);',
+        '        store.Commit();',
+        '      } finally {',
+        '        pv.Clear();',
+        '      }',
+        '      persist.Save(shortcutPath, true);',
+        '    }',
+        '  }',
+        '}'
+      ) -join [Environment]::NewLine
+
+      Add-Type -Language CSharp -TypeDefinition $typeDef | Out-Null
+    }
+
+    for ($i = 0; $i -lt 5; $i++) {
+      try {
+        [PublishSvn.ShortcutHelper]::SetAppUserModelId($shortcutPath, $AppId)
+        break
+      } catch {
+        if ($i -ge 4) {
+          if ($DebugNotify) {
+            Write-Host "通知警告: 写入快捷方式 AppId 失败: $($_.Exception.Message)"
+          }
+          throw
+        }
+        Start-Sleep -Milliseconds 120
+      }
+    }
+    return $shortcutPath
+  } catch {
+    return $null
+  }
+}
+
+function Send-ToastNotification {
+  param(
+    [string]$Title,
+    [string[]]$Lines,
+    [string]$AppId
+  )
+
+  if ([string]::IsNullOrWhiteSpace($Title)) {
+    return $false
+  }
+
+  try {
+    Add-Type -AssemblyName System.Runtime.WindowsRuntime -ErrorAction SilentlyContinue | Out-Null
+
+    if (-not ('PublishSvn.ProcessAppId' -as [type])) {
+      Add-Type -Language CSharp -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+
+namespace PublishSvn {
+  public static class ProcessAppId {
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern int SetCurrentProcessExplicitAppUserModelID(string appID);
+  }
+}
+'@ | Out-Null
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($AppId)) {
+      # Per-candidate AppId is applied below.
+    }
+
+    $xml = [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime]::new()
+    $xml.LoadXml("<toast><visual><binding template='ToastGeneric'></binding></visual></toast>")
+    $binding = $xml.SelectSingleNode('//binding')
+
+    $text = $xml.CreateElement('text')
+    $text.InnerText = $Title
+    $binding.AppendChild($text) | Out-Null
+
+    foreach ($line in ($Lines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })) {
+      $node = $xml.CreateElement('text')
+      $node.InnerText = $line
+      $binding.AppendChild($node) | Out-Null
+    }
+
+    $toast = [Windows.UI.Notifications.ToastNotification, Windows.UI.Notifications, ContentType = WindowsRuntime]::new($xml)
+
+    $appIdsToTry = @()
+    if (-not [string]::IsNullOrWhiteSpace($AppId)) {
+      $appIdsToTry += $AppId
+    }
+    $appIdsToTry += @('Microsoft.Windows.PowerShell', 'Windows PowerShell', 'Microsoft.PowerShell', 'PowerShell')
+
+    try {
+      $startAppIds = Get-StartApps 2>$null | Where-Object { $_.Name -match 'PowerShell|Terminal|终端|命令提示符|cmd' } | Select-Object -ExpandProperty AppID
+      if ($startAppIds) {
+        $appIdsToTry += $startAppIds
+      }
+    } catch {
+    }
+
+    foreach ($candidate in ($appIdsToTry | Select-Object -Unique)) {
+      try {
+        try {
+          [void][PublishSvn.ProcessAppId]::SetCurrentProcessExplicitAppUserModelID($candidate)
+        } catch {
+          if ($DebugNotify) {
+            Write-Host "通知警告: 设置进程 AppId 失败 (AppId=$candidate): $($_.Exception.Message)"
+          }
+        }
+
+        $notifier = [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime]::CreateToastNotifier($candidate)
+        $notifier.Show($toast)
+        if ($DebugNotify) {
+          Write-Host "通知提示: Toast 已发送 (AppId=$candidate)"
+        }
+        return $true
+      } catch {
+        if ($DebugNotify) {
+          Write-Host "通知警告: 发送 Toast 失败 (AppId=$candidate): $($_.Exception.Message)"
+        }
+      }
+    }
+
+  } catch {
+    if ($DebugNotify) {
+      Write-Host "通知警告: 初始化 Toast 失败: $($_.Exception.Message)"
+    }
+  }
+
+  return $false
+}
+
+function Truncate-Text {
+  param(
+    [string]$Text,
+    [int]$MaxLength = 80
+  )
+
+  if ([string]::IsNullOrWhiteSpace($Text)) {
+    return $Text
+  }
+
+  $normalized = ($Text -replace '\s+', ' ').Trim()
+  if ($normalized.Length -le $MaxLength) {
+    return $normalized
+  }
+
+  if ($MaxLength -le 1) {
+    return $normalized.Substring(0, [Math]::Max(0, $MaxLength))
+  }
+
+  return $normalized.Substring(0, $MaxLength - 1) + '…'
+}
+
 function Write-ResultSummary {
   param(
     [string]$Status,
@@ -241,6 +565,51 @@ function Write-ResultSummary {
     Write-Host " - 提交: $CommitStatus"
   }
   Write-Host '运行结束。'
+
+  $title = "publish-svn：$Status"
+
+  $line1 = "环境: $EnvValue | 配置: $ProfileValue | 耗时: $Duration"
+  $line2 = $null
+
+  if (-not [string]::IsNullOrWhiteSpace($ErrorMessage)) {
+    $line2 = "错误: $(Truncate-Text -Text $ErrorMessage -MaxLength 120)"
+  } else {
+    $parts = @()
+    if ($CommitStatus) {
+      $parts += "提交: $CommitStatus"
+    }
+    if ($SvnRevision) {
+      $parts += "SVN: $SvnRevision"
+    }
+    if (-not [string]::IsNullOrWhiteSpace($MessageValue)) {
+      $parts += (Truncate-Text -Text $MessageValue -MaxLength 60)
+    }
+    $line2 = ($parts -join ' | ')
+  }
+
+  $lines = @($line1, $line2) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+
+  $appId = 'publish-svn'
+
+  if (-not (Test-ToastRegistration -AppId $appId)) {
+    if ($DebugNotify) {
+      Write-Host '通知提示: 未检测到 publish-svn 注册，尝试注册...'
+    }
+    $registration = Ensure-ToastRegistration -AppId $appId -DisplayName 'publish-svn'
+    if (-not $registration -and $DebugNotify) {
+      Write-Host '通知警告: publish-svn 注册失败，将降级使用系统 AppId 发送。'
+    }
+  } elseif ($DebugNotify) {
+    Write-Host '通知提示: publish-svn 已注册，直接发送。'
+  }
+
+  $sent = Send-ToastNotification -Title $title -Lines $lines -AppId $appId
+  if (-not $sent) {
+    Write-Warning '通知警告: 系统通知发送失败（所有候选 AppId 均失败）。如需排查请加 -DebugNotify 查看详细日志。'
+    if ($DebugNotify) {
+      Write-Host '通知警告: 所有候选 AppId 均发送失败。'
+    }
+  }
 }
 
 function Format-Json {
@@ -907,7 +1276,28 @@ try {
 
       if ($gitRoot) {
         try {
-          $gitMessage = Invoke-CommandUtf8 { & git -C $gitRoot -c i18n.logOutputEncoding=utf-8 log -1 --pretty=%B 2>$null }
+          $gitMessage = $null
+          $isMergeCommit = $false
+
+          try {
+            $headParents = Invoke-CommandUtf8 { & git -C $gitRoot rev-list --parents -n 1 HEAD 2>$null }
+            if ($LASTEXITCODE -eq 0 -and $headParents) {
+              $parentParts = (($headParents | Out-String).Trim() -split '\s+')
+              $isMergeCommit = ($parentParts.Count -gt 2)
+            }
+          } catch {
+            $isMergeCommit = $false
+          }
+
+          if ($isMergeCommit) {
+            $gitMessage = Invoke-CommandUtf8 { & git -C $gitRoot -c i18n.logOutputEncoding=utf-8 log --first-parent --no-merges -1 --pretty=%B 2>$null }
+            if ($LASTEXITCODE -ne 0 -or -not $gitMessage) {
+              $gitMessage = $null
+            }
+          }
+          if (-not $gitMessage) {
+            $gitMessage = Invoke-CommandUtf8 { & git -C $gitRoot -c i18n.logOutputEncoding=utf-8 log -1 --pretty=%B 2>$null }
+          }
           if ($LASTEXITCODE -eq 0 -and $gitMessage) {
             $logMessage = ($gitMessage | Out-String).Trim()
             if ($logMessage) {
