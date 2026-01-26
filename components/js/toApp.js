@@ -339,18 +339,13 @@ export const toRedpackRecommend = () => {
 }
 
 /**
- * 跳转app首页的现金红包页面（6.0.2）
+ * 跳转app首页的现金红包页面(现金红包列表页)
  */
 export const toRedpackCash = () => {
-  if (compareVersions('6.0.2') == -1) return Vue.prototype.$toast('请更新至最新版本')
-  try {
-    if (isIOS()) {
-      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://home/page?tab=1' })
-    } else {
-      window.external.action('dandan://home/page?tab=1')
-    }
-  } catch (error) {
-    console.log('环境错误', error)
+  if (isIOS()) {
+    window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://index/red_pack' })
+  } else {
+    window.external.action('dandan://index/red_pack')
   }
 }
 
