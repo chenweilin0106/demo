@@ -34,8 +34,8 @@
           </div>
           <div :class="['rb_dateListsIcon position-absolute', `status${isShowDateList}`]"></div>
         </div>
-        <div v-if="isShowDateList" ref="dateListAreaRef" class="rb_dateListArea flex overflow-y-scroll overflow-x-hidden overscroll-none justify-center">
-          <div class="rb_dateListDiv position-relative flex-column align-center">
+        <div v-if="isShowDateList" class="rb_dateListArea flex position-relative justify-center">
+          <div ref="rb_dateListDivRef" class="rb_dateListDiv position-relative flex-column align-center overflow-y-scroll overflow-x-hidden overscroll-none">
             <div v-for="(item, index) in day_list" :key="index + item" class="rb_dateListItem flex align-center justify-center line-height-1 flex-shrink-0 position-relative" @click.stop="selectChosen(rankChosen, tagChosen, index)">
               <span>{{item}}</span>
               <div class="rb_dateListItemChosen position-absolute" v-if="index==selectDate[rankChosen]"></div>
@@ -223,13 +223,13 @@ export default {
       this.isShowDateList = !this.isShowDateList
       this.$nextTick(() => {
         if (this.isShowDateList === true) {
-          let man = this.$refs.dateListAreaRef
+          let man = this.$refs.rb_dateListDivRef
           let i = 0
           for (let index in this.day_list) {
             i++
             if (this.selectDate[this.rankChosen] == index) break
           }
-          let len = document.getElementsByClassName('rb_dateListItem')[0].clientHeight * (Number(i) - 2)
+          let len = document.getElementsByClassName('rb_dateListItem')[0].clientHeight * (Number(i) - 3)
           man.scrollTo({ top: len, behavior: 'smooth' })
         }
       })
@@ -377,68 +377,66 @@ export default {
       z-index: 3;
       width: 220px;
       .rb_dateDiv{
+        z-index: 2;
+        padding-top: 1px;
         width: 220px;
         height: 75px;
-        background: url('@/pages/nationalDay/assets/mk6_9.png') no-repeat left top/100% 100%;
+        background: url('@/pages/springFestival/assets/mk6_9.png') no-repeat left top/100% 100%;
         font-weight: bold;
         font-size: 26px;
         color: #AD7E1A;
-        z-index: 2;
         .rb_dateListsIcon{
           width: 29px;
           height: 15px;
           right: 23px;
           top: 29px;
           &.statusfalse{
-            background: url('@/pages/nationalDay/assets/mk6_12.png') no-repeat left top/100% 100%;
+            background: url('@/pages/springFestival/assets/mk6_11.png') no-repeat left top/100% 100%;
           }
           &.statustrue{
-            background: url('@/pages/nationalDay/assets/mk6_11.png') no-repeat left top/100% 100%;
+            background: url('@/pages/springFestival/assets/mk6_10.png') no-repeat left top/100% 100%;
           }
         }
       }
       .rb_dateListArea{
-        width: 240px;
-        max-height: 300px;
-        &::after {
-          content: '';
-          position: absolute;
-          z-index: 1;
-          left: 50%;
-          transform: translateX(-50%);
-          top: 64px;
-          width: 168px;
-          height: calc(100% - 75px + 20px);
-          border-radius: 20px;
-          border: 8px solid #FFC62D;
-          border-top-width: 10px;
-          border-bottom-width: 10px;
-          box-sizing: border-box;
-          background: linear-gradient(0deg, #FFF7D6, #FFFFFF);
-          box-shadow: 0px 0px 13px 0px #FFC62D;
-        }
+        z-index: 1;
+        margin-top: -11px;
+        width: 168px;
+        height: fit-content;
+        border-radius: 20px;
+        border: 8px solid transparent;
+        border-top-width: 10px;
+        border-bottom-width: 10px;
+        background: linear-gradient(0deg, #FFF7D6, #FFFFFF), linear-gradient(0deg, #FFC62D, #FFC62D);
+        background-origin: padding-box, border-box;
+        background-clip: padding-box, border-box;
+        box-shadow: 0 0 13px 0 #FFC62D;
         .rb_dateListDiv{
-          z-index: 2;
-          width: 152px;
+          z-index: 1;
+          flex-shrink: 0;
+          width: 220px;
           border-radius: 18px;
+          height: fit-content;
+          max-height: 279px;
           .rb_dateListItem{
+            z-index: 1;
             width: 141px;
             height: 53px;
+            padding-top: 2px;
             border-bottom: 2px solid #EFD48D;
             font-weight: bold;
             font-size: 26px;
             color: #AD7E1A;
-            z-index: 1;
             &:last-child{
               border-bottom: none;
             }
             .rb_dateListItemChosen{
-              top: 5px;
+              z-index: 2;
+              top: 7px;
+              right: -28px;
               width: 45px;
               height: 35px;
-              background: url('@/pages/nationalDay/assets/mk6_10.png') no-repeat left top/100% 100%;
-              right: -28px;
-              z-index: 2;
+              background: url('@/pages/springFestival/assets/mk6_12.png') no-repeat left top/100% 100%;
             }
           }
         }
