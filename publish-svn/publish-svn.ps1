@@ -6,6 +6,8 @@
   [string]$TargetRel,
   [string]$Message,
   [string]$BuildScript,
+  [string]$OfficialDistRoot,
+  [string]$OfficialProjectRel,
   [switch]$NoBuild,
   [switch]$NoCommit,
   [switch]$DebugSvn,
@@ -62,6 +64,63 @@ function Prompt-WithDefault {
   }
 
   return $Value
+}
+
+function Prompt-Required {
+  param(
+    [string]$Value,
+    [string]$Prompt,
+    [string]$Default,
+    [string]$Warning = '输入不能为空，请重新输入。'
+  )
+
+  while ($true) {
+    $resolved = Prompt-WithDefault $Value $Prompt $Default
+    if (-not [string]::IsNullOrWhiteSpace($resolved)) {
+      return $resolved
+    }
+    if (-not [string]::IsNullOrWhiteSpace($Warning)) {
+      Write-Host $Warning
+    }
+    $Value = $null
+    $Default = $null
+  }
+}
+
+function Test-FileNameSegmentValid {
+  param(
+    [string]$Value
+  )
+
+  if ([string]::IsNullOrWhiteSpace($Value)) {
+    return $false
+  }
+
+  $invalidChars = [System.IO.Path]::GetInvalidFileNameChars()
+  return ($Value.IndexOfAny($invalidChars) -lt 0)
+}
+
+function Prompt-RequiredFileNameSegment {
+  param(
+    [string]$Value,
+    [string]$Prompt,
+    [string]$Default
+  )
+
+  while ($true) {
+    $resolved = Prompt-WithDefault $Value $Prompt $Default
+    if ([string]::IsNullOrWhiteSpace($resolved)) {
+      Write-Host '提交信息不能为空，请重新输入。'
+      $Value = $null
+      continue
+    }
+    if (-not (Test-FileNameSegmentValid -Value $resolved)) {
+      Write-Host '提交信息包含非法字符，请重新输入。'
+      $Value = $null
+      continue
+    }
+    return $resolved
+  }
 }
 
 function Invoke-Svn {
@@ -174,6 +233,26 @@ function Format-ByteSize {
   return ('{0:N2} GB' -f $gb)
 }
 
+function Get-FolderByteSize {
+  param(
+    [string]$FolderPath
+  )
+
+  if ([string]::IsNullOrWhiteSpace($FolderPath) -or -not (Test-Path $FolderPath -PathType Container)) {
+    return 0
+  }
+
+  $total = [int64]0
+  try {
+    foreach ($file in (Get-ChildItem -LiteralPath $FolderPath -File -Recurse -Force -ErrorAction SilentlyContinue)) {
+      $total += [int64]$file.Length
+    }
+  } catch {
+  }
+
+  return $total
+}
+
 function Format-Duration {
   param(
     [TimeSpan]$Span
@@ -181,6 +260,15 @@ function Format-Duration {
 
   $totalHours = [int][Math]::Floor($Span.TotalHours)
   return ('{0:00}:{1:00}:{2:00}.{3:000}' -f $totalHours, $Span.Minutes, $Span.Seconds, $Span.Milliseconds)
+}
+
+function Format-Timestamp {
+  param(
+    [DateTime]$Value,
+    [string]$Pattern = 'yyyy-MM-dd HH:mm:ss'
+  )
+
+  return $Value.ToString($Pattern)
 }
 
 function Get-EnvValue {
@@ -202,6 +290,275 @@ function Get-EnvValue {
   }
 
   return $null
+}
+
+function Get-EnvValueFromFiles {
+  param(
+    [string[]]$FilePaths,
+    [string]$Key
+  )
+
+  if ([string]::IsNullOrWhiteSpace($Key)) {
+    return $null
+  }
+
+  foreach ($filePath in $FilePaths) {
+    if ([string]::IsNullOrWhiteSpace($filePath)) {
+      continue
+    }
+
+    $value = Get-EnvValue -FilePath $filePath -Key $Key
+    if ($null -ne $value) {
+      return $value
+    }
+  }
+
+  return $null
+}
+
+function Find-BandizipCli {
+  $cmd = Get-Command bz.exe -ErrorAction SilentlyContinue
+  if ($cmd -and $cmd.Source -and (Test-Path $cmd.Source)) {
+    return [ordered]@{
+      Kind = 'bz'
+      Path = [string]$cmd.Source
+    }
+  }
+
+  $cmd = Get-Command Bandizip.exe -ErrorAction SilentlyContinue
+  if ($cmd -and $cmd.Source -and (Test-Path $cmd.Source)) {
+    return [ordered]@{
+      Kind = 'gui'
+      Path = [string]$cmd.Source
+    }
+  }
+
+  $candidatePaths = @(
+    (Join-Path $env:ProgramFiles 'Bandizip\\bz.exe'),
+    (Join-Path $env:ProgramFiles 'Bandizip\\Bandizip.exe')
+  )
+  $programFilesX86 = ${env:ProgramFiles(x86)}
+  if (-not [string]::IsNullOrWhiteSpace($programFilesX86)) {
+    $candidatePaths += @(
+      (Join-Path $programFilesX86 'Bandizip\\bz.exe'),
+      (Join-Path $programFilesX86 'Bandizip\\Bandizip.exe')
+    )
+  }
+  foreach ($candidate in $candidatePaths) {
+    if ($candidate -and (Test-Path $candidate)) {
+      $kind = if ([System.IO.Path]::GetFileName($candidate) -ieq 'bz.exe') { 'bz' } else { 'gui' }
+      return [ordered]@{
+        Kind = $kind
+        Path = [string]$candidate
+      }
+    }
+  }
+
+  return $null
+}
+
+function Compress-FolderWithBandizipZip {
+  param(
+    [Parameter(Mandatory = $true)][string]$FolderPath,
+    [Parameter(Mandatory = $true)][string]$ZipPath
+  )
+
+  if (-not (Test-Path $FolderPath -PathType Container)) {
+    throw "压缩失败：目录不存在: $FolderPath"
+  }
+
+  $cli = Find-BandizipCli
+  if (-not $cli -or -not $cli.Path) {
+    return [ordered]@{
+      Skipped = $true
+      Reason = '未找到 Bandizip CLI（bz.exe / Bandizip.exe）'
+      ZipPath = $ZipPath
+      ExitCode = $null
+      Output = @()
+    }
+  }
+
+  $workDir = Split-Path -Parent $FolderPath
+  $folderName = Split-Path -Leaf $FolderPath
+  $folderFull = (Resolve-Path -LiteralPath $FolderPath -ErrorAction SilentlyContinue)
+  if ($folderFull) {
+    $FolderPath = $folderFull.Path
+  }
+  $zipFull = (Resolve-Path -LiteralPath (Split-Path -Parent $ZipPath) -ErrorAction SilentlyContinue)
+  if ($zipFull) {
+    $ZipPath = Join-Path $zipFull.Path (Split-Path -Leaf $ZipPath)
+  }
+
+  $bzArgs = @('c', '-fmt:zip', '-y', '-r')
+  $bzArgs += @($ZipPath, '*')
+
+  $output = @()
+  $exitCode = 0
+  Push-Location $FolderPath
+  try {
+    $output = @(Invoke-CommandUtf8 { & $cli.Path @bzArgs 2>&1 })
+    $exitCode = $LASTEXITCODE
+  } finally {
+    Pop-Location
+  }
+
+  $outputTextForCheck = ($output | Out-String).Trim()
+  if ($outputTextForCheck -match '(?m)^Usage:\s*$') {
+    $details = $outputTextForCheck
+    if ($details) {
+      throw "压缩失败（$($cli.Path)）：命令行参数可能不兼容。`n$details"
+    }
+    throw "压缩失败（$($cli.Path)）：命令行参数可能不兼容。"
+  }
+
+  if ($exitCode -ne 0) {
+    $details = ($output | Out-String).Trim()
+    if ($details) {
+      throw "压缩失败（$($cli.Path)），退出码: $exitCode`n$details"
+    }
+    throw "压缩失败（$($cli.Path)），退出码: $exitCode"
+  }
+
+  if (-not (Test-Path $ZipPath -PathType Leaf)) {
+    $details = ($output | Out-String).Trim()
+    if ($details) {
+      throw "压缩失败：未生成压缩包: $ZipPath`n$details"
+    }
+    throw "压缩失败：未生成压缩包: $ZipPath"
+  }
+
+  return [ordered]@{
+    Skipped = $false
+    Reason = $null
+    ZipPath = $ZipPath
+    ExitCode = $exitCode
+    Output = $output
+  }
+}
+
+function Get-EnvValueForRun {
+  param(
+    [string]$ProjectRoot,
+    [string]$EnvValue,
+    [string]$Key,
+    [string]$OverrideEnvFileName
+  )
+
+  if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
+    return $null
+  }
+
+  $filePaths = @()
+  if (-not [string]::IsNullOrWhiteSpace($OverrideEnvFileName)) {
+    $filePaths += Join-Path $ProjectRoot $OverrideEnvFileName
+  } elseif (-not [string]::IsNullOrWhiteSpace($EnvValue)) {
+    $filePaths += Join-Path $ProjectRoot (".env.$EnvValue")
+  }
+  $filePaths += Join-Path $ProjectRoot '.env'
+
+  return Get-EnvValueFromFiles -FilePaths $filePaths -Key $Key
+}
+
+function Get-GitCommitMessage {
+  param(
+    [string]$ProjectRoot
+  )
+
+  if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
+    return $null
+  }
+
+  $gitRoot = $null
+  try {
+    $git = Get-Command git -ErrorAction SilentlyContinue
+    if ($git) {
+      $gitRoot = Invoke-CommandUtf8 { & git -C $ProjectRoot rev-parse --show-toplevel 2>$null }
+      if ($LASTEXITCODE -eq 0 -and $gitRoot) {
+        $gitRoot = ($gitRoot | Out-String).Trim()
+      } else {
+        $gitRoot = $null
+      }
+    }
+  } catch {
+    $gitRoot = $null
+  }
+
+  if (-not $gitRoot) {
+    return $null
+  }
+
+  try {
+    $gitMessage = $null
+    $isMergeCommit = $false
+
+    try {
+      $headParents = Invoke-CommandUtf8 { & git -C $gitRoot rev-list --parents -n 1 HEAD 2>$null }
+      if ($LASTEXITCODE -eq 0 -and $headParents) {
+        $parentParts = (($headParents | Out-String).Trim() -split '\s+')
+        $isMergeCommit = ($parentParts.Count -gt 2)
+      }
+    } catch {
+      $isMergeCommit = $false
+    }
+
+    if ($isMergeCommit) {
+      $gitMessage = Invoke-CommandUtf8 { & git -C $gitRoot -c i18n.logOutputEncoding=utf-8 log --first-parent --no-merges -1 --pretty=%B 2>$null }
+      if ($LASTEXITCODE -ne 0 -or -not $gitMessage) {
+        $gitMessage = $null
+      }
+    }
+    if (-not $gitMessage) {
+      $gitMessage = Invoke-CommandUtf8 { & git -C $gitRoot -c i18n.logOutputEncoding=utf-8 log -1 --pretty=%B 2>$null }
+    }
+    if ($LASTEXITCODE -eq 0 -and $gitMessage) {
+      $logMessage = ($gitMessage | Out-String).Trim()
+      if ($logMessage) {
+        return $logMessage
+      }
+    }
+  } catch {
+    return $null
+  }
+
+  return $null
+}
+
+function Sanitize-FileNameSegment {
+  param(
+    [string]$Value
+  )
+
+  if ([string]::IsNullOrWhiteSpace($Value)) {
+    return $Value
+  }
+
+  $normalized = ($Value -replace '\s+', ' ').Trim()
+  if ([string]::IsNullOrWhiteSpace($normalized)) {
+    return $normalized
+  }
+
+  $invalidChars = [System.IO.Path]::GetInvalidFileNameChars()
+  $chars = $normalized.ToCharArray() | ForEach-Object {
+    if ($invalidChars -contains $_) {
+      '-'
+    } else {
+      $_
+    }
+  }
+
+  return (-join $chars).Trim()
+}
+
+function Get-EnvFileLines {
+  param(
+    [string]$FilePath
+  )
+
+  if (-not (Test-Path $FilePath)) {
+    return @()
+  }
+
+  return Get-Content -Encoding UTF8 $FilePath
 }
 
 function Test-ToastRegistration {
@@ -535,6 +892,8 @@ function Write-ResultSummary {
     [string]$TargetPathValue,
     [string]$SourcePathValue,
     [string]$MessageValue,
+    [string]$CompressStatus,
+    [string]$CompressDetail,
     [DateTime]$StartTime,
     [DateTime]$EndTime,
     [string]$Duration,
@@ -542,6 +901,8 @@ function Write-ResultSummary {
     [string]$CommitStatus,
     [string]$ErrorMessage
   )
+
+  $showCommitStatus = $CommitStatus -and ($EnvValue -ine 'official')
 
   Write-Host ''
   Write-Host '--- 结果 ---'
@@ -561,28 +922,41 @@ function Write-ResultSummary {
   if ($SvnRevision) {
     Write-Host " - SVN 版本: $SvnRevision"
   }
-  if ($CommitStatus) {
-    Write-Host " - 提交: $CommitStatus"
+  if ($showCommitStatus) {
+    Write-Host " - 提交SVN: $CommitStatus"
+  }
+  if (-not [string]::IsNullOrWhiteSpace($CompressStatus)) {
+    if (-not [string]::IsNullOrWhiteSpace($CompressDetail)) {
+      Write-Host (" - 压缩: {0} | {1}" -f $CompressStatus, $CompressDetail)
+    } else {
+      Write-Host (" - 压缩: {0}" -f $CompressStatus)
+    }
   }
   Write-Host '运行结束。'
 
   $title = "publish-svn：$Status"
 
   $line1 = "环境: $EnvValue | 配置: $ProfileValue | 耗时: $Duration"
+  if ([string]::IsNullOrWhiteSpace($ErrorMessage) -and -not [string]::IsNullOrWhiteSpace($CompressStatus)) {
+    $line1 += " | 压缩: $CompressStatus"
+  }
   $line2 = $null
 
   if (-not [string]::IsNullOrWhiteSpace($ErrorMessage)) {
     $line2 = "错误: $(Truncate-Text -Text $ErrorMessage -MaxLength 120)"
   } else {
     $parts = @()
-    if ($CommitStatus) {
-      $parts += "提交: $CommitStatus"
+    if (-not [string]::IsNullOrWhiteSpace($CompressDetail)) {
+      $parts += "压缩: $(Truncate-Text -Text $CompressDetail -MaxLength 60)"
+    }
+    if ($showCommitStatus) {
+      $parts += "提交SVN: $CommitStatus"
     }
     if ($SvnRevision) {
       $parts += "SVN: $SvnRevision"
     }
     if (-not [string]::IsNullOrWhiteSpace($MessageValue)) {
-      $parts += (Truncate-Text -Text $MessageValue -MaxLength 60)
+      $parts += (Truncate-Text -Text $MessageValue -MaxLength 45)
     }
     $line2 = ($parts -join ' | ')
   }
@@ -716,6 +1090,94 @@ function Convert-ProfileMap {
   return $ordered
 }
 
+function Get-MapKeysInOrder {
+  param(
+    [object]$Map
+  )
+
+  if (-not $Map) {
+    return @()
+  }
+
+  if ($Map -is [System.Collections.IDictionary]) {
+    return @($Map.Keys)
+  }
+
+  return @($Map.PSObject.Properties | ForEach-Object { $_.Name })
+}
+
+function Write-SelectedProfileSummary {
+  param(
+    [object]$Profile,
+    [string]$ResolvedProjectRoot
+  )
+
+  if (-not $Profile) {
+    return
+  }
+
+  Write-Host '已选择配置:'
+
+  foreach ($prop in $Profile.PSObject.Properties) {
+    $key = $prop.Name
+    $val = $prop.Value
+
+    switch ($key) {
+      'name' {
+        Write-Host " - name: $($Profile.name)"
+        continue
+      }
+      'projectRoot' {
+        $display = if (-not [string]::IsNullOrWhiteSpace($ResolvedProjectRoot)) { $ResolvedProjectRoot } else { $val }
+        Write-Host " - projectRoot: $display"
+        continue
+      }
+      'svnRoots' {
+        if ($val) {
+          Write-Host ' - svnRoots:'
+          foreach ($k in (Get-MapKeysInOrder -Map $val)) {
+            Write-Host ("   {0} = {1}" -f $k, $val.$k)
+          }
+        }
+        continue
+      }
+      'defaultBuildScripts' {
+        if ($val) {
+          Write-Host ' - defaultBuildScripts:'
+          foreach ($k in (Get-MapKeysInOrder -Map $val)) {
+            Write-Host ("   {0} = {1}" -f $k, $val.$k)
+          }
+        }
+        continue
+      }
+      'svnDefaultTargetRelMap' {
+        if ($val) {
+          Write-Host ' - svnDefaultTargetRelMap:'
+          foreach ($k in (Get-MapKeysInOrder -Map $val)) {
+            Write-Host ("   {0} = {1}" -f $k, $val.$k)
+          }
+        }
+        continue
+      }
+      'officialProjectRelMap' {
+        if ($val) {
+          Write-Host ' - officialProjectRelMap:'
+          foreach ($k in (Get-MapKeysInOrder -Map $val)) {
+            Write-Host ("   {0} = {1}" -f $k, $val.$k)
+          }
+        }
+        continue
+      }
+      default {
+        if ($null -eq $val) {
+          continue
+        }
+        Write-Host (" - {0}: {1}" -f $key, $val)
+      }
+    }
+  }
+}
+
 function Get-ProfileHash {
   param(
     [object]$Profile
@@ -727,8 +1189,14 @@ function Get-ProfileHash {
 
   $payload = [ordered]@{
     projectRoot         = $Profile.projectRoot
+    officialDistRoot = $Profile.officialDistRoot
+    officialProjectRel = $Profile.officialProjectRel
+    officialProjectRelFromEnv = $Profile.officialProjectRelFromEnv
+    officialProjectRelMap = Convert-ProfileMap $Profile.officialProjectRelMap
     svnTargetRootRel    = $Profile.svnTargetRootRel
     svnDefaultTargetRel = $Profile.svnDefaultTargetRel
+    svnDefaultTargetRelFromEnv = $Profile.svnDefaultTargetRelFromEnv
+    svnDefaultTargetRelMap = Convert-ProfileMap $Profile.svnDefaultTargetRelMap
     svnRoots            = Convert-ProfileMap $Profile.svnRoots
     defaultBuildScripts = Convert-ProfileMap $Profile.defaultBuildScripts
   }
@@ -1117,37 +1585,7 @@ try {
       throw "Profile 缺少 svnDefaultTargetRel 或 svnDefaultTargetRelFromEnv+svnDefaultTargetRelMap: $($selectedProfile.name)"
     }
 
-    Write-Host '已选择配置:'
-    Write-Host " - name: $($selectedProfile.name)"
-    Write-Host " - projectRoot: $ProjectRoot"
-    Write-Host " - svnTargetRootRel: $($selectedProfile.svnTargetRootRel)"
-    if ($selectedProfile.svnDefaultTargetRel) {
-      Write-Host " - svnDefaultTargetRel: $($selectedProfile.svnDefaultTargetRel)"
-    }
-    if ($selectedProfile.svnDefaultTargetRelFromEnv) {
-      Write-Host " - svnDefaultTargetRelFromEnv: $($selectedProfile.svnDefaultTargetRelFromEnv)"
-    }
-    if ($selectedProfile.svnDefaultTargetRelMap) {
-      Write-Host ' - svnDefaultTargetRelMap:'
-      $targetRelMap = Convert-ProfileMap $selectedProfile.svnDefaultTargetRelMap
-      if ($targetRelMap) {
-        foreach ($entry in $targetRelMap.GetEnumerator()) {
-          Write-Host ("   {0} = {1}" -f $entry.Key, $entry.Value)
-        }
-      }
-    }
-    if ($svnRoots.Count -gt 0) {
-      Write-Host ' - svnRoots:'
-      foreach ($entry in $svnRoots.GetEnumerator()) {
-        Write-Host ("   {0} = {1}" -f $entry.Key, $entry.Value)
-      }
-    }
-    if ($defaultBuildScripts.Count -gt 0) {
-      Write-Host ' - defaultBuildScripts:'
-      foreach ($entry in $defaultBuildScripts.GetEnumerator()) {
-        Write-Host ("   {0} = {1}" -f $entry.Key, $entry.Value)
-      }
-    }
+    Write-SelectedProfileSummary -Profile $selectedProfile -ResolvedProjectRoot $ProjectRoot
 
   }
 
@@ -1159,8 +1597,28 @@ try {
 
   $envDefault = if ($Env) { $Env } elseif ($lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.Env)) { $lastForProfile.Env } else { 'dev' }
   $envOptions = @()
-  if ($svnRoots.Count -gt 0) {
-    $envOptions = $svnRoots.Keys | Sort-Object
+  $defaultBuildScriptKeys = @()
+  $svnRootKeys = @()
+  if ($selectedProfile) {
+    $defaultBuildScriptKeys = Get-MapKeysInOrder -Map $selectedProfile.defaultBuildScripts
+    $svnRootKeys = Get-MapKeysInOrder -Map $selectedProfile.svnRoots
+  }
+  if ($defaultBuildScriptKeys.Count -eq 0 -and $defaultBuildScripts.Count -gt 0) {
+    $defaultBuildScriptKeys = @($defaultBuildScripts.Keys)
+  }
+  if ($svnRootKeys.Count -eq 0 -and $svnRoots.Count -gt 0) {
+    $svnRootKeys = @($svnRoots.Keys)
+  }
+
+  if ($defaultBuildScriptKeys.Count -gt 0) {
+    $envOptions += $defaultBuildScriptKeys
+  }
+  if ($svnRootKeys.Count -gt 0) {
+    foreach ($key in $svnRootKeys) {
+      if ($envOptions -notcontains $key) {
+        $envOptions += $key
+      }
+    }
   }
   if ($envOptions.Count -gt 0) {
     $Env = Select-Env -Options $envOptions -SelectedName $envDefault -AutoSelect:([bool]$Env)
@@ -1168,50 +1626,109 @@ try {
     $Env = Prompt-WithDefault $Env 'Env' $envDefault
   }
 
-  $targetRootDefault = if ($TargetRootRel) { $TargetRootRel } elseif ($lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.TargetRootRel)) { $lastForProfile.TargetRootRel } elseif ($selectedProfile -and $selectedProfile.svnTargetRootRel) { $selectedProfile.svnTargetRootRel } else { '' }
-  $TargetRootRel = Prompt-WithDefault $TargetRootRel 'TargetRootRel (e.g. weekly || normal)' $targetRootDefault
-
-  $targetRelFromEnvKey = if ($selectedProfile -and $selectedProfile.svnDefaultTargetRelFromEnv) { [string]$selectedProfile.svnDefaultTargetRelFromEnv } else { $null }
-  $targetRelMap = $null
-  if ($selectedProfile -and $selectedProfile.svnDefaultTargetRelMap) {
-    $targetRelMap = Convert-ProfileMap $selectedProfile.svnDefaultTargetRelMap
-  }
-  $useMappedTargetRel = (-not [string]::IsNullOrWhiteSpace($targetRelFromEnvKey)) -and $targetRelMap -and ($targetRelMap.Count -gt 0)
-
-  if ($TargetRel -and $useMappedTargetRel) {
-    $profileName = if ($selectedProfile -and $selectedProfile.name) { $selectedProfile.name } else { $Profile }
-    if (-not $profileName) {
-      $profileName = 'unknown'
-    }
-    throw "配置 $profileName 已启用环境映射，不允许手动传入 TargetRel。"
-  }
-
-  if (-not $TargetRel -and $useMappedTargetRel) {
-    $profileName = if ($selectedProfile -and $selectedProfile.name) { $selectedProfile.name } else { $Profile }
-    if (-not $profileName) {
-      $profileName = 'unknown'
-    }
-    $envValue = Get-EnvValue -FilePath (Join-Path $ProjectRoot '.env') -Key $targetRelFromEnvKey
-    if ([string]::IsNullOrWhiteSpace($envValue)) {
-      throw "配置 $profileName 未在 .env 中找到 $targetRelFromEnvKey，请确认配置。"
-    }
-    if (-not $targetRelMap.Contains($envValue)) {
-      throw "配置 $profileName 的 .env 中 $targetRelFromEnvKey=$envValue 未匹配到配置映射，请检查 svnDefaultTargetRelMap。"
-    }
-
-    $TargetRel = $targetRelMap[$envValue]
-    Write-Host ("环境映射: env {0}={1} -> svn {2}" -f $targetRelFromEnvKey, $envValue, $TargetRel)
-    Write-Host ("TargetRel (relative to svnTargetRootRel): {0}" -f $TargetRel)
+  $isOfficialPro = $Env -ieq 'official'
+  $envOverrideFileName = if ($isOfficialPro) { '.env.officialPro' } else { $null }
+  if (-not $isOfficialPro) {
+    $targetRootDefault = if ($TargetRootRel) { $TargetRootRel } elseif ($lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.TargetRootRel)) { $lastForProfile.TargetRootRel } elseif ($selectedProfile -and $selectedProfile.svnTargetRootRel) { $selectedProfile.svnTargetRootRel } else { '' }
+    $TargetRootRel = Prompt-WithDefault $TargetRootRel 'TargetRootRel (e.g. weekly || normal)' $targetRootDefault
   } else {
-    $targetDefault = ''
-    if ($TargetRel) {
-      $targetDefault = $TargetRel
-    } elseif ($lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.TargetRel)) {
-      $targetDefault = $lastForProfile.TargetRel
-    } elseif ($selectedProfile -and $selectedProfile.svnDefaultTargetRel) {
-      $targetDefault = $selectedProfile.svnDefaultTargetRel
+    $officialDistRootDefault = if ($OfficialDistRoot) { $OfficialDistRoot } elseif ($lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.OfficialDistRoot)) { $lastForProfile.OfficialDistRoot } elseif ($selectedProfile -and $selectedProfile.officialDistRoot) { $selectedProfile.officialDistRoot } else { '' }
+    if ([string]::IsNullOrWhiteSpace($officialDistRootDefault) -and $lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.OfficialProDistRoot)) {
+      $officialDistRootDefault = $lastForProfile.OfficialProDistRoot
     }
-    $TargetRel = Prompt-WithDefault $TargetRel 'TargetRel (relative to svnTargetRootRel, e.g. page || love2026)' $targetDefault
+    $OfficialDistRoot = Prompt-WithDefault $OfficialDistRoot 'OfficialDistRoot (e.g. D:\\officialDist)' $officialDistRootDefault
+
+    $officialProjectRelFromEnvKey = if ($selectedProfile -and $selectedProfile.officialProjectRelFromEnv) { [string]$selectedProfile.officialProjectRelFromEnv } else { $null }
+    $officialProjectRelMap = $null
+    if ($selectedProfile -and $selectedProfile.officialProjectRelMap) {
+      $officialProjectRelMap = Convert-ProfileMap $selectedProfile.officialProjectRelMap
+    }
+    $hasOfficialProjectRelFromEnv = -not [string]::IsNullOrWhiteSpace($officialProjectRelFromEnvKey)
+    $hasOfficialProjectRelMap = $selectedProfile -and ($selectedProfile.officialProjectRelMap -ne $null)
+    if ($hasOfficialProjectRelFromEnv -and -not $hasOfficialProjectRelMap) {
+      throw "Profile 配置 officialProjectRelFromEnv 但缺少 officialProjectRelMap: $($selectedProfile.name)"
+    }
+    if (-not $hasOfficialProjectRelFromEnv -and $hasOfficialProjectRelMap) {
+      throw "Profile 配置 officialProjectRelMap 但缺少 officialProjectRelFromEnv: $($selectedProfile.name)"
+    }
+    $useMappedOfficialProjectRel = $hasOfficialProjectRelFromEnv -and $officialProjectRelMap -and ($officialProjectRelMap.Count -gt 0)
+
+    if ($OfficialProjectRel -and $useMappedOfficialProjectRel) {
+      $profileName = if ($selectedProfile -and $selectedProfile.name) { $selectedProfile.name } else { $Profile }
+      if (-not $profileName) {
+        $profileName = 'unknown'
+      }
+      throw "配置 $profileName 已启用环境映射，不允许手动传入 OfficialProjectRel。"
+    }
+
+    if (-not $OfficialProjectRel -and $useMappedOfficialProjectRel) {
+      $profileName = if ($selectedProfile -and $selectedProfile.name) { $selectedProfile.name } else { $Profile }
+      if (-not $profileName) {
+        $profileName = 'unknown'
+      }
+      $envValue = Get-EnvValueForRun -ProjectRoot $ProjectRoot -EnvValue $Env -Key $officialProjectRelFromEnvKey -OverrideEnvFileName $envOverrideFileName
+      if ([string]::IsNullOrWhiteSpace($envValue)) {
+        throw "配置 $profileName 未在 .env / $envOverrideFileName 中找到 $officialProjectRelFromEnvKey，请确认配置。"
+      }
+      if (-not $officialProjectRelMap.Contains($envValue)) {
+        throw "配置 $profileName 的 $officialProjectRelFromEnvKey=$envValue 未匹配到配置映射，请检查 officialProjectRelMap。"
+      }
+
+      $OfficialProjectRel = $officialProjectRelMap[$envValue]
+      Write-Host ("环境映射: env {0}={1} -> official {2}" -f $officialProjectRelFromEnvKey, $envValue, $OfficialProjectRel)
+      Write-Host ("OfficialProjectRel: {0}" -f $OfficialProjectRel)
+    } else {
+      $officialProjectDefault = if ($OfficialProjectRel) { $OfficialProjectRel } elseif ($lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.OfficialProjectRel)) { $lastForProfile.OfficialProjectRel } elseif ($selectedProfile -and $selectedProfile.officialProjectRel) { $selectedProfile.officialProjectRel } else { '' }
+      if ([string]::IsNullOrWhiteSpace($officialProjectDefault) -and $lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.OfficialProProjectRel)) {
+        $officialProjectDefault = $lastForProfile.OfficialProProjectRel
+      }
+      $OfficialProjectRel = Prompt-WithDefault $OfficialProjectRel 'OfficialProjectRel (e.g. activity1)' $officialProjectDefault
+    }
+  }
+
+  if (-not $isOfficialPro) {
+    $targetRelFromEnvKey = if ($selectedProfile -and $selectedProfile.svnDefaultTargetRelFromEnv) { [string]$selectedProfile.svnDefaultTargetRelFromEnv } else { $null }
+    $targetRelMap = $null
+    if ($selectedProfile -and $selectedProfile.svnDefaultTargetRelMap) {
+      $targetRelMap = Convert-ProfileMap $selectedProfile.svnDefaultTargetRelMap
+    }
+    $useMappedTargetRel = (-not [string]::IsNullOrWhiteSpace($targetRelFromEnvKey)) -and $targetRelMap -and ($targetRelMap.Count -gt 0)
+
+    if ($TargetRel -and $useMappedTargetRel) {
+      $profileName = if ($selectedProfile -and $selectedProfile.name) { $selectedProfile.name } else { $Profile }
+      if (-not $profileName) {
+        $profileName = 'unknown'
+      }
+      throw "配置 $profileName 已启用环境映射，不允许手动传入 TargetRel。"
+    }
+
+    if (-not $TargetRel -and $useMappedTargetRel) {
+      $profileName = if ($selectedProfile -and $selectedProfile.name) { $selectedProfile.name } else { $Profile }
+      if (-not $profileName) {
+        $profileName = 'unknown'
+      }
+      $envValue = Get-EnvValueForRun -ProjectRoot $ProjectRoot -EnvValue $Env -Key $targetRelFromEnvKey -OverrideEnvFileName $envOverrideFileName
+      if ([string]::IsNullOrWhiteSpace($envValue)) {
+        throw "配置 $profileName 未在 .env 或 .env.$Env 中找到 $targetRelFromEnvKey，请确认配置。"
+      }
+      if (-not $targetRelMap.Contains($envValue)) {
+        throw "配置 $profileName 的 .env 中 $targetRelFromEnvKey=$envValue 未匹配到配置映射，请检查 svnDefaultTargetRelMap。"
+      }
+
+      $TargetRel = $targetRelMap[$envValue]
+      Write-Host ("环境映射: env {0}={1} -> svn {2}" -f $targetRelFromEnvKey, $envValue, $TargetRel)
+      Write-Host ("TargetRel (relative to svnTargetRootRel): {0}" -f $TargetRel)
+    } else {
+      $targetDefault = ''
+      if ($TargetRel) {
+        $targetDefault = $TargetRel
+      } elseif ($lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.TargetRel)) {
+        $targetDefault = $lastForProfile.TargetRel
+      } elseif ($selectedProfile -and $selectedProfile.svnDefaultTargetRel) {
+        $targetDefault = $selectedProfile.svnDefaultTargetRel
+      }
+      $TargetRel = Prompt-WithDefault $TargetRel 'TargetRel (relative to svnTargetRootRel, e.g. page || love2026)' $targetDefault
+    }
   }
 
   if (-not $BuildScript -and $lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.BuildScript)) {
@@ -1230,94 +1747,98 @@ try {
 
   $envInSvnRoots = $svnRoots.ContainsKey($Env)
   $envInBuildScripts = $defaultBuildScripts.ContainsKey($Env)
-  if (-not $envInSvnRoots -and (-not $NoBuild -and -not $envInBuildScripts)) {
-    throw "环境未配置在 svnRoots 与 defaultBuildScripts: $Env"
-  }
-  if (-not $envInSvnRoots) {
-    throw "环境未配置在 svnRoots: $Env"
-  }
-  if (-not $NoBuild -and -not $envInBuildScripts) {
-    throw "环境未配置在 defaultBuildScripts: $Env"
-  }
-
-  if (-not $TargetRel) {
-    throw '必须指定目标相对路径。'
-  }
-  if (-not (Test-RelativePath $TargetRel)) {
-    throw "TargetRel 必须为相对路径且不能包含 ..: $TargetRel"
-  }
-
-  if (-not $TargetRootRel) {
-    throw '必须指定目标工作副本根相对路径。'
-  }
-  if (-not (Test-RelativePath $TargetRootRel)) {
-    throw "svnTargetRootRel 必须为相对路径且不能包含 ..: $TargetRootRel"
-  }
-
-  if (-not $NoCommit) {
-    $logMessage = $null
-    $messageSource = $null
-
-    if ([string]::IsNullOrWhiteSpace($Message)) {
-      $gitRoot = $null
-      try {
-        $git = Get-Command git -ErrorAction SilentlyContinue
-        if ($git) {
-          $gitRoot = Invoke-CommandUtf8 { & git -C $ProjectRoot rev-parse --show-toplevel 2>$null }
-          if ($LASTEXITCODE -eq 0 -and $gitRoot) {
-            $gitRoot = ($gitRoot | Out-String).Trim()
-          } else {
-            $gitRoot = $null
-          }
-        }
-      } catch {
-        $gitRoot = $null
-      }
-
-      if ($gitRoot) {
-        try {
-          $gitMessage = $null
-          $isMergeCommit = $false
-
-          try {
-            $headParents = Invoke-CommandUtf8 { & git -C $gitRoot rev-list --parents -n 1 HEAD 2>$null }
-            if ($LASTEXITCODE -eq 0 -and $headParents) {
-              $parentParts = (($headParents | Out-String).Trim() -split '\s+')
-              $isMergeCommit = ($parentParts.Count -gt 2)
-            }
-          } catch {
-            $isMergeCommit = $false
-          }
-
-          if ($isMergeCommit) {
-            $gitMessage = Invoke-CommandUtf8 { & git -C $gitRoot -c i18n.logOutputEncoding=utf-8 log --first-parent --no-merges -1 --pretty=%B 2>$null }
-            if ($LASTEXITCODE -ne 0 -or -not $gitMessage) {
-              $gitMessage = $null
-            }
-          }
-          if (-not $gitMessage) {
-            $gitMessage = Invoke-CommandUtf8 { & git -C $gitRoot -c i18n.logOutputEncoding=utf-8 log -1 --pretty=%B 2>$null }
-          }
-          if ($LASTEXITCODE -eq 0 -and $gitMessage) {
-            $logMessage = ($gitMessage | Out-String).Trim()
-            if ($logMessage) {
-              $messageSource = 'Git'
-            }
-          }
-        } catch {
-          $logMessage = $null
-        }
-      }
+  if (-not $isOfficialPro) {
+    if (-not $envInSvnRoots -and (-not $NoBuild -and -not $envInBuildScripts)) {
+      throw "环境未配置在 svnRoots 与 defaultBuildScripts: $Env"
+    }
+    if (-not $envInSvnRoots) {
+      throw "环境未配置在 svnRoots: $Env"
+    }
+    if (-not $NoBuild -and -not $envInBuildScripts) {
+      throw "环境未配置在 defaultBuildScripts: $Env"
     }
 
-    $defaultMsg = $logMessage
-    $messagePrompt = if ($messageSource) { "提交信息 (来自 $messageSource)" } else { '提交信息' }
-    $Message = Prompt-WithDefault $Message $messagePrompt $defaultMsg
+    if (-not $TargetRel) {
+      throw '必须指定目标相对路径。'
+    }
+    if (-not (Test-RelativePath $TargetRel)) {
+      throw "TargetRel 必须为相对路径且不能包含 ..: $TargetRel"
+    }
 
-    if ([string]::IsNullOrWhiteSpace($Message)) {
-      throw '未使用 -NoCommit 时必须填写提交信息。'
+    if (-not $TargetRootRel) {
+      throw '必须指定目标工作副本根相对路径。'
+    }
+    if (-not (Test-RelativePath $TargetRootRel)) {
+      throw "svnTargetRootRel 必须为相对路径且不能包含 ..: $TargetRootRel"
+    }
+  } else {
+    if (-not $NoBuild -and -not $envInBuildScripts) {
+      throw "环境未配置在 defaultBuildScripts: $Env"
+    }
+    if ([string]::IsNullOrWhiteSpace($OfficialDistRoot)) {
+      throw '必须指定 OfficialDistRoot。'
+    }
+    if (-not [System.IO.Path]::IsPathRooted($OfficialDistRoot)) {
+      throw "OfficialDistRoot 必须为绝对路径: $OfficialDistRoot"
+    }
+    if ([string]::IsNullOrWhiteSpace($OfficialProjectRel)) {
+      throw '必须指定 OfficialProjectRel。'
+    }
+    if (-not (Test-RelativePath $OfficialProjectRel)) {
+      throw "OfficialProjectRel 必须为相对路径且不能包含 ..: $OfficialProjectRel"
     }
   }
+
+  $gitMessageForPrompt = Get-GitCommitMessage -ProjectRoot $ProjectRoot
+  $messagePrompt = if ($gitMessageForPrompt) { '提交信息 (来自 Git)' } else { '提交信息' }
+  if (-not $NoCommit -and -not $isOfficialPro) {
+    $Message = Prompt-Required $Message $messagePrompt $gitMessageForPrompt '提交信息不能为空，请重新输入。'
+  }
+  if ($isOfficialPro) {
+    $gitDefault = $null
+    if (-not [string]::IsNullOrWhiteSpace($gitMessageForPrompt)) {
+      if (Test-FileNameSegmentValid -Value $gitMessageForPrompt) {
+        $gitDefault = $gitMessageForPrompt
+      } else {
+        Write-Host '提示: Git 提交信息包含换行或文件名非法字符，不能直接作为默认值（official 会把提交信息拼进目录名）。'
+        Write-Host 'Git 提交信息原文（可复制后自行修改）：'
+        Write-Host $gitMessageForPrompt
+      }
+    }
+    $Message = Prompt-RequiredFileNameSegment $Message $messagePrompt $gitDefault
+  }
+  if ($isOfficialPro) {
+    $envPath = Join-Path $ProjectRoot '.env'
+    $envOfficialPath = Join-Path $ProjectRoot '.env.officialPro'
+    $mergedEnvLines = @()
+    $envLines = Get-EnvFileLines -FilePath $envPath
+    if ($envLines.Count -gt 0) {
+      $mergedEnvLines += $envLines
+    } else {
+      Write-Host "警告: 未找到或内容为空: $envPath"
+    }
+    $officialLines = Get-EnvFileLines -FilePath $envOfficialPath
+    if ($officialLines.Count -gt 0) {
+      $mergedEnvLines += $officialLines
+    } else {
+      Write-Host "警告: 未找到或内容为空: $envOfficialPath"
+    }
+
+    Write-Host ''
+    Write-Host '--- 环境变量确认 ---'
+    Write-Host ''
+    if ($mergedEnvLines.Count -gt 0) {
+      foreach ($line in $mergedEnvLines) {
+        Write-Host $line
+      }
+    } else {
+      Write-Host '（无内容可显示）'
+    }
+    Write-Host ''
+    [void](Read-HostSafe '请确认后按回车开始构建')
+  }
+
+  $buildEndTime = $null
   if (-not $NoBuild -and $BuildScript) {
     Write-Host ''
     Write-Host '--- 构建 ---'
@@ -1330,9 +1851,13 @@ try {
       if ($LASTEXITCODE -ne 0) {
         throw "构建失败，退出码: $LASTEXITCODE"
       }
+      $buildEndTime = Get-Date
     } finally {
       Pop-Location
     }
+  }
+  if (-not $buildEndTime) {
+    $buildEndTime = Get-Date
   }
 
   $distResolved = Resolve-Path (Join-Path $ProjectRoot 'dist') -ErrorAction Stop
@@ -1340,7 +1865,7 @@ try {
   $distFiles = Get-ChildItem $distPath -File
   $distDirs = Get-ChildItem $distPath -Directory
 
-  $iconSubDir = Get-EnvValue -FilePath (Join-Path $ProjectRoot '.env') -Key 'VUE_APP_ICON_PATH'
+  $iconSubDir = Get-EnvValueForRun -ProjectRoot $ProjectRoot -EnvValue $Env -Key 'VUE_APP_ICON_PATH' -OverrideEnvFileName $envOverrideFileName
 
   if ($iconSubDir) {
     $SourcePath = Join-Path $distPath $iconSubDir
@@ -1354,260 +1879,388 @@ try {
     throw "源路径不存在: $SourcePath"
   }
 
-  $svnRoot = $svnRoots[$Env]
-  if (-not (Test-Path $svnRoot)) {
-    throw "目标根目录不存在: $svnRoot"
-  }
-
-  $svn = Get-Command svn -ErrorAction SilentlyContinue
-  if (-not $svn) {
-    throw '未在 PATH 中找到 svn。'
-  }
-
-  $TargetRoot = Join-Path $svnRoot $TargetRootRel
-  if (-not (Test-Path $TargetRoot)) {
-    throw "目标工作副本根目录不存在: $TargetRoot"
-  }
-
-  if (-not (Test-SvnWorkingCopy -PathValue $TargetRoot)) {
-    throw "目标工作副本根目录不是 SVN 工作副本: $TargetRoot"
-  }
-
-  $TargetPath = Join-Path $TargetRoot $TargetRel
-
-  $isNewTarget = $false
-  $targetExists = Test-Path $TargetPath
-  $targetIsWorkingCopy = $false
-  if ($targetExists) {
-    if (Test-SvnWorkingCopy -PathValue $TargetPath) {
-      $targetIsWorkingCopy = $true
-    }
-  }
-
-  if ($targetIsWorkingCopy) {
+  $commitSkipped = $false
+  $compressStatus = $null
+  $compressDetail = $null
+  $compressZipPath = $null
+  $compressBeforeBytes = $null
+  $compressAfterBytes = $null
+  if ($isOfficialPro) {
     Write-Host ''
-    Write-Host '--- SVN 更新 ---'
+    Write-Host '--- Official 构建转移 ---'
     Write-Host ''
-    Push-Location $TargetPath
-    try {
-      Invoke-Svn -SvnArgs @('update') -ErrorMessage "svn update 失败: $TargetPath"
-    } finally {
-      Pop-Location
+
+    $activityData = Get-EnvValueForRun -ProjectRoot $ProjectRoot -EnvValue $Env -Key 'VUE_APP_THINKING_ACTIVITY_DATA' -OverrideEnvFileName $envOverrideFileName
+    $activityName = Get-EnvValueForRun -ProjectRoot $ProjectRoot -EnvValue $Env -Key 'VUE_APP_THINKING_ACTIVITY_NAME' -OverrideEnvFileName $envOverrideFileName
+    if ([string]::IsNullOrWhiteSpace($activityData) -and [string]::IsNullOrWhiteSpace($activityName)) {
+      $activityData = (Get-Date).ToString('yyyyMMdd')
+      $activityName = 'dist'
     }
-  } else {
-    $isNewTarget = $true
-    Write-Host ''
-    Write-Host '--- SVN 更新 ---'
-    Write-Host ''
-    if ($targetExists) {
-      Write-Host "目标目录存在但未加入版本控制（未 svn add/commit），先更新父目录: $TargetRoot"
-    } else {
-      Write-Host "目标目录不存在，先更新父目录: $TargetRoot"
+
+    $gitSegment = $Message
+    if (-not (Test-FileNameSegmentValid -Value $gitSegment)) {
+      throw '提交信息为空或包含非法字符，请重新输入。'
     }
-    Push-Location $TargetRoot
-    try {
-      Invoke-Svn -SvnArgs @('update') -ErrorMessage "svn update 失败: $TargetRoot"
-    } finally {
-      Pop-Location
+
+    $timestampText = Format-Timestamp -Value $buildEndTime -Pattern 'yyyy-MM-dd HH-mm-ss'
+    $resultFolderName = "{0}_{1}_{2}_{3}" -f $activityData, $activityName, $gitSegment, $timestampText
+    $invalidChars = [System.IO.Path]::GetInvalidFileNameChars()
+    if ($resultFolderName.IndexOfAny($invalidChars) -ge 0) {
+      throw "目录名包含非法字符，请检查 VUE_APP_THINKING_ACTIVITY_DATA 或 VUE_APP_THINKING_ACTIVITY_NAME: $resultFolderName"
     }
+
+    if (-not (Test-Path $OfficialDistRoot)) {
+      New-Item -ItemType Directory -Path $OfficialDistRoot -Force | Out-Null
+    }
+    $officialProjectRoot = Join-Path $OfficialDistRoot $OfficialProjectRel
+    if (-not (Test-Path $officialProjectRoot)) {
+      New-Item -ItemType Directory -Path $officialProjectRoot -Force | Out-Null
+    }
+
+    $TargetPath = Join-Path $officialProjectRoot $resultFolderName
     if (Test-Path $TargetPath) {
+      throw "目标目录已存在: $TargetPath"
+    }
+    New-Item -ItemType Directory -Path $TargetPath -Force | Out-Null
+
+    if (Test-Path $SourcePath -PathType Leaf) {
+      Copy-Item -LiteralPath $SourcePath -Destination $TargetPath -Force
+    } else {
+      Copy-Item -Path (Join-Path $SourcePath '*') -Destination $TargetPath -Recurse -Force
+    }
+
+    Write-Host "已复制到: $TargetPath"
+
+    $targetFolderName = Split-Path -Leaf $TargetPath
+    $zipTempPath = "$TargetPath.zip"
+    $zipFinalPath = Join-Path $TargetPath ("{0}.zip" -f $targetFolderName)
+    try {
+      $compressZipPath = $zipFinalPath
+      $compressBeforeBytes = Get-FolderByteSize -FolderPath $TargetPath
+      $zipResult = Compress-FolderWithBandizipZip -FolderPath $TargetPath -ZipPath $zipTempPath
+      if ($zipResult -and $zipResult.Skipped) {
+        Write-Host ("压缩: 已跳过（{0}）" -f $zipResult.Reason)
+        $compressStatus = '已跳过'
+        $compressDetail = if ($compressBeforeBytes -ne $null) { ("前: {0}" -f (Format-ByteSize -Bytes $compressBeforeBytes)) } else { $null }
+      } else {
+        $zipMoved = $false
+        $tempZipPath = $zipResult.ZipPath
+        $compressZipPath = $tempZipPath
+        if (-not [string]::IsNullOrWhiteSpace($tempZipPath) -and (Test-Path -LiteralPath $tempZipPath -PathType Leaf)) {
+          try {
+            Move-Item -LiteralPath $tempZipPath -Destination $zipFinalPath -Force
+            $zipMoved = $true
+            $compressZipPath = $zipFinalPath
+          } catch {
+            $zipMoved = $false
+            Write-Warning "压缩包移动失败，已保留在原位置: $tempZipPath。错误: $($_.Exception.Message)"
+          }
+        }
+
+        $compressAfterBytes = (Get-Item -LiteralPath $compressZipPath -ErrorAction SilentlyContinue).Length
+        Write-Host ("已压缩: {0}" -f $compressZipPath)
+        $compressStatus = '成功'
+        $beforeText = if ($compressBeforeBytes -ne $null) { Format-ByteSize -Bytes $compressBeforeBytes } else { $null }
+        $afterText = if ($compressAfterBytes -ne $null) { Format-ByteSize -Bytes $compressAfterBytes } else { $null }
+        if ($beforeText -and $afterText) {
+          $compressDetail = "前: $beforeText -> 后: $afterText"
+        } elseif ($afterText) {
+          $compressDetail = "后: $afterText"
+        } elseif ($beforeText) {
+          $compressDetail = "前: $beforeText"
+        } else {
+          $compressDetail = $null
+        }
+        if (-not [string]::IsNullOrWhiteSpace($compressZipPath)) {
+          if ([string]::IsNullOrWhiteSpace($compressDetail)) {
+            $compressDetail = $compressZipPath
+          } else {
+            $compressDetail = "$compressDetail | $compressZipPath"
+          }
+        }
+      }
+    } catch {
+      $reason = $_.Exception.Message
+      if ([string]::IsNullOrWhiteSpace($reason)) {
+        $reason = ($_ | Out-String).Trim()
+      }
+      Write-Warning "压缩失败，已跳过: $reason"
+      $compressStatus = '失败(已跳过)'
+      $beforeText = if ($compressBeforeBytes -ne $null) { Format-ByteSize -Bytes $compressBeforeBytes } else { $null }
+      if ($beforeText) {
+        $compressDetail = "前: $beforeText | 错误: $(Truncate-Text -Text $reason -MaxLength 120)"
+      } else {
+        $compressDetail = "错误: $(Truncate-Text -Text $reason -MaxLength 120)"
+      }
+    }
+
+    $commitSkipped = $true
+  } else {
+    $svnRoot = $svnRoots[$Env]
+    if (-not (Test-Path $svnRoot)) {
+      throw "目标根目录不存在: $svnRoot"
+    }
+
+    $svn = Get-Command svn -ErrorAction SilentlyContinue
+    if (-not $svn) {
+      throw '未在 PATH 中找到 svn。'
+    }
+
+    $TargetRoot = Join-Path $svnRoot $TargetRootRel
+    if (-not (Test-Path $TargetRoot)) {
+      throw "目标工作副本根目录不存在: $TargetRoot"
+    }
+
+    if (-not (Test-SvnWorkingCopy -PathValue $TargetRoot)) {
+      throw "目标工作副本根目录不是 SVN 工作副本: $TargetRoot"
+    }
+
+    $TargetPath = Join-Path $TargetRoot $TargetRel
+
+    $isNewTarget = $false
+    $targetExists = Test-Path $TargetPath
+    $targetIsWorkingCopy = $false
+    if ($targetExists) {
       if (Test-SvnWorkingCopy -PathValue $TargetPath) {
         $targetIsWorkingCopy = $true
-        $isNewTarget = $false
+      }
+    }
+
+    if ($targetIsWorkingCopy) {
+      Write-Host ''
+      Write-Host '--- SVN 更新 ---'
+      Write-Host ''
+      Push-Location $TargetPath
+      try {
+        Invoke-Svn -SvnArgs @('update') -ErrorMessage "svn update 失败: $TargetPath"
+      } finally {
+        Pop-Location
       }
     } else {
-      $confirmCreate = Select-Confirm -Prompt "目标目录不存在，将创建并继续: $TargetPath，是否继续"
-      if (-not $confirmCreate) {
-        throw '已取消创建目标目录。'
-      }
-      New-Item -ItemType Directory -Path $TargetPath | Out-Null
-    }
-  }
-
-
-  Write-Host ''
-  Write-Host '--- 同步 ---'
-  Write-Host ''
-  Write-Host "源路径: $SourcePath"
-  Write-Host "目标路径: $TargetPath"
-  Write-Host '同步策略: hash 文件仅按文件名同步; 非 hash 文件强制覆盖'
-
-  $sourceRoot = (Resolve-Path $SourcePath -ErrorAction Stop).Path.TrimEnd('\')
-  $targetRoot = (Resolve-Path $TargetPath -ErrorAction Stop).Path.TrimEnd('\')
-  $hashPattern = '\.[0-9a-f]{8,}\.'
-  $sourceRelSet = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
-  $createdDirs = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
-  $syncDetails = New-Object 'System.Collections.Generic.List[string]'
-  $addedCount = 0
-  $overwriteCount = 0
-  $skipCount = 0
-  $deleteCount = 0
-  $copiedBytes = [int64]0
-  $deletedBytes = [int64]0
-
-  $sourceFiles = Get-ChildItem -Path $sourceRoot -Recurse -File
-  foreach ($file in $sourceFiles) {
-    $relPath = $file.FullName.Substring($sourceRoot.Length + 1)
-    [void]$sourceRelSet.Add($relPath)
-
-    $targetFile = Join-Path $targetRoot $relPath
-    $isHashFile = $file.Name -match $hashPattern
-    $shouldCopy = -not $isHashFile -or -not (Test-Path $targetFile)
-    if ($shouldCopy) {
-      $targetDir = Split-Path $targetFile -Parent
-      if (-not (Test-Path $targetDir)) {
-        New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
-        if (-not $createdDirs.Contains($targetDir)) {
-          [void]$createdDirs.Add($targetDir)
-          $relDir = $targetDir.Substring($targetRoot.Length + 1)
-          $syncDetails.Add(("新目录 {0}" -f $relDir))
-        }
-      }
-      Copy-Item -LiteralPath $file.FullName -Destination $targetFile -Force
-      if (Test-Path $targetFile) {
-        $sizeText = Format-ByteSize $file.Length
-        if ($isHashFile) {
-          $addedCount++
-          $syncDetails.Add(("新文件 {0,12} {1}" -f $sizeText, $relPath))
-        } else {
-          $overwriteCount++
-          $syncDetails.Add(("覆盖   {0,12} {1}" -f $sizeText, $relPath))
-        }
-      }
-      $copiedBytes += $file.Length
-    } else {
-      $skipCount++
-      $sizeText = Format-ByteSize $file.Length
-      $syncDetails.Add(("已存在 {0,12} {1}" -f $sizeText, $relPath))
-    }
-  }
-
-  $targetFiles = Get-ChildItem -Path $targetRoot -Recurse -File -Force | Where-Object {
-    $_.FullName -notmatch '\\\.svn(\\|$)'
-  }
-  foreach ($file in $targetFiles) {
-    $relPath = $file.FullName.Substring($targetRoot.Length + 1)
-    if (-not $sourceRelSet.Contains($relPath)) {
-      $deleteCount++
-      $deletedBytes += $file.Length
-      $sizeText = Format-ByteSize $file.Length
-      $syncDetails.Add(("删除   {0,12} {1}" -f $sizeText, $relPath))
-      Remove-Item -LiteralPath $file.FullName -Force
-    }
-  }
-
-  $targetDirs = Get-ChildItem -Path $targetRoot -Recurse -Directory -Force | Where-Object {
-    $_.FullName -notmatch '\\\.svn(\\|$)'
-  } | Sort-Object { $_.FullName.Length } -Descending
-  foreach ($dir in $targetDirs) {
-    $items = Get-ChildItem -LiteralPath $dir.FullName -Force
-    if (-not $items) {
-      Remove-Item -LiteralPath $dir.FullName -Force
-    }
-  }
-
-  if ($syncDetails.Count -gt 0) {
-    Write-Host '同步详情:'
-    foreach ($line in $syncDetails) {
-      Write-Host $line
-    }
-  } else {
-    Write-Host '同步详情: 无'
-  }
-  Write-Host ("统计: 新增 {0} 覆盖 {1} 已存在 {2} 删除 {3} 复制 {4} 删除 {5}" -f `
-    $addedCount, $overwriteCount, $skipCount, $deleteCount, (Format-ByteSize $copiedBytes), (Format-ByteSize $deletedBytes))
-
-  $forceFiles = @('index.html', 'favicon.ico')
-  foreach ($forceFile in $forceFiles) {
-    $sourceFile = Join-Path $SourcePath $forceFile
-    if (Test-Path $sourceFile) {
-      $targetFile = Join-Path $TargetPath $forceFile
-      Copy-Item -LiteralPath $sourceFile -Destination $targetFile -Force
-    }
-  }
-
-  Write-Host ''
-  Write-Host '--- SVN 状态 ---'
-  Write-Host ''
-
-  $commitSkipped = $false
-
-  Push-Location $TargetPath
-  try {
-    if ($isNewTarget) {
-      Invoke-Svn -SvnArgs @('add', '.') -ErrorMessage 'svn add 失败。'
-    } else {
-      Invoke-Svn -SvnArgs @('add', '--force', '.') -ErrorMessage 'svn add 失败。'
-    }
-    $missing = & svn status | Where-Object { $_ -match '^!\s+' } | ForEach-Object { $_ -replace '^!\s+', '' }
-    foreach ($m in $missing) {
-      Invoke-Svn -SvnArgs @('delete', $m) -ErrorMessage "svn delete 失败: $m"
-    }
-
-    $statusLines = & svn status
-    $statusText = ($statusLines | Out-String).Trim()
-    if ($statusText) {
-      $statusLines | Out-Host
-    } else {
-      Write-Host 'svn status: 无改动'
-    }
-
-    if (-not $NoCommit) {
-      if (-not $statusText) {
-        Write-Host '无变更，跳过提交。'
-        $commitSkipped = $true
+      $isNewTarget = $true
+      Write-Host ''
+      Write-Host '--- SVN 更新 ---'
+      Write-Host ''
+      if ($targetExists) {
+        Write-Host "目标目录存在但未加入版本控制（未 svn add/commit），先更新父目录: $TargetRoot"
       } else {
-        Write-Host ''
-        Write-Host '--- SVN 提交 ---'
-        Write-Host ''
-        $commitStart = Get-Date
-        $commitOutput = & svn commit -m $Message 2>&1
-        $commitOutput | Out-Host
-        $commitExitCode = $LASTEXITCODE
-        if ($DebugSvn) {
-          $argText = @('commit', '-m', $Message) | ForEach-Object { Format-ArgValue $_ }
-          $argText = $argText -join ' '
-          $workDir = (Get-Location).Path
-          Write-SvnDebugLog -Command ("svn {0}" -f $argText) -WorkDir $workDir -ExitCode $commitExitCode -Output $commitOutput
+        Write-Host "目标目录不存在，先更新父目录: $TargetRoot"
+      }
+      Push-Location $TargetRoot
+      try {
+        Invoke-Svn -SvnArgs @('update') -ErrorMessage "svn update 失败: $TargetRoot"
+      } finally {
+        Pop-Location
+      }
+      if (Test-Path $TargetPath) {
+        if (Test-SvnWorkingCopy -PathValue $TargetPath) {
+          $targetIsWorkingCopy = $true
+          $isNewTarget = $false
         }
-        if ($commitExitCode -ne 0) {
-          $details = ($commitOutput | Out-String).Trim()
-          if ($details) {
-            throw "svn commit 失败。`n$details"
+      } else {
+        $confirmCreate = Select-Confirm -Prompt "目标目录不存在，将创建并继续: $TargetPath，是否继续"
+        if (-not $confirmCreate) {
+          throw '已取消创建目标目录。'
+        }
+        New-Item -ItemType Directory -Path $TargetPath | Out-Null
+      }
+    }
+
+
+    Write-Host ''
+    Write-Host '--- 同步 ---'
+    Write-Host ''
+    Write-Host "源路径: $SourcePath"
+    Write-Host "目标路径: $TargetPath"
+    Write-Host '同步策略: hash 文件仅按文件名同步; 非 hash 文件强制覆盖'
+
+    $sourceRoot = (Resolve-Path $SourcePath -ErrorAction Stop).Path.TrimEnd('\')
+    $targetRoot = (Resolve-Path $TargetPath -ErrorAction Stop).Path.TrimEnd('\')
+    $hashPattern = '\.[0-9a-f]{8,}\.'
+    $sourceRelSet = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    $createdDirs = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    $syncDetails = New-Object 'System.Collections.Generic.List[string]'
+    $addedCount = 0
+    $overwriteCount = 0
+    $skipCount = 0
+    $deleteCount = 0
+    $copiedBytes = [int64]0
+    $deletedBytes = [int64]0
+
+    $sourceFiles = Get-ChildItem -Path $sourceRoot -Recurse -File
+    foreach ($file in $sourceFiles) {
+      $relPath = $file.FullName.Substring($sourceRoot.Length + 1)
+      [void]$sourceRelSet.Add($relPath)
+
+      $targetFile = Join-Path $targetRoot $relPath
+      $isHashFile = $file.Name -match $hashPattern
+      $shouldCopy = -not $isHashFile -or -not (Test-Path $targetFile)
+      if ($shouldCopy) {
+        $targetDir = Split-Path $targetFile -Parent
+        if (-not (Test-Path $targetDir)) {
+          New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+          if (-not $createdDirs.Contains($targetDir)) {
+            [void]$createdDirs.Add($targetDir)
+            $relDir = $targetDir.Substring($targetRoot.Length + 1)
+            $syncDetails.Add(("新目录 {0}" -f $relDir))
           }
-          throw 'svn commit 失败。'
         }
-        $commitText = ($commitOutput | Out-String).Trim()
-        if ($commitText -match '(?m)^Committed revision\s+(?<rev>\d+)\b') {
-          $lastRev = $Matches['rev']
-        } elseif ($commitText -match '(?m)^Committed revision:\s*(?<rev>\d+)\b') {
-          $lastRev = $Matches['rev']
-        } elseif ($commitText -match '(?m)^提交(?:修订版|版本)?\s*(?<rev>\d+)\b') {
-          $lastRev = $Matches['rev']
-        } else {
-          throw "svn commit 未返回新版本号，请检查提交日志。"
+        Copy-Item -LiteralPath $file.FullName -Destination $targetFile -Force
+        if (Test-Path $targetFile) {
+          $sizeText = Format-ByteSize $file.Length
+          if ($isHashFile) {
+            $addedCount++
+            $syncDetails.Add(("新文件 {0,12} {1}" -f $sizeText, $relPath))
+          } else {
+            $overwriteCount++
+            $syncDetails.Add(("覆盖   {0,12} {1}" -f $sizeText, $relPath))
+          }
         }
-        $commitEnd = Get-Date
-        $commitDuration = Format-Duration ($commitEnd - $commitStart)
-        Write-Host "svn commit 耗时: $commitDuration"
-        Invoke-Svn -SvnArgs @('cleanup', $TargetPath) -ErrorMessage 'svn cleanup 失败。'
+        $copiedBytes += $file.Length
+      } else {
+        $skipCount++
+        $sizeText = Format-ByteSize $file.Length
+        $syncDetails.Add(("已存在 {0,12} {1}" -f $sizeText, $relPath))
+      }
+    }
+
+    $targetFiles = Get-ChildItem -Path $targetRoot -Recurse -File -Force | Where-Object {
+      $_.FullName -notmatch '\\\.svn(\\|$)'
+    }
+    foreach ($file in $targetFiles) {
+      $relPath = $file.FullName.Substring($targetRoot.Length + 1)
+      if (-not $sourceRelSet.Contains($relPath)) {
+        $deleteCount++
+        $deletedBytes += $file.Length
+        $sizeText = Format-ByteSize $file.Length
+        $syncDetails.Add(("删除   {0,12} {1}" -f $sizeText, $relPath))
+        Remove-Item -LiteralPath $file.FullName -Force
+      }
+    }
+
+    $targetDirs = Get-ChildItem -Path $targetRoot -Recurse -Directory -Force | Where-Object {
+      $_.FullName -notmatch '\\\.svn(\\|$)'
+    } | Sort-Object { $_.FullName.Length } -Descending
+    foreach ($dir in $targetDirs) {
+      $items = Get-ChildItem -LiteralPath $dir.FullName -Force
+      if (-not $items) {
+        Remove-Item -LiteralPath $dir.FullName -Force
+      }
+    }
+
+    if ($syncDetails.Count -gt 0) {
+      Write-Host '同步详情:'
+      foreach ($line in $syncDetails) {
+        Write-Host $line
       }
     } else {
-      $commitSkipped = $true
+      Write-Host '同步详情: 无'
     }
-  } finally {
-    Pop-Location
+    Write-Host ("统计: 新增 {0} 覆盖 {1} 已存在 {2} 删除 {3} 复制 {4} 删除 {5}" -f `
+      $addedCount, $overwriteCount, $skipCount, $deleteCount, (Format-ByteSize $copiedBytes), (Format-ByteSize $deletedBytes))
+
+    $forceFiles = @('index.html', 'favicon.ico')
+    foreach ($forceFile in $forceFiles) {
+      $sourceFile = Join-Path $SourcePath $forceFile
+      if (Test-Path $sourceFile) {
+        $targetFile = Join-Path $TargetPath $forceFile
+        Copy-Item -LiteralPath $sourceFile -Destination $targetFile -Force
+      }
+    }
+
+    Write-Host ''
+    Write-Host '--- SVN 状态 ---'
+    Write-Host ''
+
+    Push-Location $TargetPath
+    try {
+      if ($isNewTarget) {
+        Invoke-Svn -SvnArgs @('add', '.') -ErrorMessage 'svn add 失败。'
+      } else {
+        Invoke-Svn -SvnArgs @('add', '--force', '.') -ErrorMessage 'svn add 失败。'
+      }
+      $missing = & svn status | Where-Object { $_ -match '^!\s+' } | ForEach-Object { $_ -replace '^!\s+', '' }
+      foreach ($m in $missing) {
+        Invoke-Svn -SvnArgs @('delete', $m) -ErrorMessage "svn delete 失败: $m"
+      }
+
+      $statusLines = & svn status
+      $statusText = ($statusLines | Out-String).Trim()
+      if ($statusText) {
+        $statusLines | Out-Host
+      } else {
+        Write-Host 'svn status: 无改动'
+      }
+
+      if (-not $NoCommit) {
+        if (-not $statusText) {
+          Write-Host '无变更，跳过提交。'
+          $commitSkipped = $true
+        } else {
+          Write-Host ''
+          Write-Host '--- SVN 提交 ---'
+          Write-Host ''
+          $commitStart = Get-Date
+          $commitOutput = & svn commit -m $Message 2>&1
+          $commitOutput | Out-Host
+          $commitExitCode = $LASTEXITCODE
+          if ($DebugSvn) {
+            $argText = @('commit', '-m', $Message) | ForEach-Object { Format-ArgValue $_ }
+            $argText = $argText -join ' '
+            $workDir = (Get-Location).Path
+            Write-SvnDebugLog -Command ("svn {0}" -f $argText) -WorkDir $workDir -ExitCode $commitExitCode -Output $commitOutput
+          }
+          if ($commitExitCode -ne 0) {
+            $details = ($commitOutput | Out-String).Trim()
+            if ($details) {
+              throw "svn commit 失败。`n$details"
+            }
+            throw 'svn commit 失败。'
+          }
+          $commitText = ($commitOutput | Out-String).Trim()
+          if ($commitText -match '(?m)^Committed revision\s+(?<rev>\d+)\b') {
+            $lastRev = $Matches['rev']
+          } elseif ($commitText -match '(?m)^Committed revision:\s*(?<rev>\d+)\b') {
+            $lastRev = $Matches['rev']
+          } elseif ($commitText -match '(?m)^提交(?:修订版|版本)?\s*(?<rev>\d+)\b') {
+            $lastRev = $Matches['rev']
+          } else {
+            throw "svn commit 未返回新版本号，请检查提交日志。"
+          }
+          $commitEnd = Get-Date
+          $commitDuration = Format-Duration ($commitEnd - $commitStart)
+          Write-Host "svn commit 耗时: $commitDuration"
+          Invoke-Svn -SvnArgs @('cleanup', $TargetPath) -ErrorMessage 'svn cleanup 失败。'
+        }
+      } else {
+        $commitSkipped = $true
+      }
+    } finally {
+      Pop-Location
+    }
   }
 
   $scriptEnd = Get-Date
   $durationText = Format-Duration ($scriptEnd - $scriptStart)
   $profileForLast = if ($Profile) { $Profile } elseif ($selectedProfile) { $selectedProfile.name } else { '' }
+  $targetRootRelForHistory = $TargetRootRel
+  $targetRelForHistory = $TargetRel
+  if ($isOfficialPro -and $lastForProfile) {
+    if (-not [string]::IsNullOrWhiteSpace($lastForProfile.TargetRootRel)) {
+      $targetRootRelForHistory = $lastForProfile.TargetRootRel
+    }
+    if (-not [string]::IsNullOrWhiteSpace($lastForProfile.TargetRel)) {
+      $targetRelForHistory = $lastForProfile.TargetRel
+    }
+  }
   $newLast = [ordered]@{
     Env = $Env
-    TargetRootRel = $TargetRootRel
-    TargetRel = $TargetRel
+    TargetRootRel = $targetRootRelForHistory
+    TargetRel = $targetRelForHistory
     Message = $Message
     BuildScript = $BuildScript
+    OfficialDistRoot = $OfficialDistRoot
+    OfficialProjectRel = $OfficialProjectRel
     Profile = $profileForLast
     ProfileHash = $profileHash
     ProjectRoot = $ProjectRoot
@@ -1621,7 +2274,7 @@ try {
 
   $lastEntries = Update-LastHistory -NewEntry $newLast -ExistingEntries $lastEntries -Path $lastPath
 
-  $commitStatus = if ($NoCommit) { '已跳过' } elseif ($commitSkipped) { '已跳过(无改动)' } else { '已完成' }
+  $commitStatus = if ($isOfficialPro) { '已跳过(official)' } elseif ($NoCommit) { '已跳过' } elseif ($commitSkipped) { '已跳过(无改动)' } else { '已完成' }
   Write-ResultSummary `
     -Status '成功' `
     -EnvValue $Env `
@@ -1629,11 +2282,34 @@ try {
     -TargetPathValue $TargetPath `
     -SourcePathValue $SourcePath `
     -MessageValue $Message `
+    -CompressStatus $compressStatus `
+    -CompressDetail $compressDetail `
     -StartTime $scriptStart `
     -EndTime $scriptEnd `
     -Duration $durationText `
     -SvnRevision $lastRev `
     -CommitStatus $commitStatus
+
+  if ($isOfficialPro -and -not [string]::IsNullOrWhiteSpace($TargetPath)) {
+    try {
+      $selectPath = $null
+      $targetFolderName = Split-Path -Leaf $TargetPath
+      $zipCandidateFinal = Join-Path $TargetPath ("{0}.zip" -f $targetFolderName)
+      $zipCandidateTemp = "$TargetPath.zip"
+      if (Test-Path -LiteralPath $zipCandidateFinal -PathType Leaf) {
+        $selectPath = $zipCandidateFinal
+      } elseif (Test-Path -LiteralPath $zipCandidateTemp -PathType Leaf) {
+        $selectPath = $zipCandidateTemp
+      } elseif (Test-Path -LiteralPath $TargetPath) {
+        $selectPath = $TargetPath
+      }
+      if ($selectPath) {
+        Start-Process explorer.exe -ArgumentList "/select,`"$selectPath`"" | Out-Null
+      }
+    } catch {
+      Write-Warning "打开目录失败，已跳过: $($_.Exception.Message)"
+    }
+  }
   Clear-InputBuffer
 } catch {
   $scriptEnd = Get-Date
@@ -1644,12 +2320,24 @@ try {
   $durationText = Format-Duration ($scriptEnd - $scriptStart)
 
   $profileForLast = if ($Profile) { $Profile } elseif ($selectedProfile) { $selectedProfile.name } else { '' }
+  $targetRootRelForHistory = $TargetRootRel
+  $targetRelForHistory = $TargetRel
+  if ($isOfficialPro -and $lastForProfile) {
+    if (-not [string]::IsNullOrWhiteSpace($lastForProfile.TargetRootRel)) {
+      $targetRootRelForHistory = $lastForProfile.TargetRootRel
+    }
+    if (-not [string]::IsNullOrWhiteSpace($lastForProfile.TargetRel)) {
+      $targetRelForHistory = $lastForProfile.TargetRel
+    }
+  }
   $failedEntry = [ordered]@{
     Env = $Env
-    TargetRootRel = $TargetRootRel
-    TargetRel = $TargetRel
+    TargetRootRel = $targetRootRelForHistory
+    TargetRel = $targetRelForHistory
     Message = $Message
     BuildScript = $BuildScript
+    OfficialDistRoot = $OfficialDistRoot
+    OfficialProjectRel = $OfficialProjectRel
     Profile = $profileForLast
     ProfileHash = $profileHash
     ProjectRoot = $ProjectRoot
@@ -1673,7 +2361,7 @@ try {
     Write-Host "警告: 记录失败历史失败: $($_.Exception.Message)"
   }
 
-  $commitStatus = if ($NoCommit) { '已跳过' } else { '未完成' }
+  $commitStatus = if ($isOfficialPro) { '已跳过(official)' } elseif ($NoCommit) { '已跳过' } else { '未完成' }
   Write-ResultSummary `
     -Status '失败' `
     -EnvValue $Env `
@@ -1681,6 +2369,8 @@ try {
     -TargetPathValue $TargetPath `
     -SourcePathValue $SourcePath `
     -MessageValue $Message `
+    -CompressStatus $compressStatus `
+    -CompressDetail $compressDetail `
     -StartTime $scriptStart `
     -EndTime $scriptEnd `
     -Duration $durationText `
@@ -1696,6 +2386,3 @@ try {
   Clear-InputBuffer
   exit 1
 }
-
-
-
