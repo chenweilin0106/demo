@@ -120,7 +120,7 @@ export default {
       }
       .topItemNum {
         text-align: center;
-        width: 100%;
+        width: 75%;
         font-size: 22px;
         color: #ffef85;
       }
