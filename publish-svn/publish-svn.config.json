@@ -24,8 +24,8 @@
     {
       "name": "vipDay",
       "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2024vipDay",
-      "officialDistRoot": "D:\\officialDist",
-      "officialProjectRel": "noraml\\vipDay",
+      "officialDistRoot": "D:\\officialDist\\normal",
+      "officialProjectRel": "vipDay",
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",
         "test": "D:\\Project\\测试分支\\web\\vue"
@@ -41,7 +41,7 @@
     {
       "name": "2026-valentineDay",
       "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2026valentineDay",
-      "officialDistRoot": "D:\\officialProDist",
+      "officialDistRoot": "D:\\officialDist",
       "officialProjectRel": "",
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",
@@ -58,7 +58,7 @@
     {
       "name": "repeat",
       "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\repeat",
-      "officialDistRoot": "D:\\officialProDist",
+      "officialDistRoot": "D:\\officialDist",
       "officialProjectRel": "",
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",
@@ -81,7 +81,7 @@
     {
       "name": "newerBenefit",
       "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\newerBenefit",
-      "officialDistRoot": "D:\\officialProDist",
+      "officialDistRoot": "D:\\officialDist",
       "officialProjectRel": "",
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",
@@ -98,7 +98,7 @@
     {
       "name": "2025-weekly",
       "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\2025",
-      "officialDistRoot": "D:\\officialProDist",
+      "officialDistRoot": "D:\\officialDist",
       "officialProjectRel": "",
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",

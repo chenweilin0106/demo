@@ -523,32 +523,6 @@ function Get-GitCommitMessage {
   return $null
 }
 
-function Sanitize-FileNameSegment {
-  param(
-    [string]$Value
-  )
-
-  if ([string]::IsNullOrWhiteSpace($Value)) {
-    return $Value
-  }
-
-  $normalized = ($Value -replace '\s+', ' ').Trim()
-  if ([string]::IsNullOrWhiteSpace($normalized)) {
-    return $normalized
-  }
-
-  $invalidChars = [System.IO.Path]::GetInvalidFileNameChars()
-  $chars = $normalized.ToCharArray() | ForEach-Object {
-    if ($invalidChars -contains $_) {
-      '-'
-    } else {
-      $_
-    }
-  }
-
-  return (-join $chars).Trim()
-}
-
 function Get-EnvFileLines {
   param(
     [string]$FilePath
@@ -1364,56 +1338,6 @@ function Select-Env {
       $index = [int]$input - 1
       if ($index -ge 0 -and $index -lt $Options.Count) {
         return $Options[$index]
-      }
-    }
-    Write-Host '输入无效，请输入列表中的序号。'
-  }
-}
-
-function Select-TargetRel {
-  param(
-    [hashtable]$Map,
-    [string]$DefaultValue
-  )
-
-  if (-not $Map -or $Map.Count -eq 0) {
-    return $null
-  }
-
-  $entries = @()
-  foreach ($entry in $Map.GetEnumerator()) {
-    $entries += [pscustomobject]@{
-      Key = $entry.Key
-      Value = $entry.Value
-    }
-  }
-
-  Write-Host '可用目标目录:'
-  for ($i = 0; $i -lt $entries.Count; $i++) {
-    $entry = $entries[$i]
-    Write-Host ("[{0}] {1} => {2}" -f ($i + 1), $entry.Key, $entry.Value)
-  }
-
-  $defaultIndex = $null
-  if ($DefaultValue) {
-    for ($i = 0; $i -lt $entries.Count; $i++) {
-      if ($entries[$i].Value -eq $DefaultValue) {
-        $defaultIndex = $i
-        break
-      }
-    }
-  }
-
-  while ($true) {
-    $prompt = if ($defaultIndex -ne $null) { "选择目标目录序号 [$($defaultIndex + 1)]" } else { '选择目标目录序号' }
-    $input = Read-HostSafe $prompt
-    if ([string]::IsNullOrWhiteSpace($input) -and $defaultIndex -ne $null) {
-      return $entries[$defaultIndex].Value
-    }
-    if ($input -match '^\d+$') {
-      $index = [int]$input - 1
-      if ($index -ge 0 -and $index -lt $entries.Count) {
-        return $entries[$index].Value
       }
     }
     Write-Host '输入无效，请输入列表中的序号。'
