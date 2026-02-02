@@ -123,6 +123,42 @@ function Prompt-RequiredFileNameSegment {
   }
 }
 
+function Prompt-OptionalFileNameSegment {
+  param(
+    [string]$Value,
+    [string]$Prompt,
+    [string]$Suggestion,
+    [string]$Hint
+  )
+
+  while ($true) {
+    if (-not [string]::IsNullOrWhiteSpace($Value)) {
+      if (-not (Test-FileNameSegmentValid -Value $Value)) {
+        throw '提交信息包含非法字符，请重新输入。'
+      }
+      return $Value
+    }
+
+    $promptText = $Prompt
+    if (-not [string]::IsNullOrWhiteSpace($Hint)) {
+      $promptText += " $Hint"
+    }
+    if (-not [string]::IsNullOrWhiteSpace($Suggestion)) {
+      $promptText += " [$Suggestion]"
+    }
+    $resolved = Read-HostSafe $promptText
+    if ([string]::IsNullOrWhiteSpace($resolved)) {
+      return $null
+    }
+    if (-not (Test-FileNameSegmentValid -Value $resolved)) {
+      Write-Host '提交信息包含非法字符，请重新输入。'
+      $Value = $null
+      continue
+    }
+    return $resolved
+  }
+}
+
 function Invoke-Svn {
   param(
     [string[]]$SvnArgs,
@@ -1713,23 +1749,30 @@ try {
     }
   }
 
+  $messageWasBound = $PSBoundParameters.ContainsKey('Message')
   $gitMessageForPrompt = Get-GitCommitMessage -ProjectRoot $ProjectRoot
   $messagePrompt = if ($gitMessageForPrompt) { '提交信息 (来自 Git)' } else { '提交信息' }
   if (-not $NoCommit -and -not $isOfficialPro) {
     $Message = Prompt-Required $Message $messagePrompt $gitMessageForPrompt '提交信息不能为空，请重新输入。'
   }
   if ($isOfficialPro) {
-    $gitDefault = $null
-    if (-not [string]::IsNullOrWhiteSpace($gitMessageForPrompt)) {
-      if (Test-FileNameSegmentValid -Value $gitMessageForPrompt) {
-        $gitDefault = $gitMessageForPrompt
-      } else {
-        Write-Host '提示: Git 提交信息包含换行或文件名非法字符，不能直接作为默认值（official 会把提交信息拼进目录名）。'
-        Write-Host 'Git 提交信息原文（可复制后自行修改）：'
-        Write-Host $gitMessageForPrompt
+    if ($messageWasBound) {
+      if (-not [string]::IsNullOrWhiteSpace($Message) -and -not (Test-FileNameSegmentValid -Value $Message)) {
+        throw '提交信息包含非法字符，请重新输入。'
       }
+    } else {
+      $officialHint = if ($gitMessageForPrompt) { '(来自 Git，留空不拼接)' } else { '(留空不拼接)' }
+      $officialSuggestion = $null
+      if (-not [string]::IsNullOrWhiteSpace($gitMessageForPrompt)) {
+        if (Test-FileNameSegmentValid -Value $gitMessageForPrompt) {
+          $officialSuggestion = $gitMessageForPrompt
+        } else {
+          Write-Host '提示: Git 提交信息包含换行或文件名非法字符，不能直接作为默认值（official 会把提交信息拼进目录名）。'
+          Write-Host ("Git 提交信息原文（可复制后自行修改）：{0}" -f $gitMessageForPrompt)
+        }
+      }
+      $Message = Prompt-OptionalFileNameSegment $Message '提交信息' $officialSuggestion $officialHint
     }
-    $Message = Prompt-RequiredFileNameSegment $Message $messagePrompt $gitDefault
   }
   if ($isOfficialPro) {
     $envPath = Join-Path $ProjectRoot '.env'
@@ -1822,12 +1865,17 @@ try {
     }
 
     $gitSegment = $Message
-    if (-not (Test-FileNameSegmentValid -Value $gitSegment)) {
-      throw '提交信息为空或包含非法字符，请重新输入。'
+    if (-not [string]::IsNullOrWhiteSpace($gitSegment) -and -not (Test-FileNameSegmentValid -Value $gitSegment)) {
+      throw '提交信息包含非法字符，请重新输入。'
     }
 
     $timestampText = Format-Timestamp -Value $buildEndTime -Pattern 'yyyy-MM-dd HH-mm-ss'
-    $resultFolderName = "{0}_{1}_{2}_{3}" -f $activityData, $activityName, $gitSegment, $timestampText
+    $nameParts = @($activityData, $activityName)
+    if (-not [string]::IsNullOrWhiteSpace($gitSegment)) {
+      $nameParts += $gitSegment
+    }
+    $nameParts += $timestampText
+    $resultFolderName = ($nameParts -join '_')
     $invalidChars = [System.IO.Path]::GetInvalidFileNameChars()
     if ($resultFolderName.IndexOfAny($invalidChars) -ge 0) {
       throw "目录名包含非法字符，请检查 VUE_APP_THINKING_ACTIVITY_DATA 或 VUE_APP_THINKING_ACTIVITY_NAME: $resultFolderName"

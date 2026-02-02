@@ -81,7 +81,9 @@ If you submit changes, include a brief description of what behavior changed, plu
 - `publish-svn.last.json` records both succeeded and failed runs (up to 200 entries), including timestamps, duration, revision (when available), and error text.
 - On failure, the script prompts whether to rerun and prints a full rerun command with the currently bound parameters.
 
-## 近期变更（2026-01-28）
+## 近期变更（2026-02-02）
+
+- `Env=official` 下“提交信息”改为可选：留空则目录/压缩包命名不再拼接提交信息；同时优化交互提示展示（合法 Git 信息显示为建议值，不合法则提示并输出原文供复制修改）。
 
 - 日常入口统一为 `publish-svn.ps1` + `publish-svn.config.json` + `publish-svn.last.json`（原 `publish-svn.officialPro.*` 已合并改名，旧版三件套已移除）。
 - `Env=official` 下结果打印与系统通知不再展示 `提交SVN: ...`（official 流程不执行 SVN 提交阶段）。
