@@ -32,7 +32,7 @@
       </div>
       <p class="text-nowrap">1.活动开始后重置<span class="focus-color">安卓、iOS和代充</span>所有额度首充</p>
       <p class="text-nowrap">2.活动期间<span class="focus-color">所有额度</span>首充双倍福利每日重置</p>
-      <div class="immediatelyRecharge margin-row-center" hasRight="1" @click="$emit('recharge')">立即充值</div>
+      <div class="immediatelyRecharge margin-row-center" @click="$emit('recharge')">立即充值</div>
     </div>
     <RulesPopup v-if="isShowRulesPopup" @clickClose="isShowRulesPopup = false" />
     <ReceivePopup v-if="isShowReceivePopup" :config="configReceivePopup" @clickClose="isShowReceivePopup = false" />
@@ -51,7 +51,6 @@ export default {
   data() {
     return {
       awardButtonTextMap: Object.freeze({ 0: '去完成', 1: '领取', 2: '已领取，明日再来', 3: '已领取' }),
-      awardButtonClassMap: Object.freeze({ 0: 'button-noFinish', 1: 'button-receive', 2: 'button-finish', 3: 'button-finish' }),
       isShowRulesPopup: false, // 首充翻倍规则弹窗
       isShowReceivePopup: false, // 恭喜获得弹框
       configReceivePopup: [
@@ -195,21 +194,22 @@ export default {
     line-height: 1;
     white-space: nowrap;
     font-weight: normal;
-    //color: #fff;
     &.status0 {
-      color: #fff;
-      //background: linear-gradient(0deg, #FCA51B, #FFE775);
-      background: url('@/pages/labaFestival/assets/mk2_17.png') no-repeat left top/100% 100%;
+      color: #FFFFFF;
+      background: url('@/pages/womenDay/assets/mk2_17.png') no-repeat left top/100% 100%;
     }
     &.status1 {
-      color: #fff;
-      //background: linear-gradient(0deg, #E95533, #FFC74E);
-      background: url('@/pages/labaFestival/assets/mk2_18.png') no-repeat left top/100% 100%;
+      color: #FFFFFF;
+      background: url('@/pages/womenDay/assets/mk2_18.png') no-repeat left top/100% 100%;
     }
     &.status2 {
-      color: #fff;
-      //background: linear-gradient(0deg, #E95533, #FFC74E);
-      background: url('@/pages/labaFestival/assets/mk2_19.png') no-repeat left top/100% 100%;
+      color: #FFFFFF;
+      font-size: 29px;
+      background: url('@/pages/womenDay/assets/mk2_19.png') no-repeat left top/100% 100%;
+    }
+    &.status3 {
+      color: #FFFFFF;
+      background: url('@/pages/womenDay/assets/mk2_19.png') no-repeat left top/100% 100%;
     }
   }
   .RechargeRebate_TopBox_Article {

@@ -8,8 +8,8 @@
         <div v-if="accruing_days_list[Object.keys(accruing_days_list)[0]].awards[1].text_add" class="rightUpdateIcon"></div>
         <div v-for="tabItem in tabsArray" :key="tabItem.id" class="tab" @click="switchTab(tabItem)">{{ tabItem.tabName }}</div>
       </div>
-      <transition-group class="rechargeTasksList flex-column align-center" :name="transitionClass" tag="ul">
-        <div v-for="taskItem in rechargeListShow" :key="`${currentTab.listKey}_${taskItem.condition || taskItem.amount_cond}`" :class="['rechargeTaskItem', { bigAwardsTask: taskItem.bigAwardsTask }]">
+      <transition-group class="rechargeTasksList flex-column align-center" :name="transitionClass" tag="ul" :key="currentTab.listKey">
+        <div v-for="taskItem in rechargeListShow" :key="taskItem.condition || taskItem.amount_cond" :class="['rechargeTaskItem', { bigAwardsTask: taskItem.bigAwardsTask }]">
           <div class="taskDetail">
             <p v-if="taskItem.condition" class="taskDetailP1">
               <span class="taskDetailP1Span1">累计</span>

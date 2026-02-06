@@ -1,41 +1,37 @@
 <template>
-  <PopupBox title="title_35.png" @clickClose="clickClose">
+  <PopupBox title="title_28.png" @clickClose="clickClose">
     <template v-if="list.length">
       <div class="head flex line-height-1 margin-row-center">
-        <div class="head1">奖励</div>
-        <div class="head2 line-height-100">时间</div>
+        <div class="head1">消耗积分</div>
+        <div class="head2">奖励</div>
+        <div class="head3">时间</div>
       </div>
-      <div class="scrollList" ref="records" @scroll="handleScroll">
+      <div class="scrollList" ref="scrollDiv" @scroll="handleScroll">
         <div class="listItem" v-for="(item, index) in list" :key="index">
-          <div class="text1">
-            获得<span v-if="item.is_rare == 1">稀有</span>奖励&ensp;<i>{{
-              item.desc
-            }}</i>
-          </div>
-          <div class="text2">{{ item.create_time }}</div>
+          <div class="text1">{{ item.nums }}</div>
+          <div class="text2" :class="`status${item.desc == '兑换失败' ? 2 : ''}`">{{ item.desc }}</div>
+          <div class="text3">{{ item.create_time }}</div>
         </div>
-        <div class="noMoreData" v-if="isNextPage === false && list.length != 0">
-          没有更多记录了
-        </div>
+        <div class="noMoreData" v-if="isNextPage === false && list.length !== 0">没有更多记录了</div>
       </div>
     </template>
-    <div v-else class="noData flex justify-center">暂无参与记录</div>
+    <div v-else class="noData flex justify-center">暂无兑换记录</div>
   </PopupBox>
 </template>
 
 <script>
-import { getPageData } from "@/api/index"
+import { getPageData } from '@/api'
 
 export default {
-  name: 'recordsVue',
+  name: 'recordsPopup',
   data() {
     return {
-      record_list: [
-        // { desc: '稀有', create_time: '2021-02-02 12:00:00', is_rare: 1 },
+      list: [
+        // { desc: '稀有', create_time: '02-02 12:00:00', is_rare: 1 }
       ], // 奖品记录数组
       lastPage: 0, // 最后一次请求时的页数
       page: 1, // 页数
-      isNextPage: true, // 是否有下一页
+      isNextPage: true // 是否有下一页
     }
   },
   computed: {},
@@ -44,18 +40,18 @@ export default {
   },
   watch: {},
   methods: {
-    getRecordData() {
+    getData() {
       if (this.page > this.lastPage) {
         this.lastPage = JSON.parse(JSON.stringify(this.page))
-        getExchangeRecordApi(this.page, 1).then((res) => {
+        getPageData({ type: 'craze_egg_exchange_log', mark: this.page }).then((res) => {
           if (res.errno == 0) {
             // console.log(res)
-            if (res.data.has_more === false) {
+            if (res.data.has_mord === false) {
               this.isNextPage = false
             } else {
               this.page++
             }
-            this.record_list = this.record_list.concat(res.data.list)
+            this.list = this.list.concat(res.data.list)
           } else {
             this.$toast(res.errmsg)
           }
@@ -63,19 +59,16 @@ export default {
       }
     },
     handleScroll() {
-      const content = this.$refs.records // 获取到包含内容的元素
-      if (
-        content.clientHeight + content.scrollTop >=
-        content.scrollHeight - 100
-      ) {
+      const content = this.$refs.scrollDiv // 获取到包含内容的元素
+      if (content.clientHeight + content.scrollTop >= content.scrollHeight - 100) {
         console.log('下拉触发')
         if (this.isNextPage === true) {
-          this.getRecordData()
+          this.getData()
         }
       }
     },
     clickClose() {
-      this.$emit("clickClose")
+      this.$emit('clickClose')
     }
   }
 }
@@ -83,15 +76,18 @@ export default {
 
 <style scoped lang="scss">
 .head {
-  width: 565px; // todo
-  margin-bottom: 10px;
-  font-size: 24px;
+  width: 586px; // todo
+  margin-bottom: 15px;
+  font-size: 26px;
   color: #ffffff;
   .head1 {
-    margin-left: 87px;
+    margin-left: 46px;
   }
   .head2 {
-    margin-left: 332px;
+    margin-left: 95px;
+  }
+  .head3 {
+    margin-left: 176px;
   }
 }
 .scrollList {
@@ -101,12 +97,12 @@ export default {
   text-align: -webkit-center;
   overflow-y: scroll;
   .listItem {
-    width: 565px; // todo
+    width: 586px; // todo
     height: 70px;
     position: relative;
     color: #fff;
     &:nth-child(odd) {
-      background: rgba(214, 94, 62, 0.3);
+      background: rgba(95, 59, 189, 0.3);
       // border-radius: 40px;
     }
     // &:nth-child(even) {
@@ -115,35 +111,49 @@ export default {
     .text1 {
       position: absolute;
       font-size: 22px;
-      left: 9px;
+      width: 25px;
+      left: 63px;
       top: 50%;
       transform: translateY(-50%);
-      i {
-        color: #fffa6e;
-      }
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .text2 {
       position: absolute;
-      right: 6px;
+      top: 50%;
+      left: 163px;
+      transform: translateY(-50%);
+      font-size: 22px;
+      color: #FFFA6E;
+      width: 210px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &.status2 {
+        color: #7F2948;
+      }
+    }
+    .text3 {
+      position: absolute;
+      right: 24px;
       top: 50%;
       transform: translateY(-50%);
-      font-weight: bold;
       font-size: 22px;
       color: #fff;
     }
   }
   .noMoreData {
-    width: 600px;
-    height: 60px;
-    font-size: 22px;
-    color: #fff;
-    margin-top: 50px;
+    width: 586px;
+    font-size: 24px;
+    color: #6845B3;
+    margin-top: 20px;
   }
 }
 .noData {
   font-size: 28px;
   color: #fff;
-  height: 754px;
+  height: 761px;
   padding-top: 340px;
 }
 </style>

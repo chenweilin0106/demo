@@ -1,5 +1,5 @@
 <template>
-  <transition-group class="rechargeTasksList flex-column align-center" :name="transitionClass" tag="ul">
+  <transition-group class="rechargeTasksList flex-column align-center" :name="transitionClass" tag="ul" :key="currentTab.listKey">
     <PublicCard v-for="rechargeAward in totalList" size="2" :key="rechargeAward.condition||rechargeAward.amount_cond" :class="['taskCard position-relative flex align-center justify-between',{specialCard:isSpecial(rechargeAward)}]">
       <div class="taskInfo h-100 line-height-1 flex-column justify-between">
         <p class="desc">

@@ -51,8 +51,8 @@
         <!-- <div v-if="accruing_days_list[Object.keys(accruing_days_list)[0]].awards[0].text_add" class="rightUpdateIcon"></div> -->
         <div v-for="tabItem in tabsArray" :key="tabItem.id" class="tab" @click="switchTab(tabItem)">{{ tabItem.tabName }}</div>
       </div>
-      <transition-group class="rechargeTaskList" :name="transitionClass" tag="ul">
-        <div v-for="taskItem in rechargeListShow" :key="`${currentTab.listKey}_${taskItem.condition || taskItem.amount_cond}`" class="rechargeTaskItem" :class="{ bigAwardsTask: taskItem.bigAwardsTask }">
+      <transition-group class="rechargeTaskList" :name="transitionClass" tag="ul" :key="currentTab.listKey">
+        <div v-for="taskItem in rechargeListShow" :key="taskItem.condition || taskItem.amount_cond" class="rechargeTaskItem" :class="{ bigAwardsTask: taskItem.bigAwardsTask }">
           <div class="taskDetail">
             <p v-if="taskItem.condition" class="taskDetailP1">
               <span class="taskDetailP1Span1">累计</span>
@@ -428,6 +428,11 @@ export default {
         background-image: linear-gradient(0deg, #F38237, #F8DD90), -webkit-linear-gradient(#fff, #fff);
       }
       &.status2{
+        color: #ffffff;
+        font-size: 29px;
+        background-image: linear-gradient(0deg, #8A8A8A, #D4D4D4), -webkit-linear-gradient(#fff, #fff);
+      }
+      &.status3{
         color: #ffffff;
         background-image: linear-gradient(0deg, #8A8A8A, #D4D4D4), -webkit-linear-gradient(#fff, #fff);
       }
