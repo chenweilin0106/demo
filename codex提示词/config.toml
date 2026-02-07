@@ -1,0 +1,27 @@
+model = "gpt-5.2"
+model_reasoning_effort = "high"
+personality = "pragmatic"
+web_search = "live"
+
+[features]
+experimental_windows_sandbox = true
+elevated_windows_sandbox = true
+powershell_utf8 = true
+
+[projects.'C:\Users\dcw220']
+trust_level = "trusted"
+
+[projects.'C:\Users\dcw220\.codex']
+trust_level = "trusted"
+
+[projects.'\\?\D:\Project\demo']
+trust_level = "trusted"
+
+[projects.'\\?\D:\Project\dandan-activity-web']
+trust_level = "trusted"
+
+[projects.'D:\Project\dandan_website']
+trust_level = "trusted"
+
+[notice.model_migrations]
+"gpt-5.2" = "gpt-5.2-codex"
