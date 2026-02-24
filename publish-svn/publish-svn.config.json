@@ -5,11 +5,6 @@
       "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\2026",
       "officialDistRoot": "D:\\officialDist\\weekly\\2026",
       "officialProjectRelFromEnv": "VUE_APP_ICON_PATH",
-      "officialProjectRelMap": {
-        "labaFestival": "labaFestival",
-        "springFestival": "springFestival",
-        "whiteValentine": "whiteValentine"
-      },
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",
         "test": "D:\\Project\\测试分支\\web\\vue"

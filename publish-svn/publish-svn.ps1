@@ -1979,29 +1979,22 @@ try {
     $OfficialDistRoot = Prompt-WithDefault $OfficialDistRoot 'OfficialDistRoot (e.g. D:\\officialDist)' $officialDistRootDefault
 
     $officialProjectRelFromEnvKey = if ($selectedProfile -and $selectedProfile.officialProjectRelFromEnv) { [string]$selectedProfile.officialProjectRelFromEnv } else { $null }
-    $officialProjectRelMap = $null
-    if ($selectedProfile -and $selectedProfile.officialProjectRelMap) {
-      $officialProjectRelMap = Convert-ProfileMap $selectedProfile.officialProjectRelMap
-    }
     $hasOfficialProjectRelFromEnv = -not [string]::IsNullOrWhiteSpace($officialProjectRelFromEnvKey)
-    $hasOfficialProjectRelMap = $selectedProfile -and ($selectedProfile.officialProjectRelMap -ne $null)
-    if ($hasOfficialProjectRelFromEnv -and -not $hasOfficialProjectRelMap) {
-      throw "Profile 配置 officialProjectRelFromEnv 但缺少 officialProjectRelMap: $($selectedProfile.name)"
-    }
-    if (-not $hasOfficialProjectRelFromEnv -and $hasOfficialProjectRelMap) {
+    $hasOfficialProjectRelMapField = $selectedProfile -and ($selectedProfile.PSObject.Properties.Name -contains 'officialProjectRelMap')
+    if (-not $hasOfficialProjectRelFromEnv -and $hasOfficialProjectRelMapField) {
       throw "Profile 配置 officialProjectRelMap 但缺少 officialProjectRelFromEnv: $($selectedProfile.name)"
     }
-    $useMappedOfficialProjectRel = $hasOfficialProjectRelFromEnv -and $officialProjectRelMap -and ($officialProjectRelMap.Count -gt 0)
 
-    if ($OfficialProjectRel -and $useMappedOfficialProjectRel) {
-      $profileName = if ($selectedProfile -and $selectedProfile.name) { $selectedProfile.name } else { $Profile }
-      if (-not $profileName) {
-        $profileName = 'unknown'
-      }
-      throw "配置 $profileName 已启用环境映射，不允许手动传入 OfficialProjectRel。"
+    $officialProjectRelMap = $null
+    if ($hasOfficialProjectRelMapField -and $selectedProfile.officialProjectRelMap) {
+      $officialProjectRelMap = Convert-ProfileMap $selectedProfile.officialProjectRelMap
     }
+    $useMappedOfficialProjectRel = $hasOfficialProjectRelFromEnv
 
-    if (-not $OfficialProjectRel -and $useMappedOfficialProjectRel) {
+    $officialProjectRelWasBound = $PSBoundParameters.ContainsKey('OfficialProjectRel')
+    if ($officialProjectRelWasBound -and -not [string]::IsNullOrWhiteSpace($OfficialProjectRel)) {
+      Write-Host ("提示: 已手动指定 OfficialProjectRel，已跳过环境映射: {0}" -f $OfficialProjectRel)
+    } elseif (-not $OfficialProjectRel -and $useMappedOfficialProjectRel) {
       $profileName = if ($selectedProfile -and $selectedProfile.name) { $selectedProfile.name } else { $Profile }
       if (-not $profileName) {
         $profileName = 'unknown'
@@ -2010,12 +2003,21 @@ try {
       if ([string]::IsNullOrWhiteSpace($envValue)) {
         throw "配置 $profileName 未在 .env / $envOverrideFileName 中找到 $officialProjectRelFromEnvKey，请确认配置。"
       }
-      if (-not $officialProjectRelMap.Contains($envValue)) {
-        throw "配置 $profileName 的 $officialProjectRelFromEnvKey=$envValue 未匹配到配置映射，请检查 officialProjectRelMap。"
+
+      if ($officialProjectRelMap -and ($officialProjectRelMap.Count -gt 0) -and $officialProjectRelMap.Contains($envValue)) {
+        $OfficialProjectRel = $officialProjectRelMap[$envValue]
+        Write-Host ("环境映射: env {0}={1} -> official {2}" -f $officialProjectRelFromEnvKey, $envValue, $OfficialProjectRel)
+      } else {
+        $OfficialProjectRel = $envValue
+        if (-not $hasOfficialProjectRelMapField) {
+          Write-Host ("提示: 未配置 officialProjectRelMap，已使用 env {0}={1} 作为 OfficialProjectRel。" -f $officialProjectRelFromEnvKey, $envValue)
+        } elseif (-not $officialProjectRelMap -or $officialProjectRelMap.Count -eq 0) {
+          Write-Host ("提示: officialProjectRelMap 为空，已使用 env {0}={1} 作为 OfficialProjectRel。" -f $officialProjectRelFromEnvKey, $envValue)
+        } else {
+          Write-Host ("提示: officialProjectRelMap 未匹配到 env {0}={1}，已回退使用 env 值作为 OfficialProjectRel。" -f $officialProjectRelFromEnvKey, $envValue)
+        }
       }
 
-      $OfficialProjectRel = $officialProjectRelMap[$envValue]
-      Write-Host ("环境映射: env {0}={1} -> official {2}" -f $officialProjectRelFromEnvKey, $envValue, $OfficialProjectRel)
       Write-Host ("OfficialProjectRel: {0}" -f $OfficialProjectRel)
     } else {
       $officialProjectDefault = if ($OfficialProjectRel) { $OfficialProjectRel } elseif ($lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.OfficialProjectRel)) { $lastForProfile.OfficialProjectRel } elseif ($selectedProfile -and $selectedProfile.officialProjectRel) { $selectedProfile.officialProjectRel } else { '' }
