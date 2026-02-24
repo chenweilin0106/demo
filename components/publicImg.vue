@@ -117,6 +117,11 @@ export default {
       handler(newV, oldV) {
         // console.log('newV:', newV, 'oldV:', oldV)
         try {
+          if (this.imgPattern == 2) {
+            this.clearSvga()
+          } else if (this.imgPattern == 3) {
+            this.destroyJson()
+          }
           this.imgPath = this.imgName
           this.judegPattern()
         } catch (error) {
@@ -214,6 +219,7 @@ export default {
         this.svga_data.stopAnimation()
         this.svga_data.clear()
         this.svga_data.clearDynamicObjects()
+        this.svga_data._videoItem = null
         this.svga_data = null
       }
     },

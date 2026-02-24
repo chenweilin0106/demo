@@ -202,6 +202,11 @@ export default {
       handler(newV, oldV) {
         // console.log('newV:', newV, 'oldV:', oldV)
         try {
+          if (this.imgPattern == 2) {
+            this.clearSvga()
+          } else if (this.imgPattern == 3) {
+            this.destroyJson()
+          }
           this.imgPath = this.imgName
           this.judegPattern()
         } catch (error) {
