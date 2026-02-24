@@ -571,6 +571,192 @@ function Get-EnvFileLines {
   return Get-Content -Encoding UTF8 $FilePath
 }
 
+function Show-EnvConfigForRun {
+  param(
+    [string]$ProjectRoot,
+    [string]$EnvValue,
+    [string]$OverrideEnvFileName,
+    [switch]$PauseAfterPrint,
+    [string]$PausePrompt
+  )
+
+  if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
+    return
+  }
+
+  $envPath = Join-Path $ProjectRoot '.env'
+  $envOverridePath = $null
+  if (-not [string]::IsNullOrWhiteSpace($OverrideEnvFileName)) {
+    $envOverridePath = Join-Path $ProjectRoot $OverrideEnvFileName
+  } elseif (-not [string]::IsNullOrWhiteSpace($EnvValue)) {
+    $envOverridePath = Join-Path $ProjectRoot (".env.$EnvValue")
+  }
+
+  $mergedEnvLines = @()
+  $envLines = Get-EnvFileLines -FilePath $envPath
+  if ($envLines.Count -gt 0) {
+    $mergedEnvLines += $envLines
+  } else {
+    Write-Host "警告: 未找到或内容为空: $envPath"
+  }
+  if (-not [string]::IsNullOrWhiteSpace($envOverridePath)) {
+    $overrideLines = Get-EnvFileLines -FilePath $envOverridePath
+    if ($overrideLines.Count -gt 0) {
+      $mergedEnvLines += $overrideLines
+    } else {
+      Write-Host "警告: 未找到或内容为空: $envOverridePath"
+    }
+  }
+
+  Write-Host ''
+  Write-Host '--- 环境变量确认 ---'
+  Write-Host ''
+  if ($mergedEnvLines.Count -gt 0) {
+    foreach ($line in $mergedEnvLines) {
+      Write-Host $line
+    }
+  } else {
+    Write-Host '（无内容可显示）'
+  }
+  Write-Host ''
+
+  if ($PauseAfterPrint) {
+    if ([string]::IsNullOrWhiteSpace($PausePrompt)) {
+      $PausePrompt = '请确认后按回车继续'
+    }
+    [void](Read-HostSafe $PausePrompt)
+  }
+}
+
+function Get-ModeFromCommandText {
+  param(
+    [string]$CommandText
+  )
+
+  if ([string]::IsNullOrWhiteSpace($CommandText)) {
+    return $null
+  }
+
+  $text = $CommandText.Trim()
+
+  $m = [regex]::Match($text, '(?i)(?:^|\s)--mode(?:\s+|=)(?<mode>("([^"]+)")|(''([^'']+)'')|([^\s]+))')
+  if (-not $m.Success) {
+    return $null
+  }
+
+  $mode = $m.Groups['mode'].Value
+  if ([string]::IsNullOrWhiteSpace($mode)) {
+    return $null
+  }
+  $mode = $mode.Trim()
+  $mode = $mode.Trim('"', "'")
+
+  if ([string]::IsNullOrWhiteSpace($mode)) {
+    return $null
+  }
+
+  if ($mode -match '[\\\/:]') {
+    return $null
+  }
+
+  return $mode
+}
+
+function Get-NpmRunScriptName {
+  param(
+    [string]$CommandText
+  )
+
+  if ([string]::IsNullOrWhiteSpace($CommandText)) {
+    return $null
+  }
+
+  $text = $CommandText.Trim()
+  $m = [regex]::Match($text, '(?i)^\s*npm\s+run\s+(?<name>[^\s]+)')
+  if (-not $m.Success) {
+    return $null
+  }
+  $name = $m.Groups['name'].Value
+  if ([string]::IsNullOrWhiteSpace($name)) {
+    return $null
+  }
+  return $name.Trim()
+}
+
+function Get-NpmScriptCommand {
+  param(
+    [string]$ProjectRoot,
+    [string]$ScriptName
+  )
+
+  if ([string]::IsNullOrWhiteSpace($ProjectRoot) -or [string]::IsNullOrWhiteSpace($ScriptName)) {
+    return $null
+  }
+
+  $pkgPath = Join-Path $ProjectRoot 'package.json'
+  if (-not (Test-Path -LiteralPath $pkgPath -PathType Leaf)) {
+    return $null
+  }
+
+  $pkg = $null
+  try {
+    $pkg = Get-Content -Raw -Encoding UTF8 -LiteralPath $pkgPath | ConvertFrom-Json
+  } catch {
+    return $null
+  }
+
+  if (-not $pkg -or -not $pkg.scripts) {
+    return $null
+  }
+
+  foreach ($prop in $pkg.scripts.PSObject.Properties) {
+    if ($prop.Name -eq $ScriptName) {
+      return [string]$prop.Value
+    }
+  }
+
+  return $null
+}
+
+function Resolve-ModeFromBuildScript {
+  param(
+    [string]$ProjectRoot,
+    [string]$BuildScript
+  )
+
+  if ([string]::IsNullOrWhiteSpace($BuildScript)) {
+    return $null
+  }
+
+  $visited = @{}
+  $current = $BuildScript
+  $maxDepth = 6
+
+  for ($i = 0; $i -lt $maxDepth; $i++) {
+    $mode = Get-ModeFromCommandText -CommandText $current
+    if ($mode) {
+      return $mode
+    }
+
+    $scriptName = Get-NpmRunScriptName -CommandText $current
+    if (-not $scriptName) {
+      return $null
+    }
+    if ($visited.ContainsKey($scriptName)) {
+      return $null
+    }
+    $visited[$scriptName] = $true
+
+    $scriptCommand = Get-NpmScriptCommand -ProjectRoot $ProjectRoot -ScriptName $scriptName
+    if ([string]::IsNullOrWhiteSpace($scriptCommand)) {
+      return $null
+    }
+    $current = $scriptCommand
+  }
+
+  return $null
+}
+
 function Test-ToastRegistration {
   param(
     [string]$AppId
@@ -778,6 +964,163 @@ function Ensure-ToastRegistration {
   }
 }
 
+function Send-ToastNotificationViaWindowsPowerShell {
+  param(
+    [string]$Title,
+    [string[]]$Lines,
+    [string]$AppId,
+    [switch]$DebugNotify
+  )
+
+  if ([string]::IsNullOrWhiteSpace($Title)) {
+    return $false
+  }
+
+  $powershellExe = (Get-Command powershell.exe -ErrorAction SilentlyContinue).Source
+  if ([string]::IsNullOrWhiteSpace($powershellExe)) {
+    if ($DebugNotify) {
+      Write-Host '通知警告: 未找到 powershell.exe，无法降级发送 Toast。'
+    }
+    return $false
+  }
+
+  try {
+    $payload = @{
+      Title = $Title
+      Lines = @($Lines)
+      AppId = $AppId
+      DebugNotify = [bool]$DebugNotify
+    } | ConvertTo-Json -Compress -Depth 6
+
+    $payloadB64 = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($payload))
+
+    $childScript = @"
+`$ErrorActionPreference = 'Stop'
+
+function Send-ToastInternal {
+  param(
+    [string]`$Title,
+    [string[]]`$Lines,
+    [string]`$AppId,
+    [bool]`$DebugNotify
+  )
+
+  if ([string]::IsNullOrWhiteSpace(`$Title)) {
+    return `$false
+  }
+
+  try {
+    Add-Type -AssemblyName System.Runtime.WindowsRuntime -ErrorAction SilentlyContinue | Out-Null
+
+    if (-not ('PublishSvn.ProcessAppId' -as [type])) {
+      Add-Type -Language CSharp -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+
+namespace PublishSvn {
+  public static class ProcessAppId {
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern int SetCurrentProcessExplicitAppUserModelID(string appID);
+  }
+}
+'@ | Out-Null
+    }
+
+    `$xml = [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime]::new()
+    `$xml.LoadXml("<toast><visual><binding template='ToastGeneric'></binding></visual></toast>")
+    `$binding = `$xml.SelectSingleNode('//binding')
+
+    `$text = `$xml.CreateElement('text')
+    `$text.InnerText = `$Title
+    `$binding.AppendChild(`$text) | Out-Null
+
+    foreach (`$line in (`$Lines | Where-Object { -not [string]::IsNullOrWhiteSpace(`$_) })) {
+      `$node = `$xml.CreateElement('text')
+      `$node.InnerText = `$line
+      `$binding.AppendChild(`$node) | Out-Null
+    }
+
+    `$toast = [Windows.UI.Notifications.ToastNotification, Windows.UI.Notifications, ContentType = WindowsRuntime]::new(`$xml)
+
+    `$appIdsToTry = @()
+    if (-not [string]::IsNullOrWhiteSpace(`$AppId)) {
+      `$appIdsToTry += `$AppId
+    }
+    `$appIdsToTry += @('Microsoft.Windows.PowerShell', 'Windows PowerShell', 'Microsoft.PowerShell', 'PowerShell')
+
+    try {
+      `$startAppIds = Get-StartApps 2>`$null | Where-Object { `$_.Name -match 'PowerShell|Terminal|终端|命令提示符|cmd' } | Select-Object -ExpandProperty AppID
+      if (`$startAppIds) {
+        `$appIdsToTry += `$startAppIds
+      }
+    } catch {
+    }
+
+    foreach (`$candidate in (`$appIdsToTry | Select-Object -Unique)) {
+      try {
+        try {
+          [void][PublishSvn.ProcessAppId]::SetCurrentProcessExplicitAppUserModelID(`$candidate)
+        } catch {
+          if (`$DebugNotify) {
+            Write-Output ("通知警告: 设置进程 AppId 失败 (AppId={0}): {1}" -f `$candidate, `$_.Exception.Message)
+          }
+        }
+
+        `$notifier = [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime]::CreateToastNotifier(`$candidate)
+        `$notifier.Show(`$toast)
+        if (`$DebugNotify) {
+          Write-Output ("通知提示: Toast 已发送 (AppId={0})" -f `$candidate)
+        }
+        return `$true
+      } catch {
+        if (`$DebugNotify) {
+          Write-Output ("通知警告: 发送 Toast 失败 (AppId={0}): {1}" -f `$candidate, `$_.Exception.Message)
+        }
+      }
+    }
+
+  } catch {
+    if (`$DebugNotify) {
+      Write-Output ("通知警告: 初始化 Toast 失败: {0}" -f `$_.Exception.Message)
+    }
+  }
+
+  return `$false
+}
+
+try {
+  `$payloadJson = [Text.Encoding]::Unicode.GetString([Convert]::FromBase64String('$payloadB64'))
+  `$p = ConvertFrom-Json -InputObject `$payloadJson
+
+  `$ok = Send-ToastInternal -Title `$p.Title -Lines `$p.Lines -AppId `$p.AppId -DebugNotify ([bool]`$p.DebugNotify)
+  if (`$ok) { exit 0 }
+  exit 1
+} catch {
+  Write-Output ("通知警告: 降级发送失败: {0}" -f `$_.Exception.Message)
+  exit 2
+}
+"@
+
+    $childB64 = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($childScript))
+    $output = & $powershellExe -NoProfile -NonInteractive -EncodedCommand $childB64 2>&1
+    $exitCode = $LASTEXITCODE
+
+    if ($DebugNotify) {
+      Write-Host "通知提示: 已降级到 Windows PowerShell 发送 Toast（exit=$exitCode）。"
+      foreach ($line in ($output | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })) {
+        Write-Host "通知提示: WinPS: $line"
+      }
+    }
+
+    return ($exitCode -eq 0)
+  } catch {
+    if ($DebugNotify) {
+      Write-Host "通知警告: 降级到 Windows PowerShell 发送 Toast 失败: $($_.Exception.Message)"
+    }
+    return $false
+  }
+}
+
 function Send-ToastNotification {
   param(
     [string]$Title,
@@ -787,6 +1130,16 @@ function Send-ToastNotification {
 
   if ([string]::IsNullOrWhiteSpace($Title)) {
     return $false
+  }
+
+  $xmlType = 'Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime' -as [type]
+  $toastType = 'Windows.UI.Notifications.ToastNotification, Windows.UI.Notifications, ContentType = WindowsRuntime' -as [type]
+  $managerType = 'Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime' -as [type]
+  if (-not $xmlType -or -not $toastType -or -not $managerType) {
+    if ($DebugNotify) {
+      Write-Host '通知提示: 当前 PowerShell 会话不可用 WinRT Toast 类型，尝试降级到 Windows PowerShell 发送。'
+    }
+    return Send-ToastNotificationViaWindowsPowerShell -Title $Title -Lines $Lines -AppId $AppId -DebugNotify:$DebugNotify
   }
 
   try {
@@ -1587,8 +1940,35 @@ try {
   }
 
   $isOfficialPro = $Env -ieq 'official'
-  $envOverrideFileName = if ($isOfficialPro) { '.env.officialPro' } else { $null }
+  if (-not $BuildScript -and $lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.BuildScript)) {
+    if ($lastForProfile.Env -eq $Env) {
+      $BuildScript = $lastForProfile.BuildScript
+    }
+  }
+  if (-not $BuildScript -and $Env) {
+    $BuildScript = $defaultBuildScripts[$Env]
+  }
+
+  $envOverrideFileName = $null
+  if ($isOfficialPro) {
+    $envOverrideFileName = '.env.officialPro'
+  } else {
+    $mode = Resolve-ModeFromBuildScript -ProjectRoot $ProjectRoot -BuildScript $BuildScript
+    if ($mode) {
+      $candidate = ".env.$mode"
+      $candidatePath = Join-Path $ProjectRoot $candidate
+      if (Test-Path -LiteralPath $candidatePath -PathType Leaf) {
+        $envOverrideFileName = $candidate
+      } elseif (-not $NoBuild) {
+        throw "未找到环境变量文件: $candidatePath（来自 BuildScript 的 --mode $mode）"
+      }
+    } elseif (-not $NoBuild) {
+      throw "未能从 BuildScript 解析 --mode，无法确定环境变量文件。BuildScript: $BuildScript"
+    }
+  }
   if (-not $isOfficialPro) {
+    Show-EnvConfigForRun -ProjectRoot $ProjectRoot -OverrideEnvFileName $envOverrideFileName
+    Clear-InputBuffer
     $targetRootDefault = if ($TargetRootRel) { $TargetRootRel } elseif ($lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.TargetRootRel)) { $lastForProfile.TargetRootRel } elseif ($selectedProfile -and $selectedProfile.svnTargetRootRel) { $selectedProfile.svnTargetRootRel } else { '' }
     $TargetRootRel = Prompt-WithDefault $TargetRootRel 'TargetRootRel (e.g. weekly || normal)' $targetRootDefault
   } else {
@@ -1691,16 +2071,6 @@ try {
     }
   }
 
-  if (-not $BuildScript -and $lastForProfile -and -not [string]::IsNullOrWhiteSpace($lastForProfile.BuildScript)) {
-    if ($lastForProfile.Env -eq $Env) {
-      $BuildScript = $lastForProfile.BuildScript
-    }
-  }
-
-  if (-not $BuildScript -and $Env) {
-    $BuildScript = $defaultBuildScripts[$Env]
-  }
-
   if (-not $Env) {
     throw '必须指定环境。'
   }
@@ -1775,34 +2145,7 @@ try {
     }
   }
   if ($isOfficialPro) {
-    $envPath = Join-Path $ProjectRoot '.env'
-    $envOfficialPath = Join-Path $ProjectRoot '.env.officialPro'
-    $mergedEnvLines = @()
-    $envLines = Get-EnvFileLines -FilePath $envPath
-    if ($envLines.Count -gt 0) {
-      $mergedEnvLines += $envLines
-    } else {
-      Write-Host "警告: 未找到或内容为空: $envPath"
-    }
-    $officialLines = Get-EnvFileLines -FilePath $envOfficialPath
-    if ($officialLines.Count -gt 0) {
-      $mergedEnvLines += $officialLines
-    } else {
-      Write-Host "警告: 未找到或内容为空: $envOfficialPath"
-    }
-
-    Write-Host ''
-    Write-Host '--- 环境变量确认 ---'
-    Write-Host ''
-    if ($mergedEnvLines.Count -gt 0) {
-      foreach ($line in $mergedEnvLines) {
-        Write-Host $line
-      }
-    } else {
-      Write-Host '（无内容可显示）'
-    }
-    Write-Host ''
-    [void](Read-HostSafe '请确认后按回车开始构建')
+    Show-EnvConfigForRun -ProjectRoot $ProjectRoot -EnvValue $Env -OverrideEnvFileName $envOverrideFileName -PauseAfterPrint -PausePrompt '请确认后按回车开始构建'
   }
 
   $buildEndTime = $null
