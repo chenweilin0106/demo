@@ -10,4 +10,7 @@ elevated_windows_sandbox = true
 powershell_utf8 = true
 
 [notice.model_migrations]
-"gpt-5.2" = "gpt-5.2-codex"
+"gpt-5.2" = "gpt-5.3-codex"
+
+[tui]
+status_line = ["model-with-reasoning", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "codex-version", "context-remaining"]
