@@ -57,6 +57,8 @@ There is no Git history here; SVN commit messages recorded in `publish-svn.last.
 
 If you submit changes, include a brief description of what behavior changed, plus any config updates needed.
 
+After completing a feature iteration, proactively ask whether to push to the remote (`git push`) and whether to sync/update `AGENTS.md`.
+
 ## Security & Configuration Tips
 
 - Double-check `TargetRootRel`/`TargetRel` to avoid syncing to the wrong SVN path.
@@ -65,7 +67,9 @@ If you submit changes, include a brief description of what behavior changed, plu
 ## Input Resolution & Defaults
 
 - `TargetRel` can be derived from `.env` when a profile sets `svnDefaultTargetRelFromEnv` and `svnDefaultTargetRelMap`. In that case, passing `-TargetRel` is rejected.
+- For non-`official` runs, the script resolves the env override file from `--mode` in `BuildScript` (supports `npm run <script>` by reading `package.json`) and prints merged `.env` + `.env.<mode>` content for confirmation. When `-NoBuild` is set, missing `--mode` / `.env.<mode>` will not hard-fail (override may be skipped).
 - `VUE_APP_ICON_PATH` in `.env` can override the source path under `dist`. If not set and `dist` contains a single folder, that folder becomes the source; otherwise `dist` is used.
+- For `Env=official`, `OfficialProjectRel` can be derived from `.env` / `.env.officialPro` when a profile sets `officialProjectRelFromEnv`. `officialProjectRelMap` is optional; if missing/empty/unmatched, it falls back to the env value. Passing `-OfficialProjectRel` skips env mapping.
 - Commit message defaults to the latest Git commit message in the project root (if a Git repo is detected).
 - Profile selection defaults to the latest successful profile in `publish-svn.last.json` when `-Profile` is not provided.
 - Defaults are pulled from the latest successful history entry with matching `ProfileHash` (so config changes don't reuse stale defaults).
@@ -89,3 +93,8 @@ If you submit changes, include a brief description of what behavior changed, plu
 - `Env=official` 下结果打印与系统通知不再展示 `提交SVN: ...`（official 流程不执行 SVN 提交阶段）。
 - `-DebugSvn` 调试日志统一写入 `publish-svn.svn-debug.log`。
 - 清理 Bandizip 压缩测试残留目录：`_tmp_bz_*`。
+
+## 近期变更（2026-02-24）
+
+- 非 `official` 流程：选择环境后会按 `BuildScript` 的 `--mode` 打印合并后的环境变量（`.env` + `.env.<mode>`），用于运行前确认；`-NoBuild` 下不强制要求解析 `--mode`/存在 `.env.<mode>`。
+- `Env=official` 流程：支持通过 `officialProjectRelFromEnv` 读取 `.env` / `.env.officialPro`，并在 `officialProjectRelMap` 缺失/为空/未匹配时回退为 env 原值（同名可不配映射）。
