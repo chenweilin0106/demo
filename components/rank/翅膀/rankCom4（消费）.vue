@@ -15,7 +15,7 @@
             <span v-else class="noPrettyCode">ID:{{item.code || '--'}}</span>
           </div>
           <div class="topItemNumText position-absolute">{{ valueName }}</div>
-          <div class="topItemNum ellipsis position-absolute">{{ item.num }}</div>
+          <div class="topItemNum ellipsis position-absolute">{{ item.score || 0 }}</div>
         </div>
       </div>
       <div class="remainArea">
@@ -31,7 +31,7 @@
             <span v-else class="noPrettyCode">ID:{{item.code || '--'}}</span>
           </div>
           <div class="totalRankItemTime position-absolute position-column-center">
-            {{ item.num }}{{ valueName }}
+            {{ item.score || 0 }}{{ valueName }}
             <!-- <p>{{ valueName }}</p> -->
             <!-- <span>{{item.score}}</span> -->
           </div>
@@ -50,7 +50,7 @@
         <span v-else class="noPrettyCode">ID:{{userRankShow.code || '--'}}</span>
       </div>
       <div class="totalRankTime position-absolute line-height-1 position-column-center">
-        {{ userRankShow.num }}{{ valueName }}
+        {{ userRankShow.score || 0 }}{{ valueName }}
         <!-- <p>{{ valueName }}</p> -->
         <!-- <span>{{userRankShow.score}}</span> -->
       </div>

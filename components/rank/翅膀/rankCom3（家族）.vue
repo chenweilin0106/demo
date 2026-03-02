@@ -15,7 +15,7 @@
               <div class="topItemFamilyUsersItemNum position-absolute position-column-center">{{ user.time }}</div>
             </div>
           </div>
-          <div class="topItemNum ellipsis position-absolute">{{ valueName }}：{{ item.score }}</div>
+          <div class="topItemNum ellipsis position-absolute">{{ valueName }}：{{ item.score || 0 }}</div>
         </div>
       </div>
       <div class="remainArea">
@@ -32,7 +32,7 @@
           <!-- </div> -->
           <div class="totalRankItemTime position-absolute position-column-center">
             <p>{{ valueName }}</p>
-            <span>{{ item.score }}</span>
+            <span>{{ item.score || 0 }}</span>
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@
         <!-- </div> -->
         <div class="totalRankTime position-absolute line-height-1 position-column-center">
           <p>{{ valueName }}</p>
-          <span>{{ userRankShow.score }}</span>
+          <span>{{ userRankShow.score || 0 }}</span>
         </div>
       </template>
       <div v-else class="noUserRank w-100 h-100 flex align-center justify-center line-height-1">尚未加入家族</div>

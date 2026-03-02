@@ -9,7 +9,7 @@
           <div class="topItemUsername ellipsis position-absolute">{{ item.username }}</div>
           <template v-if="item.rank != 1">
             <div class="topItemNumText position-absolute">距离上一名</div>
-            <div class="topItemNum position-absolute">{{ item.diff }}{{ valueName }}</div>
+            <div class="topItemNum position-absolute">{{ item.diff || 0 }}{{ valueName }}</div>
           </template>
         </div>
       </div>
@@ -20,7 +20,7 @@
           <div class="totalRankItemName position-absolute position-column-center ellipsis">{{item.username}}</div>
           <div class="totalRankItemTime position-absolute position-column-center">
             <p>距离上一名</p>
-            <span>{{ item.diff }}{{ valueName }}</span>
+            <span>{{ item.diff || 0 }}{{ valueName }}</span>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@
         <span>公开昵称&nbsp;</span>
         <div :class="['isShowBtn', userRankShow.is_show_name == 1?null:'statusShow']" @click="$emit('isShowBtnCk')"></div>
       </div>
-      <div :class="['totalRankTime position-absolute line-height-1']">{{userRankShow.score}}<span>{{valueName}}</span></div>
+      <div :class="['totalRankTime position-absolute line-height-1']">{{userRankShow.score || 0}}<span>{{valueName}}</span></div>
     </div>
   </div>
 </template>

@@ -15,7 +15,7 @@
             <span v-else class="noPrettyCode">ID:{{item.code || '--'}}</span>
           </div>
           <div class="topItemNumText position-absolute">{{ valueName }}</div>
-          <div class="topItemNum ellipsis position-absolute">{{ item.score }}</div>
+          <div class="topItemNum ellipsis position-absolute">{{ item.score || 0 }}</div>
           <div v-if="item.pet_info && Object.keys(item.pet_info).length" class="topItemPetInfo">
             <PetIcon :config="item.pet_info" :showQuality="false" />
           </div>
@@ -35,7 +35,7 @@
           </div>
           <div class="totalRankItemTime position-absolute position-column-center">
             <p>{{ valueName }}</p>
-            <span>{{item.score}}</span>
+            <span>{{item.score || 0}}</span>
           </div>
           <lazy-component v-if="item.pet_info && Object.keys(item.pet_info).length" class="totalRankItemPetInfo">
             <PetIcon :config="item.pet_info" :showQuality="false" />
@@ -56,7 +56,7 @@
       </div>
       <div class="totalRankTime position-absolute line-height-1 position-column-center">
         <p>{{ valueName }}</p>
-        <span>{{userRankShow.score}}</span>
+        <span>{{userRankShow.score || 0}}</span>
       </div>
       <lazy-component v-if="userRankShow.pet_info && Object.keys(userRankShow.pet_info).length" class="totalRankPetInfo">
         <PetIcon :config="userRankShow.pet_info" :showQuality="false" />
