@@ -133,13 +133,14 @@ export default {
         { uidStr: 0, uid: 0, code: 0, pretty_type: 0, username: '虚位以待', profile_image: '', tuid: 0, tuid_code: 0, tuid_pretty_type: 0, tusername: '虚位以待', tprofile_image: '', num: 0, rank: 19, relation: 0, virtual_info: [], tvirtual_info: [], gender: '0', tgender: '1', time: 0, diff: 0, score: 0, pet_info: { id: 1, category: '1', subcategory: '1', quality: 0, current_stage: '0', feature_list: { change_one: '0', change_two: '0', change_three: '0' } } },
         { uidStr: 0, uid: 0, code: 0, pretty_type: 0, username: '虚位以待', profile_image: '', tuid: 0, tuid_code: 0, tuid_pretty_type: 0, tusername: '虚位以待', tprofile_image: '', num: 0, rank: 20, relation: 0, virtual_info: [], tvirtual_info: [], gender: '0', tgender: '1', time: 0, diff: 0, score: 0, pet_info: { id: 1, category: '1', subcategory: '1', quality: 0, current_stage: '0', feature_list: { change_one: '0', change_two: '0', change_three: '0' } } }
       ], // 展示榜单
-      userRankShow: { uid: 0, code: 0, hide_name: false, pretty_type: 0, tuid_pretty_type: 0, username: '虚位以待', profile_image: '', num: 0, tuid: 0, tusername: '虚位以待', tprofile_image: '', relation: 0, fans: { fans_uid: 0, fans_username: '虚位以待', fans_profile_image: '' }, time: 0, diff: 0, score: 0, pet_info: { id: 1, category: '1', subcategory: '1', quality: 0, current_stage: '0', feature_list: { change_one: '0', change_two: '0', change_three: '0' } } }, // 个人排名展示
+      userRankShow: { uid: 0, code: 0, hide_name: false, is_show_name: 1, pretty_type: 0, tuid_pretty_type: 0, username: '虚位以待', profile_image: '', num: 0, tuid: 0, tusername: '虚位以待', tprofile_image: '', relation: 0, fans: { fans_uid: 0, fans_username: '虚位以待', fans_profile_image: '' }, time: 0, diff: 0, score: 0, pet_info: { id: 1, category: '1', subcategory: '1', quality: 0, current_stage: '0', feature_list: { change_one: '0', change_two: '0', change_three: '0' } } }, // 个人排名展示
       isShowPreviewPopup: false, // 预览弹窗
       configPreviewPopup: {},
       isShowRulesPopup: false // 规则弹窗
     }
   },
   created() {
+    // axios({ url: `${process.env.VUE_APP_OSS_PATH}activity/weekly/svga/20240614_m2_lottery.svga`, method: 'get', responseType: 'arraybuffer' })
     if (this.$route.query.rankChosen) this.rankChosen = this.$route.query.rankChosen
     if (this.$route.query.tagChosen) this.tagChosen = this.$route.query.tagChosen
     this.getHomePage()
@@ -177,22 +178,21 @@ export default {
      */
     selectChosen(r, t, date, isThinking = false) {
       this.isShowDateList = false
-      const rankStrategies = {
-        // 1: () => getPageData({ type: 'white_love_daily_rank', mark: { rank_type: r, date: date || this.todaySelectDate } }), // 日榜 多个榜单需要mark字段
-        1: () => getPageData({ type: 'lovetop_daily_rank', mark: date || this.todaySelectDate }), // 日榜
-        // 2: () => getPageData({ type: 'white_love_tot_rank', mark: r }) // 总榜 多个榜单需要mark字段
-        2: () => getPageData({ type: 'lovetop_tot_rank' }) // 总榜
-      }
+      // const rankStrategies = {
+      //   1: () => getPageData({ type: 'white_love_daily_rank', mark: { rank_type: r, date: date || this.todaySelectDate } }), // 日榜 多个榜单需要mark字段
+      //   2: () => getPageData({ type: 'white_love_tot_rank', mark: r }) // 总榜 多个榜单需要mark字段
+      // }
+      // if (!rankStrategies[t]) return console.log('切换榜单数据错误')
       if (isThinking) this.$thinking.track('WebClick', { module: '问鼎江山', element: this.tabsArray[r - 1].tabName })
-      if (!rankStrategies[t]) return console.log('切换榜单数据错误')
-      rankStrategies[t]().then((res) => {
+      // rankStrategies[t]().then((res) => {
+      getPageData({ type: 'sweet_top_get_rank_list', mark: { type: t, category: r, date: date || this.todaySelectDate } }).then((res) => {
         if (res.errno) return this.$toast(res.errmsg)
         this.rankChosen = r
         this.tagChosen = t
         if (this.tagChosen == 1) this.selectDate[this.rankChosen] = date || res.data.select_date // 日榜 存储日期数据
         this.rankListShow = res.data.rank_list
         this.userRankShow = res.data.my_rank ? res.data.my_rank : { ...res.data.user_info, time: res.data.my_score }
-        if (res.data.hide_name) this.userRankShow.hide_name = res.data.hide_name
+        // if (res.data.hide_name) this.userRankShow.hide_name = res.data.hide_name
         this.findUserRankInList() // 查找用户在榜单中的排名
         this.$nextTick(() => this.$refs[`rankCom${this.rankChosen}Ref`].scrollRank()) // 还原榜单滚动
       })
@@ -239,9 +239,10 @@ export default {
      */
     isShowBtnCk: _throttle(function() {
       // this.userRankShow.hide_name = !this.userRankShow.hide_name
-      getPageData({ type: 'white_love_top_name_set', mark: this.userRankShow.hide_name ? '2' : '1' }).then((res) => {
+      // getPageData({ type: 'white_love_top_name_set', mark: this.userRankShow.hide_name ? '2' : '1' }).then((res) => {
+      getPageData({ type: 'white_love_top_name_set', mark: this.userRankShow.is_show_name == 1 ? '2' : '1' }).then((res) => {
         if (res.errno == 0) {
-          this.userRankShow.hide_name = !this.userRankShow.hide_name
+          // this.userRankShow.hide_name = !this.userRankShow.hide_name
           this.selectChosen(this.rankChosen, this.tagChosen, this.selectDate[this.rankChosen])
         } else {
           this.$toast(res.errmsg)
