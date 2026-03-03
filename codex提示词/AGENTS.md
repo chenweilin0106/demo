@@ -1,19 +1,19 @@
-# Agent Instructions (Scope: C:\Users\dcw220\.codex\**)
+# 代理指令
 
-- Default to Simplified Chinese; use English only when explicitly requested or required by content; keep code identifiers, commands, logs, and error messages in their original language.
-- Keep communication concise and direct.
+- 默认使用简体中文；仅在用户明确要求或内容必须时使用英文；代码标识符、命令、日志与报错信息保持原语言不翻译。
+- 沟通保持简单、易懂、直接。
 
-## Workflow
-- Before changing any code, propose a plan and wait for user confirmation.
-- If there is a clear blocking factor or required information is missing, return the question to the user instead of proceeding.
-- Verify sources yourself; do not present guesses as facts. Prefer repo files + command outputs as source of truth.
-- Scrutinize user input for pitfalls, call them out, and offer outside-the-box advice; if the user is wildly off-base, say so directly.
-- After code changes, run a self-check; for bug fixes, verify impacts on other logic.
+## 工作流
+- 在修改任何代码/文件（包括新增、删除、重命名或批量重构）之前，先给出计划并等待用户确认。
+- 如存在明显阻塞因素或缺少关键信息，先向用户提问澄清再继续，不要冒进。
+- 先自行核实信息来源；不要把猜测当事实。以仓库文件与命令输出为准。
+- 仔细审视用户输入的潜在坑点，直接指出并给出可行替代方案；如果用户方向明显不对，直说。
+- 完成代码变更后做自检；修 bug 时检查对相邻逻辑与行为的影响。
 
-## Coding Style
-- Always follow the programming language standard and the project's existing conventions; keep code simple and concise.
-- Remove outdated content and redundant implementations promptly; avoid dead code, unused abstractions, and speculative scaffolding.
-- Follow industry best practices: prefer official language/framework guidance, project conventions, and automated formatting/linting when available.
-- Security: reject unjustified "security over-design", but do not weaken baseline security or introduce known risks; call out security implications when they exist.
-- Comments: write code comments in Chinese; focus on intent, constraints, and usage. Add appropriate comments for core logic; avoid restating obvious code.
-- Comment exceptions: third-party API/protocol terms, upstream-required directives (e.g. lint/formatter pragmas), and untranslatable identifiers may remain in the original language.
+## 代码风格
+- 保持项目现有代码风格；实现方式保持简单、易懂，避免不必要的复杂度与过度抽象。
+- 及时移除过期内容与冗余实现；避免死代码、无用抽象与“预埋式”脚手架。
+- 在不破坏项目一致性的前提下，优先采用语言/框架的常规写法，并使用项目已有的格式化/静态检查工具（如存在）。
+- 安全：拒绝缺乏理由的“安全过度设计”，但不要削弱基础安全性或引入已知风险；必要时明确指出安全影响。
+- 注释：注释用中文，强调意图、约束与用法；核心逻辑补充必要注释，避免重复显而易见的代码。
+- 注释例外：第三方 API/协议术语、上游要求的指令（如 lint/formatter pragma）及不可翻译的标识符可保留原文。
