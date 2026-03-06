@@ -14,6 +14,6 @@ responses_websockets_v2 = true
 "gpt-5.2" = "gpt-5.3-codex"
 
 [tui]
-status_line = ["model-with-reasoning", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "codex-version", "context-used"]
+status_line = ["model-with-reasoning", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "codex-version", "context-used", "context-window-size"]
 
 [windows]
