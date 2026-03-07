@@ -17,3 +17,4 @@ responses_websockets_v2 = true
 status_line = ["model-with-reasoning", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "codex-version", "context-used", "context-window-size"]
 
 [windows]
+sandbox = "elevated"
