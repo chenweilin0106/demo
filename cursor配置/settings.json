@@ -33,10 +33,10 @@
     "editor.defaultFormatter": "vscode.json-language-features"
   },
   "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
   "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.html-language-features"
   },
   "[vue]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -58,11 +58,10 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.css-language-features"
   },
   "liveServer.settings.useLocalIp": true,
   "workbench.productIconTheme": "macos-modern",
-  "workbench.iconTheme": "file-icons",
   "[markdown]": {
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
   },
@@ -77,20 +76,20 @@
   ],
   "editor.smoothScrolling": true,
   "errorLens.statusBarColorsEnabled": true,
-  "http.proxy": "http://127.0.0.1:7890",
-  "http.proxyStrictSSL": false,
-  "http.proxySupport": "override",
-  "http.noProxy": [],
   "editor.stickyScroll.enabled": false,
   "errorLens.enabled": true,
   "errorLens.messageTemplate": "$message [$source]",
   "switch2idea.ideaPath": "D:\\WebStorm 2025.2.5\\bin\\webstorm64.exe",
-  "update.enableWindowsBackgroundUpdates": false,
-  "editor.fontFamily": "JetBrains Mono, 'PingFang SC', monospace",
+  "editor.fontFamily": "Jetbrains Mono, 'PingFang SC', monospace",
   "cursor.cpp.disabledLanguages": [
     "plaintext"
   ],
+  "window.zoomLevel": 1,
+  "window.commandCenter": true,
+  "window.menuBarVisibility": "compact",
+  "workbench.experimental.share.enabled": true,
+  "workbench.iconTheme": "file-icons-colourless",
+  "update.enableWindowsBackgroundUpdates": false,
   "update.mode": "none",
-  "workbench.colorTheme": "Default Dark+",
-  "workbench.activityBar.orientation": "vertical"
+  "workbench.colorTheme": "Default Dark+"
 }

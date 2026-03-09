@@ -51,6 +51,11 @@
         "command": "-editor.foldAll",
         "when": "editorFocus && foldingEnabled"
     },
+    {
+        "key": "ctrl+alt+s",
+        "command": "workbench.action.toggleUnifiedSidebarFromKeyboard",
+        "when": "cursor.agentIdeUnification.enabled == true && !isAuxiliaryWindowFocusedContext"
+    },
     // {
     //     "key": "ctrl+alt+i",
     //     "command": "workbench.action.tasks.runTask",
