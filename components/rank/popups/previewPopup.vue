@@ -1,6 +1,6 @@
 <template>
-  <PopupBox title="title_37.png" @clickClose="clickClose">
-    <div :class="['previewImg', config.type == 'pst_privilege' || config.type == 'car' ? 'gift' : config.type == 'title' ? 'titleSp' : config.type == 'CP_card' ? 'cpCardSp' : config.type == 'world_msg_skins' ? 'wmsSp' : config.type == 'room_dec_suit' ? 'roomSp' : config.type == 'costume' ? 'userMainSp' : 'other']">
+  <PopupBox title="预览" @clickClose="clickClose">
+    <div :class="['previewImg', config.type == 'pst_privilege' || config.type == 'car' ? 'gift' : config.type == 'title' ? 'titleSp' : config.type == 'CP_card' ? 'cpCardSp' : config.type == 'world_msg_skins' ? 'wmsSp' : config.type == 'room_dec_suit' ? 'roomSp' : config.type == 'costume' ? 'userMainSp' : config.type == 'ring' ? 'ringSp' : 'other']">
       <PublicImg :imgName="config.img" :imgType="config.type"></PublicImg>
       <div class="cpIcon" v-if="config.type == 'CP_card'"></div>
       <div class="roomSuitIcon" v-if="config.type == 'room_dec_suit'"></div>
@@ -39,7 +39,7 @@ export default {
 ::v-deep .popupContent {
   // min-height: 410px;
   .main {
-    margin-bottom: 55px;
+    margin-bottom: 60px;
     .previewImg {
       margin: 0 auto 0 auto;
       overflow: hidden;
@@ -49,7 +49,7 @@ export default {
       &.gift {
         width: 427px;
         height: 740px;
-        background: url('@/assets/chat_room_bg.png') no-repeat left top/100% 100%;
+        background: url('@/pages/gardenParty/assets/chat_room_bg.png') no-repeat left top/100% 100%;
         border: none;
         border-radius: 0;
       }
@@ -67,7 +67,7 @@ export default {
         .cpIcon {
           width: 394px;
           height: 180px;
-          background: url('@/assets/cp_card_bg.png') no-repeat left top/100% 100%;
+          background: url('@/pages/gardenParty/assets/cp_card_bg.png') no-repeat left top/100% 100%;
           position: absolute;
           left: 50%;
           top: 46%;
@@ -90,7 +90,7 @@ export default {
         .roomSuitIcon {
           width: 340px;
           height: 736px;
-          background: url('@/assets/room_suit_bg.png') no-repeat left top/100% 100%;
+          background: url('@/pages/gardenParty/assets/room_suit_bg.png') no-repeat left top/100% 100%;
           position: absolute;
           left: 50%;
           transform: translateX(-50%);
@@ -102,7 +102,14 @@ export default {
         height: 740px;
         border: none;
         border-radius: 0;
-        background: url('@/assets/user_main_bg.png') no-repeat left top/100% 100%;
+        background: url('@/pages/gardenParty/assets/user_main_bg.png') no-repeat left top/100% 100%;
+      }
+      &.ringSp {
+        width: 120px * 1.4;
+        height: 120px * 1.4;
+        border: none;
+        border-radius: 0;
+        background: none;
       }
       &.other {
         width: 120px * 1.4;
@@ -119,7 +126,7 @@ export default {
     }
     .tip2Text {
       font-size: 24px;
-      color: #945A34;
+      color: #FFF06D;
       text-align: center;
       margin: 15px auto 0;
       white-space: pre-wrap;
