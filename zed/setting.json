@@ -1,0 +1,51 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "soft_wrap": "editor_width",
+  "horizontal_scroll_margin": 0,
+  "scrollbar": {
+    "axes": {
+      "horizontal": false,
+      "vertical": true
+    }
+  },
+  "format_on_save": "off",
+  "languages": {
+    "JavaScript": {
+
+    }
+  },
+  "autoscroll_on_clicks": false,
+  "buffer_font_weight": 450.0,
+  "buffer_font_size": 16.0,
+  "buffer_font_family": "Geist Mono",
+  "image_viewer": {
+    "unit": "binary"
+  },
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "sticky_scroll": {
+    "enabled": false
+  },
+  "cursor_blink": true,
+  "buffer_font_fallbacks": [
+    "PingFang SC",
+    "monospace"
+  ],
+  "tab_size": 2,
+  "icon_theme": "Zed (Default)",
+  "base_keymap": "JetBrains",
+  "ui_font_size": 16,
+  "theme": {
+    "mode": "light",
+    "light": "Solarized Light",
+    "dark": "Gruvbox Dark Soft",
+  },
+}
