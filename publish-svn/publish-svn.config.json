@@ -35,10 +35,10 @@
       "svnTargetRootRel": "normal"
     },
     {
-      "name": "2026-valentineDay",
-      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2026valentineDay",
-      "officialDistRoot": "D:\\officialDist",
-      "officialProjectRel": "",
+      "name": "foolsDay",
+      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2026fooldsDay",
+      "officialDistRoot": "D:\\officialDist\\normal",
+      "officialProjectRel": "foolsDay",
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",
         "test": "D:\\Project\\测试分支\\web\\vue"
@@ -48,7 +48,7 @@
         "test": "npm run build:test",
         "official": "npm run build:officialPro"
       },
-      "svnDefaultTargetRel": "love2026",
+      "svnDefaultTargetRel": "2026foolsDay",
       "svnTargetRootRel": "normal"
     },
     {
@@ -90,23 +90,6 @@
       },
       "svnDefaultTargetRel": "newerBenefit",
       "svnTargetRootRel": "normal"
-    },
-    {
-      "name": "2025-weekly",
-      "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\2025",
-      "officialDistRoot": "D:\\officialDist",
-      "officialProjectRel": "",
-      "svnRoots": {
-        "dev": "D:\\Project\\开发分支\\web\\vue",
-        "test": "D:\\Project\\测试分支\\web\\vue"
-      },
-      "defaultBuildScripts": {
-        "dev": "npm run build:test",
-        "test": "npm run build:test",
-        "official": "npm run build:officialPro"
-      },
-      "svnDefaultTargetRel": "page",
-      "svnTargetRootRel": "weekly"
     }
   ]
 }
