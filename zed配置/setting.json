@@ -1,0 +1,26 @@
+{
+  "soft_wrap": "editor_width",
+  "horizontal_scroll_margin": 0,
+  "scrollbar": {
+    "axes": {
+      "horizontal": false,
+      "vertical": true
+    }
+  },
+  "format_on_save": "off",
+  "autoscroll_on_clicks": false,
+  // "buffer_font_size": 16.0,
+  "buffer_font_family": "Geist Mono",
+  "image_viewer": {
+    "unit": "binary"
+  },
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "cursor_blink": true,
+  "buffer_font_fallbacks": [
+    "PingFang SC"
+  ],
+  "tab_size": 2,
+  "base_keymap": "JetBrains"
+}

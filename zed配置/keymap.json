@@ -16,36 +16,17 @@
     }
   },
   "format_on_save": "off",
-  "languages": {
-    "JavaScript": {
-
-    }
-  },
   "autoscroll_on_clicks": false,
-  "buffer_font_weight": 450.0,
   "buffer_font_size": 16.0,
+  "buffer_font_weight": 450,
   "buffer_font_family": "Geist Mono",
-  "image_viewer": {
-    "unit": "binary"
-  },
+  "buffer_font_fallbacks": [
+    "PingFang SC"
+  ],
   "session": {
     "trust_all_worktrees": true
   },
-  "sticky_scroll": {
-    "enabled": false
-  },
   "cursor_blink": true,
-  "buffer_font_fallbacks": [
-    "PingFang SC",
-    "monospace"
-  ],
   "tab_size": 2,
-  "icon_theme": "Zed (Default)",
-  "base_keymap": "JetBrains",
-  "ui_font_size": 16,
-  "theme": {
-    "mode": "light",
-    "light": "Solarized Light",
-    "dark": "Gruvbox Dark Soft",
-  },
+  "base_keymap": "JetBrains"
 }
