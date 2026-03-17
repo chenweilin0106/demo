@@ -75,10 +75,3 @@ net localgroup docker-users <你的Windows用户名> /add
 ## 6. 参考（WSL / 代理 / Codex）
 - WSL2 安装、排错与代理：`WSL2-安装.md`
 - 在 WSL 中安装 Codex（含复用 Windows 配置、`w2l` 路径转换）：`WSL-Codex-安装与复用Windows配置.md`
-
-## 7. 本次安装踩坑记录（2026-03-14）
-
-- 安装完成后终端提示 `docker` 命令找不到：通常是 PATH 未刷新；关掉重开 PowerShell/Windows Terminal 再试。若急用可临时用全路径：`C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe`。
-- 运行时报 `npipe:////./pipe/docker_engine` / 找不到 pipe：Docker Desktop 引擎未启动；先打开 Docker Desktop 等左下角显示 `Engine running`。
-- 使用 `docker.exe` 全路径时若提示 `docker-credential-desktop` 不在 `%PATH%`：确保 `C:\\Program Files\\Docker\\Docker\\resources\\bin` 在 PATH（或在当前终端临时追加该目录）后再 `pull/run`。
-- 确认使用 WSL2 后端：Docker Desktop Settings → 勾选 `Use the WSL 2 based engine`，并在 Resources → WSL Integration 中开启 Ubuntu。
