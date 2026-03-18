@@ -123,6 +123,12 @@ function Set-OhMyPoshProfile {
     $start,
     "`$ompTheme = '$escapedTheme'",
     'oh-my-posh init pwsh --config $ompTheme | Invoke-Expression',
+    '# PSReadLine：取消命令位（第一个词）高亮（让输入文本走默认颜色）',
+    'try {',
+    '  Import-Module PSReadLine -ErrorAction Stop',
+    '  $opt = Get-PSReadLineOption',
+    '  Set-PSReadLineOption -Colors @{ Command = $opt.DefaultTokenColor }',
+    '} catch { }',
     $end
   ) -join "`r`n"
 
@@ -267,6 +273,11 @@ if (-not [Console]::IsInputRedirected -and -not [Console]::IsOutputRedirected) {
       }
 
       & $omp init pwsh --config $chosen.FullName | Invoke-Expression
+      try {
+        Import-Module PSReadLine -ErrorAction Stop
+        $opt = Get-PSReadLineOption
+        Set-PSReadLineOption -Colors @{ Command = $opt.DefaultTokenColor }
+      } catch { }
       Write-Host "已在当前会话启用主题：$($chosen.Name)" -ForegroundColor Green
     } catch {
       Write-Host "启用失败：$($chosen.Name)" -ForegroundColor Red

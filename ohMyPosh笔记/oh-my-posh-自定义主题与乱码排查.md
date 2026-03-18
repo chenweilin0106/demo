@@ -15,6 +15,7 @@
 - PowerShell Profile：`C:\Users\dcw220\Documents\PowerShell\Microsoft.PowerShell_profile.ps1`
   - 用 `$ompTheme = Join-Path $HOME '.poshthemes\the-unnamed.custom.omp.json'`
   - 用 `function oh-my-posh { ... }` 包装调用，调用期间临时切 UTF-8，结束后还原
+  - PSReadLine：把 `Command` 颜色设为 `DefaultTokenColor`，取消“命令位（第一个词）”黄色高亮
 
 > 备份：Profile 会有 `Microsoft.PowerShell_profile.ps1.bak.*`。
 

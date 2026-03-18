@@ -61,6 +61,13 @@ $global:ompTheme = Join-Path $HOME '.poshthemes\the-unnamed.custom.omp.json'
 if (Test-Path -LiteralPath $global:ompTheme) {
     & $global:ompExe init pwsh --config $global:ompTheme --plain | Invoke-Expression
 }
+
+# 可选：PSReadLine 取消“命令位（第一个词）”黄色高亮（让输入文本走默认颜色）
+try {
+    Import-Module PSReadLine -ErrorAction Stop
+    $opt = Get-PSReadLineOption
+    Set-PSReadLineOption -Colors @{ Command = $opt.DefaultTokenColor }
+} catch { }
 ```
 
 ## 可选：把 oh-my-posh 加到 PATH
