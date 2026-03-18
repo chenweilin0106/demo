@@ -7,7 +7,7 @@ wsl --version
 wsl -l -v
 ```
 - `winget` 不存在：先装/修复 App Installer（Microsoft Store）。
-- `wsl -l -v` 若报 `E_ACCESSDENIED`/乱码：见 `WSL2-安装.md` 的“排错”。
+- `wsl -l -v` 若报 `E_ACCESSDENIED`/乱码：见 `../wsl笔记/WSL2-安装.md` 的“排错”。
 - `wsl --version` 不存在或 `wsl --help` 参数很少：你可能还在旧版 WSL，先走第 1 步用 `--web-download` 更新到新版本。
 
 ## 1. 安装/初始化 WSL2（已装可跳过）
@@ -41,7 +41,7 @@ wsl --install -d Ubuntu
 ```powershell
 wsl.exe --install -d Ubuntu --location C:\softwear\WSL\Ubuntu --web-download
 ```
-目录权限不够时（例如目标目录不能写），需要管理员先建目录并给当前用户授权；细节见 `WSL2-安装.md` 的“安装到指定目录”。
+目录权限不够时（例如目标目录不能写），需要管理员先建目录并给当前用户授权；细节见 `../wsl笔记/WSL2-安装.md` 的“安装到指定目录”。
 
 ## 2. 安装 Docker Desktop
 ```powershell
@@ -70,11 +70,11 @@ net localgroup docker-users
 net localgroup docker-users <你的Windows用户名> /add
 ```
 - 虚拟化不支持/未开启：BIOS 开 VT-x/AMD-V；Windows 里确保启用虚拟机平台/WSL 相关组件（一般 `wsl --install` 会自动处理）。
-- 拉镜像很慢/失败：通常是网络/代理问题；见 `WSL2-安装.md` 的“代理（Clash）”。
+- 拉镜像很慢/失败：通常是网络/代理问题；见 `../wsl笔记/WSL2-安装.md` 的“代理（Clash）”。
 
 ## 6. 参考（WSL / 代理 / Codex）
-- WSL2 安装、排错与代理：`WSL2-安装.md`
-- 在 WSL 中安装 Codex（含复用 Windows 配置、`w2l` 路径转换）：`WSL-Codex-安装与复用Windows配置.md`
+- WSL2 安装、排错与代理：`../wsl笔记/WSL2-安装.md`
+- 在 WSL 中安装 Codex（含复用 Windows 配置、`w2l` 路径转换）：`../wsl笔记/WSL-Codex-安装与复用Windows配置.md`
 
 ## 7. 本次安装踩坑记录（2026-03-14）
 
@@ -82,3 +82,4 @@ net localgroup docker-users <你的Windows用户名> /add
 - 运行时报 `npipe:////./pipe/docker_engine` / 找不到 pipe：Docker Desktop 引擎未启动；先打开 Docker Desktop 等左下角显示 `Engine running`。
 - 使用 `docker.exe` 全路径时若提示 `docker-credential-desktop` 不在 `%PATH%`：确保 `C:\\Program Files\\Docker\\Docker\\resources\\bin` 在 PATH（或在当前终端临时追加该目录）后再 `pull/run`。
 - 确认使用 WSL2 后端：Docker Desktop Settings → 勾选 `Use the WSL 2 based engine`，并在 Resources → WSL Integration 中开启 Ubuntu。
+
