@@ -162,11 +162,28 @@ export function parseUrl(url) {
  */
 export function scrollCenter(element, container, direction = 'h', behavior = 'smooth') {
   if (!element || !container) return console.log('scrollCenter: 请传入element和container')
-  const offsetPosition = element[direction === 'h' ? 'offsetLeft' : 'offsetTop']
-  const centerPosition = container[direction === 'h' ? 'offsetWidth' : 'offsetHeight'] / 2
-  const scrollPosition = offsetPosition - centerPosition + (element[direction === 'h' ? 'offsetWidth' : 'offsetHeight'] / 2)
+
+  const isHorizontal = direction === 'h'
+  const elementRect = element.getBoundingClientRect()
+  const containerRect = container.getBoundingClientRect()
+
+  const elementCenter = isHorizontal ? (elementRect.left + elementRect.right) / 2 : (elementRect.top + elementRect.bottom) / 2
+  const containerCenter = isHorizontal ? (containerRect.left + containerRect.right) / 2 : (containerRect.top + containerRect.bottom) / 2
+
+  const delta = elementCenter - containerCenter
+  const currentScroll = isHorizontal ? container.scrollLeft : container.scrollTop
+  let scrollPosition = currentScroll + delta
+
+  // 防止出现负值或超出最大滚动范围
+  const maxScroll = isHorizontal ? container.scrollWidth - container.clientWidth : container.scrollHeight - container.clientHeight
+  if (Number.isFinite(maxScroll) && maxScroll > 0) {
+    scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll))
+  } else {
+    scrollPosition = Math.max(0, scrollPosition)
+  }
+
   container.scrollTo({
-    [direction === 'h' ? 'left' : 'top']: scrollPosition,
+    [isHorizontal ? 'left' : 'top']: scrollPosition,
     behavior
   })
 }
