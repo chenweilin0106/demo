@@ -6,6 +6,17 @@
 - 已安装并能进入 Ubuntu：`wsl -d Ubuntu`
 - （可选）已配置代理：见 `WSL2-安装.md`
 
+### 0.1 代理常见坑（WSL2 连不上 Windows 代理端口）
+如果你用的是 Windows 上的 Clash Verge（Mixed Port `7897`）给 WSL2 提速：
+- 必须开启 `Allow LAN/允许局域网`，并确保端口不是只监听 `127.0.0.1`。
+- 自检（Windows 端）：`netstat -ano | findstr ":7897"`，期望看到 `0.0.0.0:7897` / `[::]:7897` 在 `LISTENING`。
+
+在 Ubuntu 内自检端口可达（先拿 Windows 网关 IP）：
+```bash
+WIN_IP=$(ip route | awk '/^default / {print $3; exit}')
+timeout 2 bash -lc "cat < /dev/null > /dev/tcp/${WIN_IP}/7897" && echo proxy_port_ok
+```
+
 ## 1. 安装依赖（Ubuntu）
 ```bash
 sudo apt-get update
@@ -31,19 +42,35 @@ source ~/.bashrc
 
 ## 3. 安装 Node（最新稳定版）
 ```bash
-nvm install node
-nvm alias default node
+# 建议安装最新 LTS（更稳，兼容性更好）
+nvm install --lts
+nvm alias default 'lts/*'
+nvm use default
 node -v
 npm -v
 ```
 
-## 4. 安装 Codex CLI
+说明：
+- `nvm install node` 安装的是 Node Current（版本更新更快）；如你明确需要 Current 才用它。
+
+## 4. 安装 pnpm（推荐）
+```bash
+corepack enable
+corepack prepare pnpm@latest --activate
+pnpm -v
+```
+
+说明：
+- Node 16.13+ 自带 `corepack`，用它启用 `pnpm` 比直接 `npm i -g pnpm` 更稳，也更方便后续切版本。
+- 如果你开了新终端后发现 `pnpm` 不生效，先执行一次 `exec bash` 或重新进入 WSL。
+
+## 5. 安装 Codex CLI
 ```bash
 npm i -g @openai/codex
 codex --version
 ```
 
-## 5. 复用 Windows 的 `.codex`（推荐）
+## 6. 复用 Windows 的 `.codex`（推荐）
 Windows 配置目录默认在：`C:\Users\<你的Windows用户名>\.codex`。
 
 在 WSL 中将其挂载路径一般是：`/mnt/c/Users/<你的Windows用户名>/.codex`。
@@ -68,7 +95,7 @@ source ~/.bashrc
 
 说明：这是“同一个目录”的符号链接，因此 Windows/WSL 的登录凭据会自动同步；你在 Windows 更新 token 后，WSL 也会用到更新后的配置。
 
-## 6. `w2l`：Windows 路径 → WSL 路径
+## 7. `w2l`：Windows 路径 → WSL 路径
 用途：把 `D:\Project\demo` 这种路径转换成 `/mnt/d/Project/demo`，便于在 WSL 里 `cd`/`cat`。
 
 安装：
@@ -99,11 +126,11 @@ cd "$(w2l 'D:\\Project\\demo')"
 cat "$(w2l 'D:\\Project\\demo\\README.md')"
 ```
 
-## 7. 多开 Codex（多窗口/多标签页）
+## 8. 多开 Codex（多窗口/多标签页）
 - Windows Terminal 开多个标签页/窗口
 - 每个标签页进入 Ubuntu：`wsl -d Ubuntu`
 - 在各自目录里分别运行：`codex`
 
-## 8. （可选）性能提示
+## 9. （可选）性能提示
 - `/mnt/c`、`/mnt/d` 能直接读写 Windows 文件；但大量小文件读写/构建时通常比 WSL 自己的 Linux 文件系统慢。
 - 如果你遇到明显性能问题，再考虑把某个仓库放到 `~/projects/...`（Linux 路径）。
