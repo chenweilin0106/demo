@@ -1,6 +1,6 @@
 <template>
   <PopupBox title="title_40.png" @clickClose="clickClose">
-    <div :class="['previewImg', config.type == 'pst_privilege' || config.type == 'car' ? 'gift' : config.type == 'title' ? 'titleSp' : config.type == 'CP_card' ? 'cpCardSp' : config.type == 'world_msg_skins' ? 'wmsSp' : config.type == 'room_dec_suit' ? 'roomSp' : config.type == 'costume' ? 'userMainSp' : config.type == 'ring' ? 'ringSp' : config.type == 'virtual_avatar_components_suite' ? 'vascSp' : 'other']">
+    <div :class="['previewImg', config.type == 'pst_privilege' || config.type == 'car' ? 'gift' : config.type == 'title' ? 'titleSp' : config.type == 'CP_card' ? 'cpCardSp' : config.type == 'world_msg_skins' ? 'wmsSp' : config.type == 'room_dec_suit' ? 'roomSp' : config.type == 'costume' ? 'userMainSp' : config.type == 'ring' ? 'ringSp' : config.type == 'virtual_avatar_components_suite' ? 'vascSp' : config.type == 'joke_gift' ? 'jokeGiftSp' : 'other']">
       <PublicImg :imgName="config.img" :imgType="config.type"></PublicImg>
       <div class="cpIcon" v-if="config.type == 'CP_card'"></div>
       <div class="roomSuitIcon" v-if="config.type == 'room_dec_suit'"></div>
@@ -119,6 +119,13 @@ export default {
         background: transparent;
         border: none;
         border-radius: 0px;
+      }
+      &.jokeGiftSp {
+        width: 562px;
+        height: 591px;
+        background: transparent;
+        border: none;
+        border-radius: 0;
       }
       &.other {
         width: 120px * 1.4;
