@@ -152,40 +152,208 @@ export function parseUrl(url) {
     hashPath: urlObj.hash.substring(1)
   }
 }
-
 /**
- * 将元素滚动到容器的中心位置
- * @param {Element} element 需要滚动的元素
- * @param {Element} container 容器元素
- * @param {'h' | 'v'} direction 滚动方向，'h'表示横向，'v'表示纵向，默认为'h'
- * @param {'auto' | 'smooth'} behavior 滚动行为，'auto'|'smooth'，默认'smooth'
+ * 将 element 滚动到 container 的指定对齐位置（start/center/end）。
+ *
+ * 计算口径：
+ * - 使用 `getBoundingClientRect()` 获取视口坐标
+ * - 加上 `container.scrollLeft/Top` 转换到内容坐标，避免二次滚动漂移
+ * - 可按需忽略：容器 padding、元素 margin、元素 border
+ *
+ * 默认行为（更符合业务对齐直觉）：
+ * - `ignoreContainerPadding=true`：按容器内容区（content 区）对齐
+ * - `ignoreElementMargin=true`：忽略子元素 margin
+ * - `ignoreElementBorder=true`：按子元素 padding box 对齐
+ *
+ * @param {Element} element 目标元素
+ * @param {Element} container 滚动容器（不是 window）
+ * @param {Object} [options]
+ * @param {'h'|'v'} [options.direction='h'] 滚动方向
+ * @param {'start'|'center'|'end'} [options.align='start'] 对齐位置
+ * @param {'auto'|'smooth'} [options.behavior='smooth'] 滚动行为
+ * @param {number|string} [options.offset=0] 额外偏移（px，可传字符串）
+ * @param {boolean} [options.clamp=true] 是否限制在可滚动范围内
+ * @param {boolean} [options.ignoreContainerPadding=true] 是否忽略容器 padding（即按 content 区对齐）
+ * @param {boolean} [options.ignoreElementMargin=true] 是否忽略元素 margin
+ * @param {boolean} [options.ignoreElementBorder=true] 是否忽略元素 border（按 padding box 对齐）
+ * @param {boolean} [options.apply=true] 是否执行 scrollTo
+ * @param {boolean} [options.debug=false] 是否返回更多中间量（排查用）
+ * @returns {{target:number,maxScroll:number,applied:boolean,axis:'x'|'y',details?:Object}}
+ *
+ * @example
+ * const container = document.querySelector('.winnersList')
+ * const el = container.querySelector('.winnerItem')
+ * scrollAlignTo(el, container, { direction: 'h', align: 'start', behavior: 'smooth' })
  */
-export function scrollCenter(element, container, direction = 'h', behavior = 'smooth') {
-  if (!element || !container) return console.log('scrollCenter: 请传入element和container')
-
-  const isHorizontal = direction === 'h'
-  const elementRect = element.getBoundingClientRect()
-  const containerRect = container.getBoundingClientRect()
-
-  const elementCenter = isHorizontal ? (elementRect.left + elementRect.right) / 2 : (elementRect.top + elementRect.bottom) / 2
-  const containerCenter = isHorizontal ? (containerRect.left + containerRect.right) / 2 : (containerRect.top + containerRect.bottom) / 2
-
-  const delta = elementCenter - containerCenter
-  const currentScroll = isHorizontal ? container.scrollLeft : container.scrollTop
-  let scrollPosition = currentScroll + delta
-
-  // 防止出现负值或超出最大滚动范围
-  const maxScroll = isHorizontal ? container.scrollWidth - container.clientWidth : container.scrollHeight - container.clientHeight
-  if (Number.isFinite(maxScroll) && maxScroll > 0) {
-    scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll))
-  } else {
-    scrollPosition = Math.max(0, scrollPosition)
+export function scrollAlignTo(element, container, options = {}) {
+  function toNumber(value, fallback = 0) {
+    if (typeof value === 'number') return Number.isFinite(value) ? value : fallback
+    if (typeof value === 'string') {
+      const n = parseFloat(value)
+      return Number.isFinite(n) ? n : fallback
+    }
+    if (value == null) return fallback
+    const n = Number(value)
+    return Number.isFinite(n) ? n : fallback
   }
 
-  container.scrollTo({
-    [isHorizontal ? 'left' : 'top']: scrollPosition,
-    behavior
-  })
+  function clampNumber(n, min, max) {
+    if (!Number.isFinite(n)) return min
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return n
+    return Math.max(min, Math.min(n, max))
+  }
+
+  function getAxis(direction) {
+    const isHorizontal = direction !== 'v'
+    return {
+      isHorizontal,
+      rectStart: isHorizontal ? 'left' : 'top',
+      rectSize: isHorizontal ? 'width' : 'height',
+      scrollKey: isHorizontal ? 'scrollLeft' : 'scrollTop',
+      clientSizeKey: isHorizontal ? 'clientWidth' : 'clientHeight',
+      scrollSizeKey: isHorizontal ? 'scrollWidth' : 'scrollHeight',
+      borderStartKey: isHorizontal ? 'borderLeftWidth' : 'borderTopWidth',
+      borderEndKey: isHorizontal ? 'borderRightWidth' : 'borderBottomWidth',
+      paddingStartKey: isHorizontal ? 'paddingLeft' : 'paddingTop',
+      paddingEndKey: isHorizontal ? 'paddingRight' : 'paddingBottom',
+      marginStartKey: isHorizontal ? 'marginLeft' : 'marginTop',
+      marginEndKey: isHorizontal ? 'marginRight' : 'marginBottom'
+    }
+  }
+
+  function readBoxNumbers(style, keys) {
+    const out = {}
+    for (const k of keys) out[k] = toNumber(style[k], 0)
+    return out
+  }
+
+  if (!element || !container) {
+    console.log('scrollAlignTo: 请传入 element 和 container')
+    return { target: 0, maxScroll: 0, applied: false, axis: 'x', details: { error: '请传入 element 和 container' } }
+  }
+
+  const direction = options.direction === 'v' ? 'v' : 'h'
+  const axis = getAxis(direction)
+
+  const align = options.align === 'center' || options.align === 'end' ? options.align : 'start'
+  const behavior = options.behavior === 'auto' ? 'auto' : 'smooth'
+  const clampEnabled = options.clamp !== false
+
+  const ignoreContainerPadding = options.ignoreContainerPadding !== false
+  const ignoreElementMargin = options.ignoreElementMargin !== false
+  const ignoreElementBorder = options.ignoreElementBorder !== false
+
+  const offset = toNumber(options.offset, 0)
+  const apply = options.apply !== false
+  const debug = options.debug === true
+
+  const containerStyle = getComputedStyle(container)
+  const elementStyle = getComputedStyle(element)
+
+  const cBox = readBoxNumbers(containerStyle, [axis.borderStartKey, axis.borderEndKey, axis.paddingStartKey, axis.paddingEndKey])
+  const eBox = readBoxNumbers(elementStyle, [axis.borderStartKey, axis.borderEndKey, axis.marginStartKey, axis.marginEndKey])
+
+  const containerRect = container.getBoundingClientRect()
+  const elementRect = element.getBoundingClientRect()
+
+  const currentScroll = toNumber(container[axis.scrollKey], 0)
+  const clientSize = toNumber(container[axis.clientSizeKey], 0)
+  const scrollSize = toNumber(container[axis.scrollSizeKey], 0)
+
+  // 以“容器 padding edge”为 0 的滚动坐标系：从 rect 差值里扣掉容器 border
+  const elementBorderStartInScroll = currentScroll + (toNumber(elementRect[axis.rectStart], 0) - toNumber(containerRect[axis.rectStart], 0)) - cBox[axis.borderStartKey]
+  const elementBorderSize = toNumber(elementRect[axis.rectSize], 0)
+  const elementBorderEndInScroll = elementBorderStartInScroll + elementBorderSize
+
+  // 构造元素用于对齐的盒子（默认：padding box，忽略 margin/border）
+  let boxStart = elementBorderStartInScroll
+  let boxEnd = elementBorderEndInScroll
+
+  if (!ignoreElementMargin) {
+    boxStart -= eBox[axis.marginStartKey]
+    boxEnd += eBox[axis.marginEndKey]
+  }
+
+  if (ignoreElementBorder) {
+    boxStart += eBox[axis.borderStartKey]
+    boxEnd -= eBox[axis.borderEndKey]
+    if (boxEnd < boxStart) boxEnd = boxStart
+  }
+
+  const boxCenter = (boxStart + boxEnd) / 2
+  const elementAlignCoord = align === 'center' ? boxCenter : (align === 'end' ? boxEnd : boxStart)
+
+  // 容器可视区域内的对齐点（同样以 padding edge 为 0）
+  const viewStart = ignoreContainerPadding ? cBox[axis.paddingStartKey] : 0
+  const viewEnd = ignoreContainerPadding ? (clientSize - cBox[axis.paddingEndKey]) : clientSize
+  const viewCenter = (viewStart + viewEnd) / 2
+
+  const containerAlignPoint = align === 'center' ? viewCenter : (align === 'end' ? viewEnd : viewStart)
+
+  let target = elementAlignCoord - containerAlignPoint + offset
+
+  const maxScroll = Math.max(0, scrollSize - clientSize)
+  if (clampEnabled) target = clampNumber(target, 0, maxScroll)
+
+  let applied = false
+  if (apply) {
+    try {
+      container.scrollTo({ [axis.isHorizontal ? 'left' : 'top']: target, behavior })
+      applied = true
+    } catch (e) {
+      try {
+        container.scrollTo({ [axis.isHorizontal ? 'left' : 'top']: target })
+        applied = true
+      } catch (_) {
+        applied = false
+      }
+    }
+  }
+
+  const result = { target, maxScroll, applied, axis: axis.isHorizontal ? 'x' : 'y' }
+
+  if (debug) {
+    result.details = {
+      options: {
+        direction,
+        align,
+        behavior,
+        offset,
+        clamp: clampEnabled,
+        ignoreContainerPadding,
+        ignoreElementMargin,
+        ignoreElementBorder,
+        apply
+      },
+      container: {
+        scroll: currentScroll,
+        clientSize,
+        scrollSize,
+        borderStart: cBox[axis.borderStartKey],
+        borderEnd: cBox[axis.borderEndKey],
+        paddingStart: cBox[axis.paddingStartKey],
+        paddingEnd: cBox[axis.paddingEndKey],
+        viewStart,
+        viewEnd,
+        viewCenter,
+        containerAlignPoint
+      },
+      element: {
+        marginStart: eBox[axis.marginStartKey],
+        marginEnd: eBox[axis.marginEndKey],
+        borderStart: eBox[axis.borderStartKey],
+        borderEnd: eBox[axis.borderEndKey],
+        elementBorderStartInScroll,
+        elementBorderEndInScroll,
+        boxStart,
+        boxEnd,
+        boxCenter,
+        elementAlignCoord
+      }
+    }
+  }
+
+  return result
 }
 
 /**
@@ -410,3 +578,4 @@ export function preloadImages(urls, options = {}) {
 
   return Promise.all(tasks).then(() => images)
 }
+
