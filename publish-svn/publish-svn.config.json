@@ -52,6 +52,23 @@
       "svnTargetRootRel": "normal"
     },
     {
+      "name": "2025ServerOpening",
+      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2025ServerOpening",
+      "officialDistRoot": "D:\\officialDist\\normal",
+      "officialProjectRel": "2025ServerOpening",
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue",
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      },
+      "defaultBuildScripts": {
+        "dev": "npm run build:test",
+        "test": "npm run build:test",
+        "official": "npm run build:officialPro"
+      },
+      "svnDefaultTargetRel": "2025ServerOpening",
+      "svnTargetRootRel": "normal"
+    },
+    {
       "name": "repeat",
       "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\repeat",
       "officialDistRoot": "D:\\officialDist",
