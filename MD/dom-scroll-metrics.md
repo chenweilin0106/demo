@@ -53,9 +53,10 @@
 |---|---:|---:|---:|---:|---:|---|
 | `clientWidth` | ✓ | ✓ | ✗ | ✗(通常) | ✗ | 可视内容宽度（含 padding） |
 | `offsetWidth` | ✓ | ✓ | ✓ | ✓(若占位) | ✗ | 盒子的“外观宽度”（border box） |
-| `scrollWidth` | ✓(总内容) | ✓(可能) | ✗ | ✗ | ✗ | 内容总宽度（含溢出部分） |
+| `getBoundingClientRect().width/height` | ✓ | ✓ | ✓ | ✗ | ✗ | 视口坐标系下的 border box 外接矩形尺寸（含 transform 影响） |
+| `scrollWidth` | ✓(总内容) | ✓ | ✗ | ✗ | ✗ | 内容总宽度（含溢出部分） |
 
-> 注：`scrollWidth` 是否包含 padding 在不同场景下容易困惑；实际开发中更推荐用 rect 或 `clientWidth` 做可视区，用 `scrollWidth` 做总内容，避免依赖“是否包含 padding”的边界行为。
+> 注：`scrollWidth` 包含 padding，但不包含 border、margin、滚动条；实际开发中用 `clientWidth` 表示可视区，用 `scrollWidth` 表示总内容更直观。
 
 ---
 
@@ -77,6 +78,9 @@
 
 ### 3.4 `getBoundingClientRect()`
 - 相对视口的矩形。
+- 返回的是元素的 **border box** 矩形（包含 content + padding + border，不包含 margin）。
+- `DOMRect` 还包含 `width/height`，通常满足 `width = right - left`、`height = bottom - top`。
+- 会反映 `transform`（scale/rotate 等），因此 `rect.width/height` 可能与 `offsetWidth/clientWidth` 不一致；旋转时 `rect` 是轴对齐外接矩形。
 - 优点：直观、能反映 transform 后的位置、能拿到小数像素。
 - 缺点：它不是内容坐标；如果你最终要用 `scrollTo({ left })`，通常需要把 rect 信息“转换”到 scrollLeft 的坐标系。
 
@@ -181,5 +185,7 @@ targetScrollLeft = 当前scrollLeft + (元素左 - 容器左) - (容器border+pa
 - 尺寸：`clientWidth/Height`、`offsetWidth/Height`、`scrollWidth/Height`
 - 坐标：`scrollLeft/Top`、`clientLeft/Top`、`offsetLeft/Top`、`getBoundingClientRect()`
 - 样式：`getComputedStyle(el).paddingLeft/borderLeftWidth/marginLeft`
+
+
 
 
