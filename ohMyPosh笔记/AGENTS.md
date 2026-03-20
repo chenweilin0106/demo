@@ -16,6 +16,8 @@
 - 仅列出主题：`pwsh -NoProfile -File .\Preview-OhMyPoshThemes.ps1 -ListOnly`
 - 翻页预览：`pwsh -NoProfile -File .\omp-preview.ps1 -Pattern minimal`
 
+注意：测试/执行同步脚本 `Sync-OhMyPoshCustomTheme.ps1` 时不要使用 `pwsh -NoProfile -File ...`，否则会拿不到 `$ompTheme`，从而回退同步到 `POSH_THEMES_PATH`。建议在已加载 Profile 的 `pwsh` 会话中直接运行 `.\Sync-OhMyPoshCustomTheme.ps1`（或用 `pwsh -File .\Sync-OhMyPoshCustomTheme.ps1`）。
+
 ## 编码风格与命名约定
 
 - 脚本保持 PowerShell 常规写法：函数使用 `Verb-Noun`（如 `Resolve-ThemePath`），尽量启用 `Set-StrictMode`，错误用 `$ErrorActionPreference = 'Stop'` 明确失败。
