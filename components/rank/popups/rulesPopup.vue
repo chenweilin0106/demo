@@ -1,5 +1,5 @@
 <template>
-  <PopupBox title="title_38.png" @clickClose="clickClose">
+  <PopupBox title="奖励详情" @clickClose="clickClose">
     <template v-if="rankChosen==1">
       <div class="img1"></div>
       <table class="publicTable publicTable1">
@@ -45,7 +45,7 @@
       </div>
       <div class="img2"></div>
       <div class="rewardsArea">
-        <!-- 最后排名奖励有两项 使用：item.id<4?'nSp':'noMargin'；最后排名奖励有一项 使用：item.id<4?'nSp':null  -->
+        <!-- 最后排名奖励有两项 使用：item.id<x?'nSp':'noMargin'；最后排名奖励有一项 使用：item.id<x?'nSp':null  -->
         <div :class="['rewardsDivItem',item.id<5?'nSp':'noMargin']" v-for="(item) in rewardsList" :key="item.id">
           <div :class="['nameDiv',item.id<5?'nSp':'noMargin']">{{item.name}}</div>
           <div class="rewardsShowDiv">
@@ -53,6 +53,8 @@
               <PublicImg :imgName="it.icon" :imgType="it.type"></PublicImg>
               <div class="rewardText" v-html="it.text"></div>
               <div class="rewardMark" v-if="it.mark">{{ it.mark }}<img :src="IconPath('zs_27_20.png')" /></div>
+              <div v-if="it.isNew" class="newMark flex align-center justify-center position-absolute pointer-none">新</div>
+              <img v-if="it.quality" :src="IconPath(it.quality)" class="qualityIcon" alt="" />
             </lazy-component>
           </div>
         </div>
@@ -97,6 +99,7 @@
       <div class="img4"></div>
       <!-- <div class="img5"></div> -->
       <div class="rewardsArea">
+        <!-- 最后排名奖励有两项 使用：item.id<x?'nSp':'noMargin'；最后排名奖励有一项 使用：item.id<x?'nSp':null  -->
         <div :class="['rewardsDivItem',item.id<5?'nSp':null]" v-for="(item) in rewardsList2" :key="item.id">
           <div :class="['nameDiv',item.id<5?'nSp':null]">{{item.name}}</div>
           <div class="rewardsShowDiv">
@@ -104,6 +107,8 @@
               <PublicImg :imgName="it.icon" :imgType="it.type"></PublicImg>
               <div class="rewardText" v-html="it.text"></div>
               <div class="rewardMark" v-if="it.mark">{{ it.mark }}<img :src="IconPath('zs_27_20.png')" /></div>
+              <div v-if="it.isNew" class="newMark flex align-center justify-center position-absolute pointer-none">新</div>
+              <img v-if="it.quality" :src="IconPath(it.quality)" class="qualityIcon" alt="" />
             </lazy-component>
           </div>
         </div>
@@ -355,7 +360,7 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin: 0 33px;
+        margin: 0 15px;
         &.nSp{
           margin: 0 100px;
         }
@@ -389,7 +394,10 @@ export default {
             border-radius: 16px;
             border: 4px solid #FBE0A7;
             position: relative;
-            margin: 0px 8px;
+            margin: 0 16.5px;
+            .imgCompo {
+              z-index: 1;
+            }
             .rewardText{
               font-size: 21px;
               color: #FFFFFF;
@@ -402,6 +410,7 @@ export default {
               text-align: center;
             }
             .rewardMark{
+              z-index: 2;
               background: linear-gradient(-90deg, #75B9FF, #FF84F8);
               border-radius: 17px;
               font-size: 20px;
@@ -416,6 +425,26 @@ export default {
                 height: 20px;
                 margin: 0 0 0 2px;
               }
+            }
+            .newMark{
+              z-index: 2;
+              top: -18px;
+              left: -13px;
+              font-weight: 500;
+              font-size: 22px;
+              color: #FFFFFF;
+              width: 40px;
+              height: 34px;
+              background: linear-gradient(-90deg, #FF7FA6, #FD5AB6);
+              border-radius: 17px 19px 0 17px;
+            }
+            .qualityIcon{
+              z-index: 2;
+              width: auto;
+              height: 28px;
+              position: absolute;
+              right: -1px;
+              bottom: -4px;
             }
           }
           .reward2{
