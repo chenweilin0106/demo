@@ -57,14 +57,7 @@ try {
     Copy-Item -LiteralPath $sourcePath -Destination $targetPath -Force
     Write-Host "已同步主题到：$targetPath"
 
-    $omp = Get-Command 'oh-my-posh' -ErrorAction SilentlyContinue
-    if ($omp) {
-        Write-Host "预览命令：oh-my-posh print preview --config `"$targetPath`""
-        & oh-my-posh print preview --config $targetPath
-    }
-    else {
-        Write-Host "提示：未找到 oh-my-posh 命令，已完成同步。"
-    }
+    Write-Host "可选预览命令：oh-my-posh print preview --config `"$targetPath`""
 }
 catch {
     Write-Error $_
