@@ -113,6 +113,7 @@
           </div>
         </div>
       </div>
+      <!-- <div class="img9"></div> -->
       <!-- <div class="rules-text-border"> -->
         <!-- <ul> -->
           <!-- <li><span></span>总榜前10上榜条件：宠爱值达到99,999</li>
@@ -137,7 +138,22 @@
           <li>段。若与其他分组获奖玩家意向号码相同，则优先</li>
           <li>神豪值高的玩家进行选号</li> -->
         <!-- </ul> -->
-      <!-- </div> -->
+      <!-- <div class="rules-text-popup">
+        <ul>
+          <li><span></span><i>【3344ABC&ABC3344】</i>靓号：7位靓号，</li>
+          <li>例如3344123&1233344</li>
+          <li><span></span><i>【2099ABC&ABC2099】</i>靓号：7位靓号，</li>
+          <li>例如2099123&1232099</li>
+          <li><span></span><i>【2026ABC&ABC2026】</i>靓号：7位靓号，</li>
+          <li>例如2026123&1232026</li>
+          <li><span></span>若未达到对应甜蜜值但达到对应名次可获得其他奖</li>
+          <li>励，不可获得靓号</li>
+          <li><span></span>注：靓号ABCD各数字不可相同，不可与520/1314</li>
+          <li>/3344等特殊含义数字组合重复。获奖时需与官方</li>
+          <li>确认可选范围内的号段。若与其他分组获奖玩家意</li>
+          <li>向号码相同，则优先甜蜜值高的玩家进行选号</li>
+        </ul>
+      </div> -->
     </template>
     <div class="img5"></div>
     <!-- <table class="publicTable" style="width: 70%;"> -->
