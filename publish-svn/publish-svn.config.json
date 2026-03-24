@@ -44,7 +44,7 @@
         "test": "D:\\Project\\测试分支\\web\\vue"
       },
       "defaultBuildScripts": {
-        "dev": "npm run build:test",
+        "dev": "npm run build:dev",
         "test": "npm run build:test",
         "official": "npm run build:officialPro"
       },
