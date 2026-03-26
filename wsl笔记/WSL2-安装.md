@@ -125,29 +125,56 @@ sudo -n true && echo OK
 
 ## 5. 代理（Clash Verge Mixed Port `7897`）
 
+### 5.0 （重要）WSL2 网络模式：NAT vs `networkingMode=mirrored`
+说明：
+- **默认是 NAT**（传统 WSL2）：WSL 有独立的虚拟网段与网关。
+- **`networkingMode=mirrored`**：WSL 会镜像 Windows 的网络接口；这会影响“怎么从 WSL 连到 Windows 本机服务”和一些代理/DNS 行为。
+
+开启 mirrored（Windows 侧，写入 `C:\Users\<你>\.wslconfig` 或 `%USERPROFILE%\.wslconfig`）：
+```ini
+[wsl2]
+networkingMode=mirrored
+```
+
+改完后生效方式：
+```powershell
+wsl --shutdown
+```
+然后重新打开发行版。
+
+相关坑（本次就踩到了）：
+- Clash Verge / mihomo 若启用 DNS `fake-ip`，域名可能会被解析成 `198.18.0.0/16`；在 mirrored 下如果 WSL 流量没走到透明代理里，就会“看起来断网”（连的是 fake-ip）。
+- mirrored 下**不要再把 `ip route` 的默认网关当成 Windows IP**来配代理（常常不是你要的那个地址）。
+
 ### 5.1 Windows 端准备
 - Clash Verge 端口为 `7897`（Mixed Port）。
-- **确保允许局域网访问（非常关键）**：开启 `Allow LAN/允许局域网`，并确保 Mixed Port 不是只监听 `127.0.0.1`，否则 WSL2 里无法连到 Windows 代理端口。
+- **优先推荐：WSL 里直接用 `127.0.0.1:7897` 访问 Windows 代理**（WSL 的 localhost forwarding，一般在 NAT/mirrored 都可用）。
+- 只有当你要从 WSL 用 Windows 的“网卡 IP/网关 IP”去连代理端口时，才需要 Clash Verge 开启 `Allow LAN/允许局域网`，并让端口监听 `0.0.0.0`。
 
 快速自检（Windows 端）：
 ```powershell
 netstat -ano | findstr ":7897"
 ```
 - 期望看到 `0.0.0.0:7897` / `[::]:7897` 在 `LISTENING`
-- 如果只看到 `127.0.0.1:7897`：打开 Clash Verge 的 `Allow LAN`（或把监听地址改为 `0.0.0.0`）并重启内核
+- 如果只看到 `127.0.0.1:7897`：通常仍可从 WSL 用 `127.0.0.1:7897` 访问；若你计划用“Windows IP”访问，再去开 `Allow LAN`
 
-### 5.2 Ubuntu 里获取 Windows 网关 IP（WSL2 视角）
+### 5.2 Ubuntu 里设置代理地址（推荐 `127.0.0.1`）
+优先用：
 ```bash
-WIN_IP=$(ip route | awk '/default/ {print $3; exit}')
-echo $WIN_IP
+PROXY_HOST=127.0.0.1
+PROXY_PORT=7897
 ```
 
 ### 5.3 临时生效（只对当前终端）
 ```bash
-export http_proxy="http://$WIN_IP:7897"
-export https_proxy="http://$WIN_IP:7897"
-export all_proxy="http://$WIN_IP:7897"
-export no_proxy="localhost,127.0.0.1,$WIN_IP"
+export http_proxy="http://${PROXY_HOST}:${PROXY_PORT}"
+export https_proxy="http://${PROXY_HOST}:${PROXY_PORT}"
+export no_proxy="localhost,127.0.0.1,::1"
+
+# 兼容：部分程序只认大写
+export HTTP_PROXY="$http_proxy"
+export HTTPS_PROXY="$https_proxy"
+export NO_PROXY="$no_proxy"
 ```
 
 测试：
@@ -162,16 +189,19 @@ curl -I https://github.com
 cat >> ~/.bashrc <<'EOF'
 
 # WSL -> Windows Clash Verge (Mixed Port 7897)
-wsl_win_ip() { ip route | awk '/default/ {print $3; exit}'; }
 proxy_on() {
-  local WIN_IP
-  WIN_IP="$(wsl_win_ip)"
-  export http_proxy="http://${WIN_IP}:7897"
-  export https_proxy="http://${WIN_IP}:7897"
-  export all_proxy="http://${WIN_IP}:7897"
-  export no_proxy="localhost,127.0.0.1,${WIN_IP}"
+  local PROXY_HOST="127.0.0.1"
+  local PROXY_PORT="7897"
+
+  export http_proxy="http://${PROXY_HOST}:${PROXY_PORT}"
+  export https_proxy="http://${PROXY_HOST}:${PROXY_PORT}"
+  export no_proxy="localhost,127.0.0.1,::1"
+
+  export HTTP_PROXY="$http_proxy"
+  export HTTPS_PROXY="$https_proxy"
+  export NO_PROXY="$no_proxy"
 }
-proxy_off() { unset http_proxy https_proxy all_proxy no_proxy; }
+proxy_off() { unset http_proxy https_proxy no_proxy HTTP_PROXY HTTPS_PROXY NO_PROXY; }
 proxy_status() { env | grep -iE '^(http|https|all|no)_proxy='; }
 
 proxy_on
@@ -180,6 +210,8 @@ EOF
 source ~/.bashrc
 proxy_status
 ```
+
+（可选）让 login shell（例如 `bash -lc`）也默认带代理：把同样的 `http_proxy/https_proxy` 写进 `~/.profile`。
 
 ### 5.5 重启 WSL 后复测
 在 Windows 端执行：
