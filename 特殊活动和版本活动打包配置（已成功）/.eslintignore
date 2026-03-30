@@ -1,9 +1,0 @@
-# Ignore built files
-dist/
-build/
-
-# Ignore project
-src/pages/summerParty/views/SummerTreasure
-src/pages/summerParty/views/SummerRank
-src/pages/loveHouse/views/PointReward
-src/pages/loveHouse/utils/pageData.js

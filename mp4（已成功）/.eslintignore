@@ -1,7 +1,0 @@
-# Ignore built files
-dist/
-build/
-
-# Ignore project
-src/pages/summerParty/views/SummerTreasure
-src/pages/summerParty/views/SummerRank

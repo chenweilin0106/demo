@@ -1,9 +1,0 @@
-@font-face {
-    font-family: 'SourceHanSerifCN-Heavy';
-    src: url('./SourceHanSerifCN-Heavy.otf');
-    font-weight: normal;
-    font-style: normal;
-}
-.test {
-    font-family: 'SourceHanSerifCN-Heavy';
-}

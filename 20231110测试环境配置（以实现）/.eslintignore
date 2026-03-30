@@ -1,7 +1,0 @@
-# Ignore built files
-dist/
-build/
-
-# Ignore project
-src/pages/1111/utils/jquery-vendor.js
-
