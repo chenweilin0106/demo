@@ -81,6 +81,7 @@ nvm use default --silent >/dev/null 2>&1
 ```bash
 nvm use default --silent
 npm i -g pnpm@latest
+pnpm setup
 pnpm -v
 ```
 
