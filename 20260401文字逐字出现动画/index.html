@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>20260401 文字逐字出现动画</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <h1 class="title">文字逐字出现动画</h1>
+      <div class="controls">
+        <button id="skipBtn" class="btn" type="button">跳过动画</button>
+      </div>
+      <div id="typeTarget" class="typewriter is-prep" aria-live="polite"></div>
+
+      <script type="text/plain" id="sourceText">这里是一段示例文字。
+包含换行、英文、数字与表情：👨‍👩‍👧‍👦 🇨🇳 👍🏻✨
+iOS 13 / Android 7 兼容目标。</script>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
