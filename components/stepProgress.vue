@@ -5,14 +5,14 @@
       <div class="nodeItem" :style="`width: ${100/tot_list.length}%`" v-for="(item) in tot_list" :key="item.id">
         <div :class="['itemNodeIcon', item.has_right!=0?'active':null]"></div>
         <div :class="['rewardDiv',`status${item.has_right}`]" @click="nodeIconCk(item)">
-          <div class="rewardIcon">
-            <PublicImg :imgName="item.icon" :imgType="item.type"></PublicImg>
-            <div class="previewMark" v-if="item.key==20000"></div>
-          </div>
+          <lazy-component class="rewardIcon" :class='`${item.type}Sp`'>
+            <PublicImg :imgName="item.icon" :imgType="item.type" />
+          </lazy-component>
           <div class="rewardText">{{$toShowText(item, { pst_privilege: null, ring: null })}}</div>
           <div class="mileShow"><strong>累计收礼达</strong><br>{{item.key}}</div>
           <div class="redMark" v-if="item.has_right == 1"></div>
           <!-- <div v-if="typeToNameMap[item.type]" class="typeLabel line-height-1 flex align-center justify-center position-absolute">{{typeToNameMap[item.type]}}</div> -->
+          <!-- <div class="previewMark" v-if="item.key==20000"></div> -->
           <div v-if="item.key==3000" class="typeLabel line-height-1 flex align-center justify-center position-absolute">礼物赠送权</div>
           <div v-if="item.key==3000||item.key==15000" class="priceLabel radius-999 flex align-center position-absolute line-height-1">
             {{ item.key == 3000 ? 520 : 3344 }}<img :src="IconPath('zs_42_32.png')" alt="" />
@@ -206,6 +206,7 @@ export default {
         height: 159px;
         background: url('@/pages/gardenParty/assets/mk3_1.png') no-repeat left top/100% 100%;
         position: absolute;
+        z-index: 1;
         left: 50%;
         top: -18px;
         transform: translateX(-50%) translateY(-100%);
@@ -217,7 +218,7 @@ export default {
           position: absolute;
           left: 0;
           top: 0;
-          z-index: 1;
+          z-index: 2;
         }
         &.status2::after{
           content: '';
@@ -227,26 +228,18 @@ export default {
           position: absolute;
           left: 0;
           top: 0;
-          z-index: 1;
+          z-index: 2;
         }
         .rewardIcon{
           width: 90px;
           height: 90px;
           position: absolute;
+          z-index: -1;
           left: 50%;
           transform: translateX(-50%);
           top: 15px;
           &.titleSp{
             width: 120px;
-          }
-          .previewMark{
-            width: 122px;
-            height: 24px;
-            background: url('@/pages/gardenParty/assets/mk3_5.png') no-repeat left top/100% 100%;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 0;
           }
         }
         .rewardText{
@@ -272,6 +265,16 @@ export default {
             font-weight: bold;
           }
         }
+        .previewMark{
+          width: 122px;
+          height: 24px;
+          background: url('@/pages/gardenParty/assets/mk3_5.png') no-repeat left top/100% 100%;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          bottom: 0;
+          z-index: 3;
+        }
         .redMark{
           width: 16px;
           height: 16px;
@@ -280,10 +283,10 @@ export default {
           position: absolute;
           right: 5px;
           top: 32px;
-          z-index: 2;
+          z-index: 3;
         }
         .typeLabel{
-          z-index: 1;
+          z-index: 3;
           left: 50%;
           transform: translateX(-50%);
           top: 76px;
@@ -299,6 +302,7 @@ export default {
           font-weight: 500;
           right: -4px;
           top: -4px;
+          z-index: 3;
           color: #FFFFFF;
           //transform: translateY(-50%);
           padding: 4px 5px 4px 10px;
