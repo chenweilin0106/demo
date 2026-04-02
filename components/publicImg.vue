@@ -478,7 +478,7 @@ export default {
       img {
         width: 100% * 0.8;
         height: 100% * 0.8;
-        object-fit: contain;
+        object-fit: cover;
         border-radius: 50%;
       }
     }
@@ -486,7 +486,7 @@ export default {
       img {
         width: 100% * 0.6;
         height: 100% * 0.6;
-        object-fit: contain;
+        object-fit: cover;
         border-radius: 50%;
         z-index: 10;
       }
