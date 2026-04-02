@@ -52,23 +52,6 @@
       "svnTargetRootRel": "normal"
     },
     {
-      "name": "foolsDay",
-      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2026foolsDay",
-      "officialDistRoot": "D:\\officialDist\\normal",
-      "officialProjectRel": "aprilFools",
-      "svnRoots": {
-        "dev": "D:\\Project\\开发分支\\web\\vue",
-        "test": "D:\\Project\\测试分支\\web\\vue"
-      },
-      "defaultBuildScripts": {
-        "dev": "npm run build:dev",
-        "test": "npm run build:test",
-        "official": "npm run build:officialPro"
-      },
-      "svnDefaultTargetRel": "aprilFools",
-      "svnTargetRootRel": "normal"
-    },
-    {
       "name": "2025ServerOpening",
       "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2025ServerOpening",
       "officialDistRoot": "D:\\officialDist\\normal",
