@@ -35,6 +35,23 @@
       "svnTargetRootRel": "normal"
     },
     {
+      "name": "legacyReign",
+      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\legacyReign",
+      "officialDistRoot": "D:\\officialDist\\normal",
+      "officialProjectRel": "legacyReign",
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue",
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      },
+      "defaultBuildScripts": {
+        "dev": "npm run build:dev",
+        "test": "npm run build:test",
+        "official": "npm run build:officialPro"
+      },
+      "svnDefaultTargetRel": "legacyReign",
+      "svnTargetRootRel": "normal"
+    },
+    {
       "name": "foolsDay",
       "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2026foolsDay",
       "officialDistRoot": "D:\\officialDist\\normal",
