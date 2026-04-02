@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import { imgAtError } from '@/utils/tool'
 /**
  * @prop {String} imgName 图像名,该组件暂只判断了三种情况：pic、svga、json(pic需判断路径,svga、json暂只会是线上地址)
  */
@@ -43,6 +42,10 @@ import SVGA from 'svgaplayerweb'
  *
  * @prop {String} imgName svga文件名称（oss目录名称一致，用作访问图片）
  * @prop {String} userAvatar 用户头像
+ * @prop {Number} loop 循环播放次数 0-无限循环
+ * @prop {Function} onComplete 播放完成回调
+ * @prop {Boolean} isLocal 是否使用本地文件
+ * @prop {Boolean} isIndexDB 是否indexDB缓存
  *
  * @param {String} svgaId 生成唯一svga动画挂载id
  * @param {Object} svga_data 存放svga动画实例（不需要响应式，所以没有在data中定义）
@@ -91,14 +94,12 @@ import lottie from 'lottie-web'
 
 export default {
   name: 'PublicImg',
-  props: ['imgName', 'imgType', 'userAvatar', 'loop', 'needPause'],
+  props: ['imgName', 'imgType', 'userAvatar', 'loop', 'needPause', 'isLocal', 'isIndexDB'],
   components: {},
   data() {
     return {
-      onlinePatternEnum: Object.freeze(/^https?:\/\//i),
       imgPattern: 0, // 格式 1:pic 2:svga 3:json
-      imgPath: '', // 图像地址
-      isLoop: false // json: 是否循环
+      imgPath: '' // 图像地址
     }
   },
   created() {},
@@ -138,9 +139,9 @@ export default {
       // console.log('imgName:', this.imgName)
       if (!this.imgName) return false
       const picPatternEnum = /\.(jpg|jpeg|png|gif|bmp)$/i // 图片格式枚举,验证参后缀格式,i忽略大小写
-      let isPic = picPatternEnum.test(this.imgName)
+      const isPic = picPatternEnum.test(this.imgName)
       const svgaPatternEnum = /\.(svga)$/i // svga格式枚举
-      let isSvga = svgaPatternEnum.test(this.imgName)
+      const isSvga = svgaPatternEnum.test(this.imgName)
       if (isPic) {
         this.imgPattern = 1
         this.imgPath = this.picPathFn(this.imgName)
@@ -159,7 +160,7 @@ export default {
      */
     picPathFn(name) {
       const onlinePatternEnum = /^https?:\/\//i // 验证参前缀是否http、https
-      let isOnline = onlinePatternEnum.test(this.name)
+      const isOnline = onlinePatternEnum.test(this.name)
       if (isOnline) {
         return name
       } else {
@@ -179,28 +180,121 @@ export default {
     /**
      * 头像图片裂开执行
      */
-    imgAtError,
+    imgAtError(event) {
+      event.currentTarget.src =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHkAAAB5CAYAAAAd+o5JAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMC1jMDAwIDc5LjE3MWMyN2ZhYiwgMjAyMi8wOC8xNi0yMjozNTo0MSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI0LjAgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjY3QkM5NkJBODc3QjExRUVCODZFQURGMUQwQUExRDU0IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjY3QkM5NkJCODc3QjExRUVCODZFQURGMUQwQUExRDU0Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NjdCQzk2Qjg4NzdCMTFFRUI4NkVBREYxRDBBQTFENTQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NjdCQzk2Qjk4NzdCMTFFRUI4NkVBREYxRDBBQTFENTQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5CLI/XAAALaElEQVR42uxd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'
+    },
     /**
-     * svga前置函数
+     * 获取svgaUrl
+     * @prop {boolean} isIndexDB svga是否走indexDB缓存
+     * @prop {string} isLocal svga走本地文件
+     */
+    svgaFn(svgaName) {
+      let svgaUrl
+      try {
+        if (this.isIndexDB) {
+          const now = new Date()
+          const currentDbName = `h5_svgas_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`
+          // console.log('indexedDB currentDbName', currentDbName)
+          try {
+            const prevDb = localStorage.getItem('h5_svgas_active_db')
+            if (prevDb && prevDb !== currentDbName) {
+              // 过月则删除上一个月的数据库
+              indexedDB.deleteDatabase(prevDb)
+              console.log('deleted previous indexedDB:', prevDb)
+            }
+            // 记录当前正在使用的数据库名
+            localStorage.setItem('h5_svgas_active_db', currentDbName)
+          } catch (e) {
+            console.warn('clear previous indexedDB failed', e)
+          }
+          const request = indexedDB.open(currentDbName, 1)
+          // console.log(request)
+          // 数据库升级时触发(通常非首次不触发)
+          request.onupgradeneeded = (event) => {
+            console.log('indexDB onupgradeneeded')
+            const db = event.target.result
+            if (!db.objectStoreNames.contains('svga_list')) {
+              db.createObjectStore('svga_list', { keyPath: 'svga_name' })
+              console.log('created objectStore svga_list')
+            } else {
+              console.log('objectStore svga_list already exists')
+            }
+          }
+          request.onerror = (event) => {
+            // let deleteDbRequest = indexedDB.deleteDatabase('h5_svgas')
+            // deleteDbRequest.onsuccess = function (event) {
+            //   console.log('onerror detete')
+            // }
+            this.svgaStart(svgaUrl, svgaName)
+            console.error('Database error:', event.target.error)
+          }
+          request.onsuccess = (event) => {
+            // console.log('onsuccess')
+            const db = event.target.result
+            const queryObjectStore = db.transaction(['svga_list'], 'readwrite').objectStore('svga_list')
+            queryObjectStore.get(svgaName).onsuccess = (event) => {
+              const result = event.target.result
+              // console.log('查询结果:', result)
+              if (result) {
+                svgaUrl = result.svga_value
+              } else {
+                svgaUrl = this.getSvgaName(svgaUrl, svgaName)
+                this.fetchResourceAsBase64(svgaUrl).then(res => {
+                  // console.log('resbase64', res)
+                  const queryObjectStore = db.transaction(['svga_list'], 'readwrite').objectStore('svga_list')
+                  queryObjectStore.put({ svga_name: svgaName, svga_value: res })
+                })
+              }
+              this.svgaStart(svgaUrl, svgaName)
+            }
+          }
+          // console.log(request)
+        } else {
+          this.svgaStart(svgaUrl, svgaName)
+        }
+      } catch (error) {
+        this.svgaStart(undefined, svgaName)
+      }
+      // console.log('svgaUrl1', svgaUrl)
+      // this.svgaStart(svgaUrl, svgaName)
+    },
+    /**
+     * 获取svga名称
+     */
+    getSvgaName(svgaUrl, svgaName) {
+      let temUrl = svgaUrl
+      if (!svgaUrl) {
+        if (this.isLocal) {
+          temUrl = require(`@/pages/${process.env.VUE_APP_ICON_PATH}/assets/${svgaName}`)
+        } else {
+          const onlinePatternEnum = /^https?:\/\//i // 验证参前缀是否http、https
+          const isOnline = onlinePatternEnum.test(svgaName)
+          temUrl = isOnline ? svgaName : `${process.env.VUE_APP_OSS_PATH}activity/weekly/svga/${svgaName}`
+        }
+      }
+      return temUrl
+    },
+    /**
+     * 播放SVGA
      * @prop {Number} loop 循环次数,0为无限循环
      */
-    svgaFn(svgaName, id, loop = 0) {
-      // console.log('loop', loop)
-      const svga_play = new SVGA.Player(`#${id}`)
-      const svga_parser = new SVGA.Parser(`#${id}`)
-      svga_play.loops = loop
-      svga_play.clearsAfterStop = false // 播放完不清空画布
-      svga_play.fillMode = 'forwards' // 播放完停留在最后一帧
-      svga_parser.load(this.onlinePatternEnum.test(svgaName) ? svgaName : `${process.env.VUE_APP_OSS_PATH}activity/weekly/svga/${svgaName}`, (videoItem) => {
-        svga_play.setVideoItem(videoItem)
-        svga_play.startAnimation()
-        svga_play.onFinished(() => {
+    svgaStart(svgaUrl, svgaName) {
+      const url = this.getSvgaName(svgaUrl, svgaName)
+      this.svga_data = new SVGA.Player(`#${this.svgaId}`)
+      const svga_parser = new SVGA.Parser(`#${this.svgaId}`)
+      this.svga_data.loops = this.loop || 0
+      this.svga_data.clearsAfterStop = false // 播放完不清空画布
+      this.svga_data.fillMode = 'forwards' // 播放完停留在最后一帧
+      svga_parser.load(url, (videoItem) => {
+        this.svga_data?.setVideoItem(videoItem)
+        this.svga_data?.startAnimation()
+        this.svga_data?.onFinished(() => {
           this.$emit('animOnFinished')
         })
       }, (error) => {
-        console.log(`svgaFn ERROR  svgaName: ${svgaName} error: ${error}`)
+        console.log(`svgaStart ERROR  svgaName: ${this.imgPath} error: ${error}`)
       })
-      return svga_play
     },
     /**
      * 挂载svga
@@ -208,7 +302,7 @@ export default {
     loadSvga() {
       this.$nextTick(() => {
         this.clearSvga()
-        this.svga_data = this.svgaFn(this.imgPath, this.svgaId, this.loop)
+        this.svgaFn(this.imgPath)
       })
     },
     /**
@@ -219,7 +313,7 @@ export default {
         this.svga_data.stopAnimation()
         this.svga_data.clear()
         this.svga_data.clearDynamicObjects()
-        this.svga_data._videoItem = null
+        // this.svga_data._videoItem = null
         this.svga_data = null
       }
     },
@@ -228,14 +322,13 @@ export default {
      * @prop {Number} loop 循环,默认true
      */
     jsonFn(jsonName, className, loop = true) {
-      let path = this.onlinePatternEnum.test(jsonName) ? jsonName : `${process.env.VUE_APP_OSS_PATH}activity/weekly/json/${jsonName}`
       const params = {
         container: document.querySelector(className),
         renderer: 'svg',
         loop,
-        path: `${path}/data.json`,
+        path: `${process.env.VUE_APP_OSS_PATH}activity/weekly/json/${jsonName}/data.json`,
         autoplay: true,
-        assetsPath: `${path}/images/`
+        assetsPath: `${process.env.VUE_APP_OSS_PATH}activity/weekly/json/${jsonName}/images/`
       }
       return lottie.loadAnimation(params)
     },
@@ -278,18 +371,16 @@ export default {
           this.PublicJsonObj.addEventListener('enterFrame', (e) => {
             // console.log(e.currentTime)
             if (e.currentTime >= this.needPause) {
-              this.goToAndStop(this.needPause)
+              // this.goToAndStop(this.needPause)
               console.log(`暂停在第${this.needPause}帧`)
               // this.$emit('showReward') // 暂停后回调,自配置
             }
           })
         }
-        if (!this.isLoop) {
+        if (!this.loop) {
           this.PublicJsonObj.addEventListener('complete', () => {
             this.$emit('complete') // 结束后回调,自配置
           })
-        } else {
-          this.isLoop = true
         }
       })
     },
@@ -300,6 +391,45 @@ export default {
       if (this.imgPath && this.PublicJsonObj) {
         this.PublicJsonObj.destroy()
         this.PublicJsonObj = null
+      }
+    },
+    /**
+     * 将ArrayBuffer转换为base64字符串
+     * @param {ArrayBuffer} buffer - 要转换的ArrayBuffer
+     * @return {string} base64编码的字符串
+     */
+    arrayBufferToBase64(buffer) {
+      let binary = ''
+      const bytes = new Uint8Array(buffer)
+      const len = bytes.byteLength
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i])
+      }
+      return btoa(binary)
+    },
+    /**
+     * 从URL获取资源并转换为base64
+     * @param {string} url - 资源URL
+     * @return {Promise<string>} base64格式的资源URL
+     */
+    async fetchResourceAsBase64(url) {
+      try {
+        // 使用浏览器原生 fetch API 获取资源
+        const response = await fetch(url)
+        // 检查响应状态
+        if (!response.ok) {
+          throw new Error(`资源请求失败: ${response.status} ${response.statusText}`)
+        }
+        // 将响应转换为ArrayBuffer
+        const arrayBuffer = await response.arrayBuffer()
+        // 使用已有的arrayBufferToBase64函数转换
+        const base64String = this.arrayBufferToBase64(arrayBuffer)
+        // console.log('base64String', base64String)
+        // 返回标准的data URL格式
+        return `data:application/octet-stream;base64,${base64String}`
+      } catch (error) {
+        console.error('资源转换失败:', error)
+        throw error
       }
     }
   },
@@ -348,15 +478,15 @@ export default {
       img {
         width: 100% * 0.8;
         height: 100% * 0.8;
-        object-fit: cover;
+        object-fit: contain;
         border-radius: 50%;
       }
     }
     &.voiceA {
       img {
-        width: 100% * 0.7;
-        height: 100% * 0.7;
-        object-fit: cover;
+        width: 100% * 0.6;
+        height: 100% * 0.6;
+        object-fit: contain;
         border-radius: 50%;
         z-index: 10;
       }
