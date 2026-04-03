@@ -146,7 +146,7 @@ export const recharge = (fn) => {
 
 /**
  * 钻石充值半屏
- * 
+ *
  * @param {number} caratNum 需要的钻石数量
  * @param {Function} callBack 回调函数
  * 示例：diamondRechargePart(100, this.getPageData)
@@ -384,7 +384,7 @@ export const toConfessionWall = (fn) => {
 
 /**
  * 跳转私聊界面
- * 
+ *
  * @param {string | number} tuid 用户uid
  */
 export const toPrivateChat = (tuid) => {
@@ -418,7 +418,7 @@ export const toSkillUpgrade = () => {
 
 /**
  * 跳转蛋蛋日常（6.0.8）
- * 
+ *
  * @param {0 | 1 | 2} index 0-每日任务 1-周挑战 2-签到
  */
 export const toDanDanDaily = (index) => {
@@ -605,6 +605,24 @@ export const toFriendsList = () => {
       window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://message/friends' })
     } else {
       window.external.dispatch('dandan://message/friends')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
+
+/**
+ * 跳转APP绑定手机号
+ */
+export const toBindPhone = () => {
+  console.log('跳转APP绑定手机号')
+  try {
+    if (isIOS()) {
+      console.log('进入IOS绑定手机号方法')
+      window.webkit.messageHandlers.DDManagerPhoneVC.postMessage('')
+    } else {
+      console.log('进入Android绑定手机号方法')
+      window.external.action('/bind/phone')
     }
   } catch (error) {
     console.log('环境错误', error)
