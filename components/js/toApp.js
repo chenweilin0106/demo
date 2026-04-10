@@ -645,3 +645,18 @@ export const banAccount = (text) => {
     console.log('环境错误', error)
   }
 }
+
+/**
+ * 跳转活力卡页面
+ */
+export const toVitalityHome = () => {
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://vitality/home' })
+    } else {
+      window.external.dispatch('dandan://vitality/home')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
