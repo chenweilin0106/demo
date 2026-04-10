@@ -1,7 +1,7 @@
 # Codex 安装笔记（wsl）
 
 ## 前置条件
-- 已在 WSL（Ubuntu）里准备好 Linux 版 `node/npm/pnpm`（建议先看同目录 `demo/wsl笔记/node环境安装笔记.md`）
+- 已在 WSL（Ubuntu）里准备好 Linux 版 `node/npm`（建议先看同目录 `demo/wsl笔记/node环境安装笔记.md`）
 - 确认当前是 Linux Node：
 ```bash
 command -v node
@@ -16,11 +16,7 @@ nvm use default --silent
 ```
 
 ## 2) 安装 Codex（最新稳定版）
-推荐用 pnpm 安装（也可用 npm，二选一即可）：
-```bash
-pnpm add -g @openai/codex@latest
-```
-或：
+使用 npm 全局安装：
 ```bash
 npm i -g @openai/codex@latest
 ```
@@ -47,5 +43,5 @@ type -a codex
 
 - 切换 Node 版本后 `codex` 不见了
   - 正常现象：全局包按 Node 版本隔离
-  - 在新版本下重新安装：`pnpm add -g @openai/codex@latest`
+  - 在新版本下重新安装：`npm i -g @openai/codex@latest`
 
