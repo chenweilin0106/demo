@@ -615,14 +615,31 @@ export const toFriendsList = () => {
  * 跳转APP绑定手机号
  */
 export const toBindPhone = () => {
-  console.log('跳转APP绑定手机号')
   try {
     if (isIOS()) {
-      console.log('进入IOS绑定手机号方法')
       window.webkit.messageHandlers.DDManagerPhoneVC.postMessage('')
     } else {
-      console.log('进入Android绑定手机号方法')
       window.external.action('/bind/phone')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
+
+/**
+ * 封禁当前账户（622）
+ *
+ * @param {string} text 封禁提示文案 必传
+ */
+export const banAccount = (text) => {
+  if (compareVersions('6.2.2') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  if (!text) return console.log('无效封禁提示文案', text)
+  const params = { text }
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.banAccount.postMessage(params)
+    } else {
+      window.external.banAccount(text)
     }
   } catch (error) {
     console.log('环境错误', error)
