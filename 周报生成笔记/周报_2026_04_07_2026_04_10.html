@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>周报（2026-04-07 ~ 2026-04-10）</title>
+  </head>
+  <body>
+    <p>使用方式：点击“复制（不带字体）”后，直接到钉钉日志里粘贴。</p>
+    <p><button id="copy">复制（不带字体）</button></p>
+
+    <div id="copy-source">
+      <ol id="weekly">
+        <li>
+          开局既巅峰
+          <ol>
+            <li>
+              基础建设
+              <ol>
+                <li>项目配置更新（2次提交）</li>
+                <li>环境变量配置更新</li>
+                <li>基础逻辑优化（地址栏数据、基础信息）</li>
+                <li>新增封禁方法与称号套系接口</li>
+                <li>新增跳转活力卡页面与滚动定位</li>
+                <li>注释清理</li>
+              </ol>
+            </li>
+            <li>
+              资源更新
+              <ol>
+                <li>图片资源更新与目录加载兼容</li>
+              </ol>
+            </li>
+            <li>
+              样式/交互优化
+              <ol>
+                <li>弹框样式优化与居中偏移调整</li>
+                <li>导航栏层级优化</li>
+              </ol>
+            </li>
+            <li>
+              进退契约
+              <ol>
+                <li>新增并更新本人校验弹框，兼容靓号样式</li>
+                <li>默认数据更新与首页接口对接</li>
+                <li>新增去绑定手机号弹框跳转回调与接口对接</li>
+                <li>节流与数据安全优化（手机号脱敏、验证码长度限制）</li>
+                <li>res_time与回滚相关逻辑修复</li>
+              </ol>
+            </li>
+            <li>
+              选择称号
+              <ol>
+                <li>基础框架搭建与返回按钮修复</li>
+                <li>新增称号详情与套系弹框，新增恭喜获得弹框</li>
+                <li>优化弹框过渡，新增确认兑换弹框</li>
+                <li>新增懒加载与滚动交互（滚动到顶部），样式优化</li>
+                <li>接口对接与接口拆分</li>
+                <li>修复configSetDescPopup赋值并补充注释</li>
+              </ol>
+            </li>
+            <li>
+              霸业储备
+              <ol>
+                <li>新增选择称号路由跳转与默认数据更新</li>
+                <li>接口对接（2次提交）与接口拆分</li>
+                <li>称号兑换卡能力完善（数量、记录对接、领取、按钮逻辑修复）</li>
+                <li>加速卡能力完善（新增使用接口、按钮状态修复、失败弹框优化）</li>
+                <li>滚动逻辑完善（新增滚动函数、定位领取、回滚），修复调用时机（2次提交）</li>
+              </ol>
+            </li>
+            <li>
+              霸业助攻
+              <ol>
+                <li>接口对接</li>
+                <li>新增前往使用/兑换滚动逻辑</li>
+                <li>修复一日加速卡充值额度</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          开服活动
+          <ol>
+            <li>
+              白手起家
+              <ol>
+                <li>新增活力卡需求</li>
+                <li>优化气泡位置</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          春日活动
+          <ol>
+            <li>
+              充值有礼
+              <ol>
+                <li>称号属性文本样式修复</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </div>
+
+    <script>
+      const copySource = document.getElementById("copy-source");
+      const weeklyList = document.getElementById("weekly");
+      const copyButton = document.getElementById("copy");
+
+      function toPlainText(element) {
+        const lines = [];
+        const walk = (node, level) => {
+          if (node.nodeName === "LI") {
+            const textNodes = [];
+            for (const child of node.childNodes) {
+              if (child.nodeType === Node.TEXT_NODE) {
+                const t = child.nodeValue.replace(/\s+/g, " ").trim();
+                if (t) textNodes.push(t);
+              } else if (
+                child.nodeType === Node.ELEMENT_NODE &&
+                child.nodeName !== "OL"
+              ) {
+                const t = child.textContent.replace(/\s+/g, " ").trim();
+                if (t) textNodes.push(t);
+              }
+            }
+            const text = textNodes.join(" ").trim();
+            if (text) {
+              lines.push("  ".repeat(level) + text);
+            }
+            const childOl = node.querySelector(":scope > ol");
+            if (childOl) {
+              for (const childLi of childOl.children) {
+                if (childLi.nodeName === "LI") walk(childLi, level + 1);
+              }
+            }
+            return;
+          }
+
+          if (node.nodeName === "OL") {
+            for (const child of node.children) {
+              if (child.nodeName === "LI") walk(child, level);
+            }
+          }
+        };
+        walk(element, 0);
+        return lines.join("\n");
+      }
+
+      function setClipboard(event) {
+        // 复制时生成“紧凑 HTML”：避免缩进/换行产生的空白文本节点被部分编辑器当作空行处理
+        const buildCompactHtml = () => {
+          const esc = (s) =>
+            String(s)
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;");
+
+          const olType = (depth) => {
+            const mod = (depth - 1) % 3;
+            if (mod === 0) return "1";
+            if (mod === 1) return "a";
+            return "i";
+          };
+
+          const liText = (li) => {
+            const parts = [];
+            for (const child of li.childNodes) {
+              if (child.nodeType === Node.TEXT_NODE) {
+                const t = child.nodeValue.replace(/\s+/g, " ").trim();
+                if (t) parts.push(t);
+              } else if (
+                child.nodeType === Node.ELEMENT_NODE &&
+                child.nodeName !== "OL"
+              ) {
+                const t = child.textContent.replace(/\s+/g, " ").trim();
+                if (t) parts.push(t);
+              }
+            }
+            return parts.join(" ").trim();
+          };
+
+          const renderOl = (ol, depth) => {
+            const type = olType(depth);
+            let html = `<ol type="${type}" style="margin:0;padding-left:1.6em;">`;
+            for (const li of ol.children) {
+              if (li.nodeName !== "LI") continue;
+              const text = liText(li);
+              html += "<li>" + esc(text);
+              const childOl = li.querySelector(":scope > ol");
+              if (childOl) html += renderOl(childOl, depth + 1);
+              html += "</li>";
+            }
+            html += "</ol>";
+            return html;
+          };
+
+          return renderOl(weeklyList, 1);
+        };
+
+        const html = buildCompactHtml();
+        const text = toPlainText(weeklyList);
+
+        // 记录一下，便于本地排查（不影响复制）
+        window.__lastCopiedHtml = html;
+        window.__lastCopiedText = text;
+
+        event.clipboardData.setData("text/html", html);
+        event.clipboardData.setData("text/plain", text);
+        event.preventDefault();
+      }
+
+      function selectionInside(node) {
+        const sel = document.getSelection();
+        if (!sel || sel.rangeCount === 0) return false;
+        const range = sel.getRangeAt(0);
+        let common = range.commonAncestorContainer;
+        if (common.nodeType === Node.TEXT_NODE) common = common.parentNode;
+        return node.contains(common);
+      }
+
+      let forceCopy = false;
+      document.addEventListener("copy", (event) => {
+        if (!event.clipboardData) return;
+        if (forceCopy || selectionInside(copySource)) setClipboard(event);
+      });
+
+      copyButton.addEventListener("click", () => {
+        forceCopy = true;
+        const range = document.createRange();
+        range.selectNodeContents(copySource);
+        const sel = document.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand("copy");
+        sel.removeAllRanges();
+        forceCopy = false;
+      });
+    </script>
+  </body>
+</html>
+
