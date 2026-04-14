@@ -18,7 +18,7 @@
           <div :class="['rewardIcon position-absolute position-row-center', item.type=='title'?'titleSp':item.type == 'mic' ? 'micSp' : null]">
             <PublicImg :imgName="item.icon" :imgType="item.type" />
           </div>
-          <div class="rewardText radius-999 position-absolute position-row-center w-100 text-center line-height-1 flex align-center justify-center">{{item.text}}</div>
+          <div class="rewardText radius-999 position-absolute position-row-center w-100 text-center line-height-1 flex align-center justify-center">{{item.text}}<img v-if="item.quality" :src="IconPath(item.quality)" class="qualityIcon" alt="" /></div>
           <div class="rewardPreview position-row-center position-absolute" v-if="item.previewImg"></div>
           <div class="rewardMark position-absolute radius-999" v-if="item.mark">{{item.mark}}<img :src="IconPath('zs_27_20.png')" /></div>
           <div v-if="item.mark1" class="doublePersonMark position-absolute"></div>
@@ -98,6 +98,10 @@ export default {
       rewardsList: Object.freeze({
         41: [
           { id: 111, type: 'pst_privilege', icon: 'mrxy_120_120.png', text: '礼物赠送权', mark: '2888', previewImg: 'tk_50.png', previewTip1: '毛绒絮语·礼物赠送权', mark1: true },
+          // { id: 121, type: 'costume', icon: 'qqjcl_120_120.png', text: '主页特效', isNew: true, previewImg: 'zyp_qqjcl.svga', previewTip1: '千骑卷尘来·主页特效' },
+          // { id: 321, type: 'chat_bubble', icon: 'qp_xdsk_sc', text: '私聊气泡', isNew: false },
+          // { id: 421, type: 'chat_bubble_pub', icon: 'fhjb_120_120.png', text: '公屏气泡', isNew: true },
+          // { id: 111, type: 'world_msg_skins', icon: 'wysk_120_120.png', text: '世界消息皮肤', previewImg: 'tk_17.png', previewTip1: '无垠深空·世界消息皮肤', mark1: false, isNew: true }
           { id: 112, type: 'tool', icon: 'ljs_120_120.png', text: '绿晶石' }
         ],
         42: [
@@ -329,6 +333,11 @@ export default {
           font-size: 22px;
           color: #FFFFFF;
           top: 100px;
+          .qualityIcon {
+            width: auto;
+            height: 28px;
+            margin-left: 8px;
+          }
         }
         .rewardPreview{
           width: 140px;

@@ -201,42 +201,42 @@ export default {
           id: 1,
           name: '第1名',
           rewards: [
-            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+30天' },
+            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+30天', isNew: false, quality: '', mark: ''  },
             { type: 'tool', icon: 'hjcbt_120_120.png', text: '黄金藏宝图\n+2' }
           ]
         }, {
           id: 2,
           name: '第2名',
           rewards: [
-            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+15天' },
+            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+15天', isNew: false, quality: '', mark: '' },
             { type: 'tool', icon: 'hjcbt_120_120.png', text: '黄金藏宝图\n+1' }
           ]
         }, {
           id: 3,
           name: '第3名',
           rewards: [
-            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+7天' },
+            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+7天', isNew: false, quality: '', mark: '' },
             { type: 'tool', icon: 'cbt_120_120.png', text: '藏宝图\n+20' }
           ]
         }, {
           id: 4,
           name: '第4~5名',
           rewards: [
-            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+5天' },
+            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+5天', isNew: false, quality: '', mark: '' },
             { type: 'tool', icon: 'cbt_120_120.png', text: '藏宝图\n+15' }
           ]
         }, {
           id: 5,
           name: '第6~10名',
           rewards: [
-            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+3天' },
+            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+3天', isNew: false, quality: '', mark: '' },
             { type: 'tool', icon: 'cbt_120_120.png', text: '藏宝图\n+10' }
           ]
         }, {
           id: 6,
           name: '第11~20名',
           rewards: [
-            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+1天' },
+            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+1天', isNew: false, quality: '', mark: '' },
             { type: 'tool', icon: 'cbt_120_120.png', text: '藏宝图\n+5' }
           ]
         }
@@ -246,42 +246,42 @@ export default {
           id: 1,
           name: '第1名',
           rewards: [
-            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+3个', mark: 13140 },
-            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+60天' }
+            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+3个', isNew: false, quality: '', mark: 13140 },
+            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+60天', isNew: false, quality: '', mark: '' }
           ]
         }, {
           id: 2,
           name: '第2名',
           rewards: [
-            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+2个', mark: 13140 },
-            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+30天' }
+            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+2个', isNew: false, quality: '', mark: 13140 },
+            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+30天', isNew: false, quality: '', mark: '' }
           ]
         }, {
           id: 3,
           name: '第3名',
           rewards: [
-            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+1个', mark: 13140 },
-            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+15天' }
+            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+1个', isNew: false, quality: '', mark: 13140 },
+            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+15天', isNew: false, quality: '', mark: '' }
           ]
         }, {
           id: 4,
           name: '第4~5名',
           rewards: [
-            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+1个', mark: 13140 },
-            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+7天' }
+            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+1个', isNew: false, quality: '', mark: 13140 },
+            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+7天', isNew: false, quality: '', mark: '' }
           ]
         }, {
           id: 5,
           name: '第6~10名',
           rewards: [
-            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+1个', mark: 13140 },
-            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+3天' }
+            { type: 'ring', icon: 'jz_szby.svga', text: '【矢志不渝】\n戒指+1个', isNew: false, quality: '', mark: 13140 },
+            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+3天', isNew: false, quality: '', mark: '' }
           ]
         }, {
           id: 6,
           name: '第11~20名',
           rewards: [
-            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+3天' }
+            { type: 'car', icon: 'llqy_120_120.png', text: '【琉璃雀羽】\n座驾+3天', isNew: false, quality: '', mark: '' }
           ]
         }
       ])
