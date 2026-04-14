@@ -96,24 +96,39 @@ export default {
       rankChosen: 1, // todo 榜单 4:爱意榜 用于数据请求/rewardsList（奖励列表）/selectDate（默认日期）/榜单滚动（榜单滚动需要同时配置rankCom${rankChosen}Ref）
       tagChosen: 1, // 榜单选择: 1:日榜 2:总榜
       rewardsList: Object.freeze({
-        41: [
-          { id: 111, type: 'pst_privilege', icon: 'mrxy_120_120.png', text: '礼物赠送权', mark: '2888', previewImg: 'tk_50.png', previewTip1: '毛绒絮语·礼物赠送权', mark1: true },
-          // { id: 121, type: 'costume', icon: 'qqjcl_120_120.png', text: '主页特效', isNew: true, previewImg: 'zyp_qqjcl.svga', previewTip1: '千骑卷尘来·主页特效' },
-          // { id: 321, type: 'chat_bubble', icon: 'qp_xdsk_sc', text: '私聊气泡', isNew: false },
-          // { id: 421, type: 'chat_bubble_pub', icon: 'fhjb_120_120.png', text: '公屏气泡', isNew: true },
+        11: [
+          // { id: 121, type: 'costume', icon: 'qqjcl_120_120.png', text: '主页特效', mark: '', previewImg: 'zyp_qqjcl.svga', previewTip1: '千骑卷尘来·主页特效', mark1: '', isNew: false },
+          // { id: 321, type: 'chat_bubble', icon: 'qp_xdsk_sc', text: '私聊气泡', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          // { id: 421, type: 'chat_bubble_pub', icon: 'fhjb_120_120.png', text: '公屏气泡', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
           // { id: 111, type: 'world_msg_skins', icon: 'wysk_120_120.png', text: '世界消息皮肤', previewImg: 'tk_17.png', previewTip1: '无垠深空·世界消息皮肤', mark1: false, isNew: true }
-          { id: 112, type: 'tool', icon: 'ljs_120_120.png', text: '绿晶石' }
+          // { id: 121, type: 'voice', icon: 'sb_tyzd', text: '声波', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          // { id: 122, type: 'tool', icon: 'hjcbt_120_120.png', text: '黄金藏宝图', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          // { id: 123, type: 'tool', icon: 'cbt_120_120.png', text: '藏宝图', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
+          // { id: 212, type: 'property', icon: 'lhq_120_120.png', text: '靓号券', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
+          // { id: 223, type: 'tool', icon: 'mjfyx_120_120.png', text: '摸金符·一星', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
+          // { id: 121, type: 'car', icon: 'axcp_120_120.png', text: '座驾', mark: '', previewImg: 'car_axcp.svga', previewTip1: '爱心敞篷·双人座驾', mark1: true },
+          // { id: 122, type: 'mic', icon: 'ts_llbw.svga', text: '头饰', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          // { id: 123, type: 'room_dec_suit', icon: 'ymmg_120_120.png', text: '房间装扮', mark: '', previewImg: '2025_520_tk_54.svga', previewTip1: '夜幕玫瑰·房间装扮' },
+          // { id: 124, type: 'tool', icon: 'cplh_120_120.png', text: 'CP靓号', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
+          { id: 111, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          { id: 112, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
         ],
-        42: [
-          { id: 121, type: 'car', icon: 'axcp_120_120.png', text: '座驾', previewImg: 'car_axcp.svga', previewTip1: '爱心敞篷·双人座驾', mark1: true },
-          { id: 122, type: 'mic', icon: 'ts_llbw.svga', text: '头饰' },
-          { id: 123, type: 'room_dec_suit', icon: 'ymmg_120_120.png', text: '房间装扮', previewImg: '2025_520_tk_54.svga', previewTip1: '夜幕玫瑰·房间装扮' },
-          { id: 124, type: 'tool', icon: 'cplh_120_120.png', text: 'CP靓号' }
+        12: [
+          { id: 121, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          { id: 122, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
+        ],
+        21: [
+          { id: 211, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          { id: 212, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
+        ],
+        22: [
+          { id: 221, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          { id: 222, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
         ]
       }), // todo 榜单奖励列表
       day_list: { 20250516: '05月16日', 20250517: '05月17日', 20250518: '05月18日', 20250519: '05月19日', 20250520: '05月20日', 20250521: '05月21日', 20250522: '05月22日', 20250523: '05月23日' }, // todo 日期列表
       todaySelectDate: 20250516, // todo 当天日期
-      selectDate: { 4: 20250516 }, // todo 所选日期
+      selectDate: { 1: 20250516 }, // todo 所选日期
       isShowDateList: false, // 是否显示日期选择列表
       rankListShow: [
         { uidStr: 0, uid: 0, code: 0, pretty_type: 0, username: '虚位以待', profile_image: '', tuid: 0, tuid_code: 0, tuid_pretty_type: 0, tusername: '虚位以待', tprofile_image: '', num: 0, rank: 1, relation: 0, virtual_info: [], tvirtual_info: [], gender: '0', tgender: '1', time: 0, diff: 0, score: 0, pet_info: { id: 1, category: '1', subcategory: '1', quality: 0, current_stage: '0', feature_list: { change_one: '0', change_two: '0', change_three: '0' } } },
