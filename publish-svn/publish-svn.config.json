@@ -71,8 +71,8 @@
     {
       "name": "repeat",
       "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\repeat",
-      "officialDistRoot": "D:\\officialDist",
-      "officialProjectRel": "",
+      "officialDistRoot": "D:\\officialDist\\weekly",
+      "officialProjectRelFromEnv": "VUE_APP_ICON_PATH",
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",
         "test": "D:\\Project\\测试分支\\web\\vue"
