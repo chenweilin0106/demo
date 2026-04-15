@@ -68,6 +68,7 @@ After completing a feature iteration, proactively ask whether to push to the rem
 
 - `TargetRel` can be derived from `.env` when a profile sets `svnDefaultTargetRelFromEnv` and `svnDefaultTargetRelMap`. In that case, passing `-TargetRel` is rejected.
 - For non-`official` runs, the script resolves the env override file from `--mode` in `BuildScript` (supports `npm run <script>` by reading `package.json`) and prints merged `.env` + `.env.<mode>` content for confirmation. When `-NoBuild` is set, missing `--mode` / `.env.<mode>` will not hard-fail (override may be skipped).
+- “环境变量确认”会完整打印合并后的 `.env` 与覆盖文件内容，不会过滤注释。`pwsh 7` 下按 RGB 分色显示：注释 `#7A7E85`、`KEY` `#CF8E6D`、`=` `#BCBEC4`、`VALUE` `#6AAB73`；非 `pwsh 7` 宿主会退回近似控制台颜色。
 - `VUE_APP_ICON_PATH` in `.env` can override the source path under `dist`. If not set and `dist` contains a single folder, that folder becomes the source; otherwise `dist` is used.
 - For `Env=official`, `OfficialProjectRel` can be derived from `.env` / `.env.officialPro` when a profile sets `officialProjectRelFromEnv`. `officialProjectRelMap` is optional; if missing/empty/unmatched, it falls back to the env value. Passing `-OfficialProjectRel` skips env mapping.
 - Commit message defaults to the latest Git commit message in the project root (if a Git repo is detected).
@@ -84,17 +85,3 @@ After completing a feature iteration, proactively ask whether to push to the rem
 
 - `publish-svn.last.json` records both succeeded and failed runs (up to 200 entries), including timestamps, duration, revision (when available), and error text.
 - On failure, the script prompts whether to rerun and prints a full rerun command with the currently bound parameters.
-
-## 近期变更（2026-02-02）
-
-- `Env=official` 下“提交信息”改为可选：留空则目录/压缩包命名不再拼接提交信息；同时优化交互提示展示（合法 Git 信息显示为建议值，不合法则提示并输出原文供复制修改）。
-
-- 日常入口统一为 `publish-svn.ps1` + `publish-svn.config.json` + `publish-svn.last.json`（原 `publish-svn.officialPro.*` 已合并改名，旧版三件套已移除）。
-- `Env=official` 下结果打印与系统通知不再展示 `提交SVN: ...`（official 流程不执行 SVN 提交阶段）。
-- `-DebugSvn` 调试日志统一写入 `publish-svn.svn-debug.log`。
-- 清理 Bandizip 压缩测试残留目录：`_tmp_bz_*`。
-
-## 近期变更（2026-02-24）
-
-- 非 `official` 流程：选择环境后会按 `BuildScript` 的 `--mode` 打印合并后的环境变量（`.env` + `.env.<mode>`），用于运行前确认；`-NoBuild` 下不强制要求解析 `--mode`/存在 `.env.<mode>`。
-- `Env=official` 流程：支持通过 `officialProjectRelFromEnv` 读取 `.env` / `.env.officialPro`，并在 `officialProjectRelMap` 缺失/为空/未匹配时回退为 env 原值（同名可不配映射）。
