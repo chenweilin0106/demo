@@ -571,6 +571,51 @@ function Get-EnvFileLines {
   return Get-Content -Encoding UTF8 $FilePath
 }
 
+function Write-EnvPreviewLine {
+  param(
+    [AllowNull()]
+    [string]$Line
+  )
+
+  $supportsRgb = ($null -ne $PSStyle) -and
+    ($null -ne $PSStyle.Foreground) -and
+    ($PSStyle.Foreground.PSObject.Methods.Name -contains 'FromRgb')
+  $commentRgb = @(0x7A, 0x7E, 0x85)
+  $keyRgb = @(0xCF, 0x8E, 0x6D)
+  $equalsRgb = @(0xBC, 0xBE, 0xC4)
+  $valueRgb = @(0x6A, 0xAB, 0x73)
+
+  if ($null -eq $Line -or $Line.Length -eq 0) {
+    Write-Host ''
+    return
+  }
+
+  if ($Line -match '^\s*#') {
+    if ($supportsRgb) {
+      Write-Host ("{0}{1}{2}" -f $PSStyle.Foreground.FromRgb($commentRgb[0], $commentRgb[1], $commentRgb[2]), $Line, $PSStyle.Reset)
+    } else {
+      Write-Host $Line -ForegroundColor DarkGray
+    }
+    return
+  }
+
+  $envMatch = [regex]::Match($Line, '^(?<key>\s*[A-Za-z_][A-Za-z0-9_]*)(?<equals>=)(?<value>.*)$')
+  if ($envMatch.Success) {
+    if ($supportsRgb) {
+      Write-Host ("{0}{1}{2}" -f $PSStyle.Foreground.FromRgb($keyRgb[0], $keyRgb[1], $keyRgb[2]), $envMatch.Groups['key'].Value, $PSStyle.Reset) -NoNewline
+      Write-Host ("{0}{1}{2}" -f $PSStyle.Foreground.FromRgb($equalsRgb[0], $equalsRgb[1], $equalsRgb[2]), $envMatch.Groups['equals'].Value, $PSStyle.Reset) -NoNewline
+      Write-Host ("{0}{1}{2}" -f $PSStyle.Foreground.FromRgb($valueRgb[0], $valueRgb[1], $valueRgb[2]), $envMatch.Groups['value'].Value, $PSStyle.Reset)
+    } else {
+      Write-Host $envMatch.Groups['key'].Value -ForegroundColor DarkYellow -NoNewline
+      Write-Host $envMatch.Groups['equals'].Value -ForegroundColor Gray -NoNewline
+      Write-Host $envMatch.Groups['value'].Value -ForegroundColor Green
+    }
+    return
+  }
+
+  Write-Host $Line
+}
+
 function Show-EnvConfigForRun {
   param(
     [string]$ProjectRoot,
@@ -613,7 +658,7 @@ function Show-EnvConfigForRun {
   Write-Host ''
   if ($mergedEnvLines.Count -gt 0) {
     foreach ($line in $mergedEnvLines) {
-      Write-Host $line
+      Write-EnvPreviewLine -Line $line
     }
   } else {
     Write-Host '（无内容可显示）'
