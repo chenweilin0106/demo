@@ -73,52 +73,42 @@
     color: #FFF54F;
   }
 }
-
-// 重点字体颜色
-.focus-color {
-  color: #FFEF85;
-}
-.rules-text{
-  line-height: 45px;
+.rules-text {
+  line-height: 40px;
   font-weight: 500;
   white-space: nowrap;
-  width: 605px;
-  // margin-left: 40px;
-  margin: 0 auto;
+  width: 558px;
+   margin-left: 53px;
   li {
     position: relative;
     list-style-type: none;
     font-size: 28px;
     display: flex;
     align-items: center;
-    color: #FFEFCF;
+    color: #FFE4AF;
     vertical-align: middle;
     span {
       position: absolute;
       top: 50%;
-      left: -24px;
+      left: -39px;
       transform: translateY(-50%);
-      width: 12px;
-      height: 12px;
-      background: #FFFAA6;
+      width: 42px;
+      height: 44px;
       border-radius: 50%;
+      background: #FFFAA6;
     }
     i {
-      color: #FFFAA6;
+      color: #8DFC62;
     }
-    img {
-      width: auto;
-      height: 45px;
-      margin: 0 2px;
-    }
-    address{
-      background: linear-gradient(90deg, #AC74FF, #FB8CFF);
-      border-radius: 999999999px;
-      color: #fff;
-      padding: 9px 13px;
-      margin: 0 5px;
-      font-size: 24px;
-      line-height: 1;
+    &.indent {
+      margin-left: 27px;
+      span {
+        left: -28px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #FFFAA6;
+      }
     }
   }
 }
@@ -152,30 +142,32 @@
     }
   }
 }
-.rules-text-popup{
-  color: #FFFFFF;
+.rules-text-popup {
+  color: #FFE4AF;
   white-space: nowrap;
-  width: 539px;
-  margin: 0 auto;
+  width: 552px;
+  margin-left: 79px;
   li {
     position: relative;
     list-style-type: none;
     font-size: 28px;
     display: flex;
     align-items: center;
-    line-height: 45px;
+    line-height: 47px;
     span {
       position: absolute;
       top: 50%;
-      left: -24px;
+      left: -39px;
       transform: translateY(-50%);
-      width: 12px;
-      height: 12px;
-      background: #FFFA7B;
+      width: 42px;
+      height: 44px;
       border-radius: 50%;
+      background-color: #fff;
     }
     em {
-      color: #4DEBC8;
+      color: #FFEF41;
+      text-decoration: underline;
+      text-underline-offset: 5px;
     }
     dfn {
       color: #ffffff;
@@ -191,6 +183,16 @@
     }
     &.empty {
       height: 45px;
+    }
+    &.indent {
+      margin-left: 33px;
+      span {
+        left: -28px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: #fff;
+      }
     }
   }
 }
