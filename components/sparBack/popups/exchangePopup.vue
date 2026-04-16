@@ -1,23 +1,23 @@
 <template>
-  <PopupBox title="title_7.png" @clickClose="clickClose">
-    <div class="remainingPoint flex align-center justify-center margin-row-center">剩余积分<img v-if="pointIcon" class="pointIcon" :src="IconPath(pointIcon)" />：{{coinsNum}}</div>
+  <PopupBox title="兑换好礼" @clickClose="clickClose">
+    <div class="remainingPoint flex align-center justify-center margin-row-center">剩余积分<img v-if="pointIcon" class="pointIcon" :src="IconPath(pointIcon)" alt="" />：{{ coinsNum }}</div>
     <div class="promptIcon flex align-center justify-center position-relative">
       <PublicImg :imgName="config.icon" :imgType="config.type" />
     </div>
-    <div class="goodsName line-height-100 width-fit">{{config.text}}</div>
+    <div class="goodsName line-height-100 width-fit">{{ config.text }}</div>
     <div class="counter">
       <div class="min" @click="onCounter('min')">最小</div>
-      <div class="reduce" @click="onCounter('reduce')"><img :src="IconPath(reduceIcon)" /></div>
-      <div class="input flex-center">{{inputNum}}</div>
-      <div class="add" @click="onCounter('add')"><img :src="IconPath(addIcon)" /></div>
+      <div class="reduce" @click="onCounter('reduce')"><img :src="IconPath(reduceIcon)" alt="" /></div>
+      <div class="input flex-center">{{ inputNum }}</div>
+      <div class="add" @click="onCounter('add')"><img :src="IconPath(addIcon)" alt="" /></div>
       <div class="max" @click="onCounter('max')">最大</div>
     </div>
     <div class="counterExchange margin-row-center position-relative flex align-center justify-between">
       <div class="line position-absolute w-100"></div>
       <div class="counterConsume flex align-center justify-center">
-        共消耗<img v-if="pointIcon" class="pointIcon" :src="IconPath(pointIcon)" />：{{config.price*inputNum}}
+        共消耗<img v-if="pointIcon" class="pointIcon" :src="IconPath(pointIcon)" alt="" />：{{ config.price * inputNum }}
       </div>
-      <PublicButton hasRight="7" class="exchange" @click="exchange">兑换</PublicButton>
+      <div class="exchange" @click="exchange">兑换</div>
     </div>
   </PopupBox>
 </template>
@@ -106,7 +106,7 @@ export default {
     justify-content: center;
     align-items: center;
     color: #fff;
-    background: #E0B053; /*todo 计数器背景色*/
+    background: #B18549;
     padding: 5px;
     height: 48px;
     font-size: 28px;
@@ -128,39 +128,28 @@ export default {
     width: 72px;
   }
 }
-// 剩余道具
 .remainingPoint{
   font-size: 32px;
-  color: #874124; /*todo 剩余数量字体颜色*/
+  color: #FFFFFF;
   font-weight: 500;
 }
-$borderWidth: 4px; /*todo 边框大小*/
-// 商品图标
 .promptIcon{
-  width: 124px;
-  height: 124px;
-  background: #FFEDE8;
-  margin: 38px auto 22px;
+  width: 128px;
+  height: 128px;
+  background: #FFFFFF;
+  margin: 29px auto 20px;
   border-radius: 16px;
-  border: 2px solid #FFC7BB;
+  border: 4px solid #FFFEC9;
 }
-// 商品名称
 .goodsName{
   margin: 0 auto 27px;
-  font-weight: 500;
   font-size: 28px;
-  color: #AF7612;
+  color: #FFFFFF;
 }
-// 兑换按钮上下间距
-$gap: 33px;
-::v-deep .popupContent{
-  padding-bottom: $gap;
-}
-// 绿晶石 紫晶石 科举卡 兑换按钮
 .counterExchange{
   margin-top: 23px;
-  padding: $gap + 2px 31px 0; // padding-top: 2px 去除line占的高度 让元素居中
-  width: 100%;
+  padding: 35px 31px 0; // padding-top: 2px 去除line占的高度 让元素居中
+  width: 608px;
   .line{
     top: 0;
     left: 0;
@@ -171,13 +160,24 @@ $gap: 33px;
   .counterConsume{
     font-weight: 500;
     font-size: 32px;
-    color: #874124;
+    color: #FFFFFF;
     line-height: 1;
   }
   .exchange{
-    width: 124px;
-    height: 64px;
+    width: 126px;
+    height: 66px;
     font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    white-space: nowrap;
+    border: 3px solid transparent;
+    border-radius: 99999px;
+    -webkit-background-clip: padding-box, border-box;
+    -webkit-background-origin: padding-box, border-box;
+    color: #ED7030;
+    background-image: linear-gradient(0deg, #FDF2C1, #FFFFFF), -webkit-linear-gradient(#fff, #fff);
   }
 }
 </style>
