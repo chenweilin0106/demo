@@ -94,8 +94,8 @@
     {
       "name": "newerBenefit",
       "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\newerBenefit",
-      "officialDistRoot": "D:\\officialDist",
-      "officialProjectRel": "",
+      "officialDistRoot": "D:\\officialDist\\normal",
+      "officialProjectRel": "newerBenefit",
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",
         "test": "D:\\Project\\测试分支\\web\\vue"
