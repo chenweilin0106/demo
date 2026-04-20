@@ -16,3 +16,7 @@
 - 在不破坏项目一致性的前提下，优先采用当前项目已有的写法或者语言/框架的常规写法，并使用项目已有的格式化/静态检查工具（如存在）。
 - 安全：拒绝缺乏理由的“安全过度设计”，但不要削弱基础安全性或引入已知风险；必要时明确指出安全影响。
 - 注释：注释用中文，强调意图、约束与用法；核心逻辑补充必要注释，避免重复显而易见的代码；第三方 API/协议术语、上游要求的指令（如 lint/formatter pragma）及不可翻译的标识符可保留原文。
+
+## PowerShell
+- 执行 PowerShell 命令前，先将当前会话的 `$OutputEncoding`、`[Console]::InputEncoding`、`[Console]::OutputEncoding`、`$PSNativeCommandEncoding` 统一设置为 UTF-8。
+- 在 `bash`/`wsl` 中调用 PowerShell 的 `-Command` 时，优先使用单引号包裹脚本内容，避免 `$` 被提前展开。
