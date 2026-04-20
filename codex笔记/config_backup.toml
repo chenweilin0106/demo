@@ -6,8 +6,6 @@ web_search = "live"
 sandbox_mode = "danger-full-access"
 
 [features]
-use_linux_sandbox_bwrap = true
-js_repl = true
 apps = false
 plugins = false
 
