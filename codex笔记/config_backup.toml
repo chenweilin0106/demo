@@ -6,11 +6,6 @@ web_search = "live"
 sandbox_mode = "danger-full-access"
 
 [features]
-apps = false
-plugins = false
-
-[notice.model_migrations]
-"gpt-5.2" = "gpt-5.4"
 
 [tui]
 status_line = ["model-with-reasoning", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "context-remaining"]
