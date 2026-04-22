@@ -90,6 +90,12 @@
       "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\repeat",
       "officialDistRoot": "D:\\officialDist\\weekly",
       "officialProjectRelFromEnv": "VUE_APP_ICON_PATH",
+      "officialProjectRelMap": {
+        "crazyEgg": "crazyEgg",
+        "skillGift": "skillGift",
+        "sparParty": "sparParty",
+        "luckyFlop": "luckyFlop"
+      },
       "svnRoots": {
         "dev": "D:\\Project\\开发分支\\web\\vue",
         "test": "D:\\Project\\测试分支\\web\\vue"
