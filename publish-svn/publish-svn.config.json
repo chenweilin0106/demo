@@ -69,6 +69,23 @@
       "svnTargetRootRel": "normal"
     },
     {
+      "name": "newerBox",
+      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2025InviteFriend",
+      "officialDistRoot": "D:\\officialDist\\normal",
+      "officialProjectRel": "newerBox",
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue",
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      },
+      "defaultBuildScripts": {
+        "dev": "npm run build:test",
+        "test": "npm run build:test",
+        "official": "npm run build:officialPro"
+      },
+      "svnDefaultTargetRel": "newerBox",
+      "svnTargetRootRel": "normal"
+    },
+    {
       "name": "repeat",
       "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\repeat",
       "officialDistRoot": "D:\\officialDist\\weekly",
