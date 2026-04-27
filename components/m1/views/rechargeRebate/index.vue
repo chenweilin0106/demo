@@ -1,29 +1,21 @@
 <template>
   <div class="RechargeRebate">
     <!--<OutBox title="mk1_title_3.png" class="skillUpdate"><SkillInfo :config="configSkillInfo" /></OutBox>-->
-    <FirstDouble v-bind="firstDoubleData" @recharge="onRecharge" @updateFirstDoubleData="updateFirstDoubleData" />
-    <!-- <GiftBox :config="configGiftBox" @updateGiftBoxData="updateGiftBoxData" @recharge="onRecharge" /> -->
+    <FirstDouble v-bind="firstDoubleData" @recharge="handleRecharge" @updateFirstDoubleData="updateFirstDoubleData" />
+    <!-- <GiftBox :config="configGiftBox" @updateGiftBoxData="updateGiftBoxData" @recharge="handleRecharge" /> -->
     <!--<RechargeFree :configRechargeFree="free_data" @updateRechargeFree="getPageData" />-->
-    <!--<LotteryMap @updateLotteryMap="updateLotteryMap" :configLotteryMap="cbt_data" @update="updateGiftUpdate" @recharge="onRecharge" />-->
-    <!--<LotteryStones :config="surprise_data" @updateLotteryStones="updateLotteryStones" @recharge="onRecharge" />-->
+    <!--<LotteryMap @updateLotteryMap="updateLotteryMap" :configLotteryMap="cbt_data" @update="updateGiftUpdate" @recharge="handleRecharge" />-->
+    <!--<LotteryStones :config="surprise_data" @updateLotteryStones="updateLotteryStones" @recharge="handleRecharge" />-->
     <OutBox
       class="rechargeAwards margin-row-center" :class="[RechargeGiftListMark=='连续充值有礼'?'active':'']">
-      <!-- lzy -->
       <div class="RechargeRebate_BottomBox_Tab">
         <!-- <div class="resetIcon pointer-none position-absolute"></div> -->
         <div v-if="recharge_status[Object.keys(recharge_status)[0]].awards[0].text_add" class="leftUpdateIcon"></div>
         <div v-if="accruing_days_list[Object.keys(accruing_days_list)[0]].awards[0].text_add" class="rightUpdateIcon"></div>
         <div v-for="item in RechargeGiftList_Text" :key="item" class="tab" @click="switchTab(item)">{{item}}</div>
       </div>
-      <!-- wpq -->
-      <!-- <div class="RechargeRebate_BottomBox_Tab" :class="[RechargeGiftListMark=='连续充值有礼'?'active':'']"> -->
-        <!-- <div class="resetIcon pointer-none position-absolute"></div> -->
-        <!-- <div v-if="recharge_status[Object.keys(recharge_status)[0]].awards[0].text_add" class="leftUpdateIcon"></div> -->
-        <!-- <div v-if="accruing_days_list[Object.keys(accruing_days_list)[0]].awards[0].text_add" class="rightUpdateIcon"></div> -->
-        <!-- <div v-for="item in RechargeGiftList_Text" :key="item" class="tab" @click="switchTab(item)">{{item}}</div> -->
-      <!-- </div> -->
-      <RechargeTasksList v-show="RechargeGiftListMark=='累计充值有礼'" :RechargeGiftListData="recharge_status" :transitionClass="transitionClass" @recharge="onRecharge" @updateRechargeData="updateRechargeData" />
-      <RechargeTasksList v-show="RechargeGiftListMark=='连续充值有礼'" :RechargeGiftListData="accruing_days_list" :transitionClass="transitionClass" @recharge="onRecharge" @updateRechargeData="updateRechargeData" />
+      <RechargeTasksList v-show="RechargeGiftListMark=='累计充值有礼'" :RechargeGiftListData="recharge_status" :transitionClass="transitionClass" @recharge="handleRecharge" @updateRechargeData="updateRechargeData" />
+      <RechargeTasksList v-show="RechargeGiftListMark=='连续充值有礼'" :RechargeGiftListData="accruing_days_list" :transitionClass="transitionClass" @recharge="handleRecharge" @updateRechargeData="updateRechargeData" />
       <div class="rules-text">
         <ul>
           <li><span></span>购买礼包、会员（含超值兑换中兑换会员）、活力</li>
@@ -389,23 +381,39 @@ export default {
       const type = this.RechargeGiftListMark === '累计充值有礼' ? 'recharge_status' : 'accruing_days_list'
       this[type][mark].has_right = 2 // 更新列表数据
     },
-    // 用于连续充值3000档位征服者文本描述，因为后端无法和累计充值的人生赢家称号奖励数据格式相同，这里前端手动处理
-    async getPageData(data) {
+    /**
+     * 获取主页数据
+     */
+    async getHomePage() {
       const res = await getPageData({ type: 'tab', mark: 'm2' })
       if (res.errno) {
         this.$toast(res.errmsg)
       } else {
-        Object.assign(this, res.data)
+        this.accruing_days_list = this.sortList(res.data.accruing_days_list)
+        this.recharge_status = this.sortList(res.data.recharge_status)
+        this.is_last_day = res.data.is_last_day
+        this.single_recharge_status = res.data.single_recharge_status
+        // this.skill_list = res.data.skill_list
+        // this.skill_status = res.data.skill_status
+        this.user_tickets = res.data.user_tickets
+        this.user_recharges = res.data.user_recharges
       }
       for (const resKey in this.accruing_days_list) {
         const arr = this.accruing_days_list[resKey].awards
         if (arr[arr.length - 1].type == 'title') {
           this.accruing_days_list[resKey].awards.push({ text: arr[arr.length - 1].desc, type: 'prestige' })
+          this.accruing_days_list[resKey].bigAwardsTask = true
         }
       }
+      for (const resKey in this.recharge_status) {
+        const arr = this.recharge_status[resKey].awards
+        if (arr[arr.length - 1]?.type == 'prestige') this.recharge_status[resKey].bigAwardsTask = true
+      }
+      this.switchTab(this.currentTab)
+      this.transitionClass = 'hasTransition'
     },
-    onRecharge() {
-      this.addVisibilityListen(this.createVisibilityFn({ showFn: this.getPageData }))
+    handleRecharge() {
+      this.addVisibilityListen(this.createVisibilityFn({ showFn: this.getHomePage }))
       recharge()
     }
   }
