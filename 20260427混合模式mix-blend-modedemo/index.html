@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>进度条渐变高光 Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --progress: 76%;
+      --track-height: 34px;
+      --track-bg: #756071;
+      --orange: #ff9159;
+      --peach: #ffc072;
+      --yellow: #FDFFAA;
+      --cream: #fff9b6;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      color: #233022;
+      background:
+        linear-gradient(135deg, rgba(250, 223, 229, .9), rgba(226, 240, 255, .82)),
+        #f7f4ee;
+    }
+
+    main {
+      width: min(920px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 38px 0 48px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .intro {
+      max-width: 720px;
+      margin: 0 0 28px;
+      color: #5d6658;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .stage {
+      position: relative;
+      overflow: hidden;
+      min-height: 250px;
+      padding: 42px 28px 38px;
+      border: 1px solid rgba(118, 147, 80, .22);
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255, 255, 255, .62), transparent 30%),
+        linear-gradient(180deg, rgba(163, 199, 91, .9), rgba(111, 161, 71, .88));
+      box-shadow: 0 16px 36px rgba(61, 74, 58, .2);
+    }
+
+    .stage::before,
+    .stage::after {
+      position: absolute;
+      inset: auto;
+      content: "";
+      pointer-events: none;
+    }
+
+    .stage::before {
+      top: -58px;
+      right: 8%;
+      width: 220px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255, 245, 168, .45);
+      filter: blur(18px);
+    }
+
+    .stage::after {
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 86px;
+      background: linear-gradient(0deg, rgba(73, 122, 61, .28), transparent);
+    }
+
+    .sample-wrap {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 18px;
+    }
+
+    .progress-box {
+      display: grid;
+      gap: 10px;
+    }
+
+    .progress-label {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      color: #fffdf2;
+      font-weight: 700;
+      text-shadow: 0 2px 2px rgba(36, 61, 30, .45);
+    }
+
+    .progress-label span {
+      min-width: 0;
+      font-size: 16px;
+    }
+
+    .progress-label strong {
+      flex: 0 0 auto;
+      color: #fff068;
+      font-size: 22px;
+    }
+
+    .track {
+      width: 100%;
+      height: var(--track-height);
+      /*padding: 4px;*/
+      border: 4px solid transparent;
+      border-radius: 999px;
+      background-image: linear-gradient(#845A61, #845A61), linear-gradient(90deg, #A9EA95, #A9EA95);
+      background-origin: padding-box, border-box;
+      background-clip: padding-box, border-box;
+      box-shadow: inset 0 0 4px 0 #3D5C29;
+    }
+
+    .fill {
+      position: relative;
+      width: var(--progress);
+      min-width: 22px;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--orange) 0%, var(--yellow) 100%);
+      transition: width .22s ease;
+    }
+
+    .fill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      opacity: 0.67;
+      mix-blend-mode: multiply;
+      box-shadow: inset 0 0 8px 4px rgba(255, 154, 0);
+      pointer-events: none;
+    }
+
+    /*.fill::before {
+      position: absolute;
+      top: 50%;
+      right: 2%;
+      left: 2%;
+      height: 65%;
+      transform: translateY(-50%);
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(255, 255, 255, .26), rgba(255, 255, 255, .62), rgba(255, 251, 173, .55));
+      content: "";
+      pointer-events: none;
+      opacity: .76;
+      filter: blur(2.5px);
+    }*/
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px 18px;
+      align-items: center;
+      margin: 22px 0 30px;
+      padding: 18px;
+      border: 1px solid rgba(53, 69, 75, .14);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .78);
+    }
+
+    .controls label {
+      color: #334047;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .controls output {
+      min-width: 52px;
+      color: #1c2a30;
+      font-size: 18px;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      grid-column: 1 / -1;
+      width: 100%;
+      accent-color: #ff9c54;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        width: min(100% - 20px, 920px);
+        padding-top: 24px;
+      }
+
+      .stage {
+        padding: 28px 14px 26px;
+      }
+
+      .progress-label {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>进度条渐变高光 Demo</h1>
+    <p class="intro">这个效果核心不是单个径向渐变，而是主色线性渐变上叠一层半透明高光，再配合内阴影和浅色描边。下面三条可以对比不同叠法。</p>
+
+    <section class="stage" aria-label="接近游戏截图的进度条预览">
+      <div class="sample-wrap">
+        <div class="progress-box">
+          <div class="progress-label">
+            <span>再浇灌 <strong id="remainText">15</strong> 次花朵就绽放啦！</span>
+            <strong id="percentText">76%</strong>
+          </div>
+          <div class="track">
+            <div class="fill" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="controls">
+      <label for="progressRange">调整进度</label>
+      <output id="progressOutput" for="progressRange">76%</output>
+      <input id="progressRange" type="range" min="8" max="100" value="76">
+    </div>
+  </main>
+
+  <script>
+    const root = document.documentElement;
+    const range = document.querySelector('#progressRange');
+    const output = document.querySelector('#progressOutput');
+    const percentText = document.querySelector('#percentText');
+    const remainText = document.querySelector('#remainText');
+    const totalWater = 62;
+
+    function syncProgress(value) {
+      const percent = Number(value);
+      const remain = Math.max(0, Math.round(totalWater * (100 - percent) / 100));
+
+      root.style.setProperty('--progress', `${percent}%`);
+      output.value = `${percent}%`;
+      percentText.textContent = `${percent}%`;
+      remainText.textContent = String(remain);
+    }
+
+    range.addEventListener('input', (event) => {
+      syncProgress(event.target.value);
+    });
+
+    syncProgress(range.value);
+  </script>
+</body>
+</html>
