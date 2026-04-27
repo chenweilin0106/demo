@@ -1,13 +1,8 @@
 <template>
-  <OutBox class="presentGiftRank position-relative">
-    <!-- lzy -->
-    <div class="rank-tabs">
-      <div v-for="item in rankText" :key="item" :class="['tab flex align-center justify-center',rankMark==item?'active':'' ]" @click="chooseRank(item)"></div>
+  <OutBox class="presentGiftRank position-relative" :class="[rankMark=='赠送榜'?'status1':'status2']">
+    <div class="RechargeRebate_BottomBox_Tab">
+      <div v-for="item in rankText" :key="item" class="tab flex align-center justify-center" @click="chooseRank(item)">{{item}}</div>
     </div>
-    <!-- wpq -->
-    <!-- <div class="rank-tabs flex align-center justify-center" :class="[rankMark=='获赠榜'?'active':'']">
-      <div v-for="item in rankText" :key="item" class="tab"></div>
-    </div> -->
     <div class="tabs_contain">
       <!-- 我的道具数量 -->
       <div class="top_my_goods">我{{rankMark.slice(0, 2)}}的钻石礼物：{{rankData.userPresent}}钻</div>
@@ -115,61 +110,50 @@ export default {
 
 <style scoped lang="scss">
 .presentGiftRank {
-  margin-top: 32px;
-  // lzy
-  .rank-tabs {
+  width: 724px;
+  min-height: 647px;
+  border-image-slice: 120 0 178 0 fill;
+  border-image-width: 120px 0 178px 0;
+  background-image: none;
+  padding-top: 0;
+  margin-top: 46px;
+  &.status1 {
+    border-image-source: url('@/pages/motherDay/assets/mk3_1.png');
+  }
+  &.status2 {
+    border-image-source: url('@/pages/motherDay/assets/mk3_2.png');
+  }
+  .RechargeRebate_BottomBox_Tab {
     position: relative;
     display: flex;
-    justify-content: center;
-    margin: -115px auto 20px;
-    width: 651px;
-    height: 109px;
-    background: url('@/pages/motherDay/assets/mk3_2.png') no-repeat left top/100% 100%;
-    transition: background-image 0.3s;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
     .tab {
       position: relative;
-      font-size: 32px;
-      color: #FFFFFF;
       flex: 1;
       height: 100%;
-    }
-    // 底部tab栏活动
-    &.active {
-      background-image: url('@/pages/motherDay/assets/mk3_2_1.png');
+      font-size: 32px;
+      opacity: 0;
+      line-height: 72px;
+      //background-color: #fff;
+      &:nth-child(1) {
+        margin-right: 24px;
+      }
     }
   }
-  // wpq
-  // .rank-tabs {
-  //   position: relative;
-  //   display: flex;
-  //   justify-content: center;
-  //   margin: -80px auto 30px;
-  //   width: 658px;
-  //   height: 76px;
-  //   background: url('@/pages/mayDay/assets/mk3_tab_1.png') no-repeat left top/100% 100%;
-  //   .tab {
-  //     position: relative;
-  //     font-size: 32px;
-  //     color: #FFFFFF;
-  //     flex: 1;
-  //     height: 100%;
-  //   }
-  //   // 底部tab栏活动
-  //   .tab-active {
-  //     background: url('@/pages/mayDay/assets/mk3_tab_1_1.png') no-repeat left top/100% 100%;
-  //   }
-  // }
   .tabs_contain {
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow: hidden;
+    padding-top: 12px;
     // 我的道具数量
     .top_my_goods {
       width: 100%;
       // font-size: 28px;
       font-size: 28px;
-      color: #4A50D1;
+      color: #6C4C68;
       text-align: center;
       margin-bottom: 18px;
     }
@@ -180,7 +164,7 @@ export default {
       margin: 0 auto 6px;
       width: 660px;
       height: 48px;
-      background: #62ACFF;
+      background: #9C6E7A;
       border-radius: 12px;
       > div {
         height: 100%;
@@ -207,12 +191,12 @@ export default {
     // 排行榜列表
     .rank_list {
       width: 660px;
-      height: 451px;
+      height: 400px;
       padding: 4px;
       border-radius: 12px;
       margin: 0 auto 20px;
       .inner {
-        background: linear-gradient(90deg, #ADA9FC, #62C4FF);
+        background: linear-gradient(0deg, #F08F72, #C0858F);
         overflow-y: scroll;
         overflow-x: hidden;
         border-radius: 12px;
