@@ -1,6 +1,6 @@
 <template>
   <OutBox class="firstDouble" title="title_2.png">
-    <img :src="IconPath('mk2_2.png')" class="ruleIcon position-absolute" @click="showRulesPopup=true" />
+    <div class="ruleBtn" @click="isShowRulesPopup = true"></div>
     <div class="RechargeRebate_TopBox_Title">
       <p class="text-center line-height-1 text-nowrap">天天首充礼·充值任意金额</p>
       <p class="text-center line-height-1 text-nowrap">每日重置，请及时领取</p>
@@ -92,11 +92,13 @@ export default {
       margin-bottom: 37px;
     }
   }
-  .ruleIcon {
-    top: 87px;
-    right: 34px;
-    width: 56px;
-    height: auto;
+  .ruleBtn {
+    position: absolute;
+    top: 72px;
+    right: -13px;
+    width: 70px;
+    height: 188px;
+    /* background: url('@/pages/motherDay/assets/mk2_1.png') no-repeat left top/100% 100%; */
   }
   //.springFestivalLabel {
   //  top: -68px;
