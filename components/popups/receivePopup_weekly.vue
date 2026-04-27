@@ -1,5 +1,5 @@
 <template>
-  <PopupBox title="title_20.png" size="1" @clickClose="clickClose">
+  <PopupBox title="恭喜获得" size="1" @clickClose="clickClose">
     <slot name="listTop"></slot>
     <div class="list">
       <div v-for="(item, index) in config" :key="index" class="award flex-column align-center flex-shrink-0" :class="item.type == 'title' ? 'titleClass' : ''">
