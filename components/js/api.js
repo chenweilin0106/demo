@@ -41,3 +41,12 @@ export const nowEquip = (data) => {
 export const propertyInfo = () => {
   return request({ url: '/actserver/template2/receive', data: { type: 'comm_user_property' } })
 }
+
+/**
+ * 获取活动信息
+ * @param {string} act_key 活动key tmp_activity-周常活动
+ * @returns {Promise<{ left_time: number }>} 活动信息
+ */
+export const activityInfo = (act_key) => {
+  return request({ url: '/h5/act-info', data: { act_key } })
+}
