@@ -175,7 +175,14 @@ export default {
     async getPageData() {
       const res = await getPageData({ type: 'tab', mark: 'm3' })
       if (res.errno) return this.$toast(res.errmsg)
-      Object.assign(this, res.data)
+      // this.my_send_present = res.data.my_send_present
+      // this.my_present = res.data.my_present
+      // this.present_top = res.data.present_top
+      // this.send_present_top = res.data.send_present_top
+      this.consume_status = this.sortList(res.data.consume_status)
+      this.$nextTick(() => {
+        this.transitionClass = 'hasTransition'
+      })
     },
     toUserMain,
     imgAtError
