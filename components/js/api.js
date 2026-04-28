@@ -50,3 +50,20 @@ export const propertyInfo = () => {
 export const activityInfo = (act_key) => {
   return request({ url: '/h5/act-info', data: { act_key } })
 }
+
+/**
+ * 获取活动模块红点状态
+ * @returns {Promise<{ data: Object.<string, boolean>, errmsg: string, errno: number }>} 活动信息
+ * @example
+ * {
+ *   "data": {
+ *     "m1_status": true,
+ *     "m3_status": false
+ *   },
+ *   "errmsg": "",
+ *   "errno": 0
+ * }
+ */
+export const activityRedDot = () => {
+  return request({ url: '/actserver/template2/receive', data: { type: 'general_red_info' } })
+}
