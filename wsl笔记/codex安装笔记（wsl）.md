@@ -77,6 +77,28 @@ sessions/
   - 如果是，优先把 WSL 的 Codex Home 改成 WSL 原生目录，例如 `/home/<你>/.codex`
   - 改完后新开终端，再用上面的命令确认
 
+- WSL 中调用 Windows PowerShell 读写中文乱码
+  - WSL 里的 Codex 如果调用 `powershell.exe`，通常会进入 Windows PowerShell 5；显式调用 `pwsh.exe` 才是 PowerShell 7
+  - 普通 PowerShell 会话建议在当前用户全局 profile 中统一设置 UTF-8：
+    - PowerShell 5：`C:\Users\<你>\Documents\WindowsPowerShell\profile.ps1`
+    - PowerShell 7：`C:\Users\<你>\Documents\PowerShell\profile.ps1`
+
+  ```powershell
+  $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+  $global:OutputEncoding = $utf8NoBom
+  [Console]::InputEncoding = $utf8NoBom
+  [Console]::OutputEncoding = $utf8NoBom
+  $PSDefaultParameterValues['*:Encoding'] = 'UTF8'
+  ```
+
+  - PowerShell 7 额外加：
+
+  ```powershell
+  $global:PSNativeCommandEncoding = $utf8NoBom
+  ```
+
+  - 注意：如果命令带了 `-NoProfile`，这些 profile 不会加载，仍要在命令开头临时设置 UTF-8 编码
+
 - 新开终端找不到 `codex`
   - 先确认 `nvm use default` 是否会自动执行（见 `demo/wsl笔记/node环境安装笔记.md` 的 `.bashrc` 配置）
   - 再确认你安装 Codex 时用的是同一个 Node 版本：`nvm current`
