@@ -331,7 +331,7 @@ export default {
     width: 68px;
     height: 67px;
     font-weight: 500;
-    font-size: 22px;
+    font-size: 26px;
     color: #FFF2A9;
     left: 22px;
     background: url('@/pages/whiteValentine/assets/mk7_39.png') no-repeat left top/100% 100%;

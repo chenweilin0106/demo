@@ -315,7 +315,7 @@ export default {
     width: 68px;
     height: 67px;
     font-weight: 500;
-    font-size: 22px;
+    font-size: 26px;
     color: #fff2a9;
     left: 42px;
     background: url('@/assets/mk8_20.png') no-repeat left top/100% 100%;
