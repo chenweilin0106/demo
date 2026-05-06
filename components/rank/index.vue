@@ -97,6 +97,8 @@ export default {
       tagChosen: 1, // 榜单选择: 1:日榜 2:总榜
       rewardsList: Object.freeze({
         11: [
+          // { id: 112, type: 'tool', icon: 'ljs_120_120.png', text: '绿晶石', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
+          // { id: 122, type: 'tool', icon: 'fsjc_120_120.png', text: '符石精粹', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
           // { id: 121, type: 'costume', icon: 'qqjcl_120_120.png', text: '主页特效', mark: '', previewImg: 'zyp_qqjcl.svga', previewTip1: '千骑卷尘来·主页特效', mark1: '', isNew: false },
           // { id: 321, type: 'chat_bubble', icon: 'qp_xdsk_sc', text: '私聊气泡', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
           // { id: 421, type: 'chat_bubble_pub', icon: 'fhjb_120_120.png', text: '公屏气泡', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
@@ -108,6 +110,7 @@ export default {
           // { id: 223, type: 'tool', icon: 'mjfyx_120_120.png', text: '摸金符·一星', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
           // { id: 121, type: 'car', icon: 'axcp_120_120.png', text: '座驾', mark: '', previewImg: 'car_axcp.svga', previewTip1: '爱心敞篷·双人座驾', mark1: true },
           // { id: 122, type: 'mic', icon: 'ts_llbw.svga', text: '头饰', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          // { id: 121, type: 'ring', icon: 'jz_qqmx.svga', text: '戒指', mark: '', previewImg: 'jz_qqmx.svga', previewTip1: '奇趣萌行·戒指', mark1: true },
           // { id: 123, type: 'room_dec_suit', icon: 'ymmg_120_120.png', text: '房间装扮', mark: '', previewImg: '2025_520_tk_54.svga', previewTip1: '夜幕玫瑰·房间装扮' },
           // { id: 124, type: 'tool', icon: 'cplh_120_120.png', text: 'CP靓号', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
           { id: 111, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
