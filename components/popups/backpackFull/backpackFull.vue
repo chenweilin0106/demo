@@ -11,9 +11,7 @@
     </div>
     <div class="buttons">
       <div class="cancel" @click="clickClose">取消</div>
-      <div class="confirm" @click="onConfirm">
-        {{ typeBackpackFull === 1 ? '我知道了' : '分解符石' }}
-      </div>
+      <div class="confirm" @click="onConfirm">{{ typeBackpackFull === 1 ? '我知道了' : '分解符石' }}</div>
     </div>
   </PopupBox>
 </template>
