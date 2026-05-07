@@ -90,7 +90,7 @@ export default {
   margin: 0 auto 37px;
   width: 119px;
   height: 119px;
-  background: url('@/pages/yearCelebration/assets/tk_65.png') no-repeat left top/100% 100%;
+  background: url('@/pages/yearCelebration/assets/runeStoneBackpack.png') no-repeat left top/100% 100%;
 }
 
 .tip {
