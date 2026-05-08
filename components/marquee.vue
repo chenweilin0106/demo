@@ -40,7 +40,7 @@ export default {
     }
   },
   mounted() {
-    this.ul = document.querySelector('.scrollBox')
+    this.ul = document.querySelector('.marquee>.scrollBox')
     // 每次滚动的跨度（正数向右，负数向左，默认向左滚动）
     this.spa = this.px2vw(-2) // 滚动速度
     this.ul.style.left = '0'
