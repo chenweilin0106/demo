@@ -1,16 +1,14 @@
 <template>
-  <PopupBox title="title_28.png" @clickClose="clickClose">
+  <PopupBox title="参与记录" @clickClose="clickClose">
     <template v-if="list.length">
       <div class="head flex line-height-1 margin-row-center">
-        <div class="head1">消耗积分</div>
-        <div class="head2">奖励</div>
-        <div class="head3">时间</div>
+        <div class="head1">奖励</div>
+        <div class="head2">获得时间</div>
       </div>
       <div class="scrollList" ref="scrollDiv" @scroll="handleScroll">
         <div class="listItem" v-for="(item, index) in list" :key="index">
-          <div class="text1">{{ item.nums }}</div>
-          <div class="text2" :class="`status${item.desc == '兑换失败' ? 2 : ''}`">{{ item.desc }}</div>
-          <div class="text3">{{ item.create_time }}</div>
+          <div class="detailDiv">{{ item.desc }}</div>
+          <div class="timeDiv">{{ item.create_time }}</div>
         </div>
         <div class="noMoreData" v-if="isNextPage === false && list.length !== 0">没有更多记录了</div>
       </div>
@@ -27,7 +25,17 @@ export default {
   data() {
     return {
       list: [
-        // { desc: '稀有', create_time: '02-02 12:00:00', is_rare: 1 }
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 },
+        // { desc: '11111111111', create_time: '02-02 12:00:00', is_rare: 1 }
       ], // 奖品记录数组
       lastPage: 0, // 最后一次请求时的页数
       page: 1, // 页数
@@ -43,7 +51,7 @@ export default {
     getData() {
       if (this.page > this.lastPage) {
         this.lastPage = JSON.parse(JSON.stringify(this.page))
-        getPageData({ type: 'craze_egg_exchange_log', mark: this.page }).then((res) => {
+        getPageData({ type: 'heart_meet_logs', mark: { type: '1', page: this.page } }).then((res) => {
           if (res.errno == 0) {
             // console.log(res)
             if (res.data.has_mord === false) {
@@ -76,67 +84,43 @@ export default {
 
 <style scoped lang="scss">
 .head {
-  width: 586px; // todo
+  width: 589px;
   margin-bottom: 15px;
   font-size: 26px;
   color: #ffffff;
+  font-weight: 500;
   .head1 {
-    margin-left: 46px;
+    margin-left: 105px;
   }
   .head2 {
-    margin-left: 95px;
-  }
-  .head3 {
-    margin-left: 176px;
+    margin-left: 293px;
   }
 }
 .scrollList {
-  width: 100%;
+  width: 589px;
   height: 720px;
+  margin: 0 auto;
   text-align: center;
   text-align: -webkit-center;
   overflow-y: scroll;
   .listItem {
-    width: 586px; // todo
+    width: 100%;
     height: 70px;
     position: relative;
-    color: #fff;
     &:nth-child(odd) {
-      background: rgba(95, 59, 189, 0.3);
-      // border-radius: 40px;
+      background: rgba(214, 94, 62, 0.3);
     }
-    // &:nth-child(even) {
-    //   background: #CAB9FF;
-    // }
-    .text1 {
+    .detailDiv {
       position: absolute;
-      font-size: 22px;
-      width: 25px;
-      left: 63px;
+      left: 37px;
       top: 50%;
       transform: translateY(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .text2 {
-      position: absolute;
-      top: 50%;
-      left: 163px;
-      transform: translateY(-50%);
       font-size: 22px;
-      color: #FFFA6E;
-      width: 210px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      &.status2 {
-        color: #7F2948;
-      }
+      color: #FFFFFF;
     }
-    .text3 {
+    .timeDiv {
       position: absolute;
-      right: 24px;
+      right: 31px;
       top: 50%;
       transform: translateY(-50%);
       font-size: 22px;
@@ -144,16 +128,18 @@ export default {
     }
   }
   .noMoreData {
-    width: 586px;
+    width: 100%;
     font-size: 24px;
-    color: #6845B3;
-    margin-top: 20px;
+    color: #983E29;
+    margin-top: 10px;
   }
 }
 .noData {
-  font-size: 28px;
+  font-size: 26px;
   color: #fff;
   height: 761px;
-  padding-top: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
