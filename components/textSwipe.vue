@@ -1,21 +1,13 @@
 <template>
-  <van-swipe
-    vertical
-    class="swipeVan"
-    :autoplay="3000"
-    :show-indicators="false"
-    @change="onSwipeChange"
-    ref="vanSwipeRef"
-  >
+  <van-swipe class="textSwipe" vertical :autoplay="5000" :show-indicators="false" :touchable="false" @change="onSwipeChange" ref="vanSwipeRef">
     <van-swipe-item v-for="(item,index) in swipeListShow" :key="index">
-      <van-notice-bar class="noticeVan" :scrollable="activeIndex == index && isScrollable">
-        <!-- {{index}} -->
-        <div class="showAreaDiv">
-          <!-- <img class="avatarIcon" :src="IconPath(item.head)" /> -->
-          <span class="lightText">恭喜用户</span>
-          <span :class="['usernameText']">{{item.username}}</span>
-          <span class="lightText">成功邀请好友并领取现金</span>
-          <span class="blueText">{{item.money}}元</span>
+      <van-notice-bar class="textSwipeNoticeBar" v-bind="activeIndex === index ? {} : { scrollable: false }">
+        <div class="textSwipeNoticeBarItem">
+          <img class="radius-50 fit-cover block avatar" v-lazy="IconPath(item.from_profile_image || 'avatarDefault.png')" alt="" @error="imgAtError" />&nbsp;
+          <span :class="['usernameDiv']">{{item.from_username}}</span>&nbsp;为&nbsp;
+          <img class="radius-50 fit-cover block avatar" v-lazy="IconPath(item.to_profile_image || 'avatarDefault.png')" alt="" @error="imgAtError" />&nbsp;
+          <span :class="['usernameDiv']">{{item.to_username}}</span>&nbsp;
+          <span class="lightText">解锁了心动合约奖励，爱意成双，双向奔赴～</span>
         </div>
       </van-notice-bar>
     </van-swipe-item>
@@ -24,14 +16,15 @@
 
 <script>
 
+import { imgAtError } from '@/utils/tool'
+
 export default {
   props: ['swipeList'],
   components: {},
   data() {
     return {
       swipeListShow: [],
-      activeIndex: 0,
-      isScrollable: false
+      activeIndex: 0
     }
   },
   created() {},
@@ -39,20 +32,20 @@ export default {
   beforeDestroy() {},
   computed: {},
   watch: {
-    swipeList(newV, oldV) {
-      this.swipeListUpdate()
+    swipeList: {
+      handler(newV, oldV) {
+        this.$nextTick(() => {
+          this.swipeListUpdate()
+        })
+      },
+      immediate: true
     }
   },
   methods: {
+    imgAtError,
     onSwipeChange(index) {
       // console.log('当前显示的item索引:', index)
-      this.isScrollable = false
       this.activeIndex = index
-      if (Number(document.getElementsByClassName('showAreaDiv')[index].clientWidth) >= Number(document.getElementsByClassName('noticeVan')[index].offsetWidth)) {
-        this.isScrollable = true
-      } else {
-        this.isScrollable = false
-      }
     },
     /**
      * 轮播数据更新
@@ -76,59 +69,49 @@ export default {
 }
 </script>
 
-<style>
-i{
-  color: #FFFA6D;
-}
-</style>
 <style scoped lang="scss">
-.swipeVan{
+.textSwipe.van-swipe {
+  $height: 59px;
   width: 100%;
-  height: 76px; // 高度
-  pointer-events: none;
-  // background-color: #fff;
-  // opacity: 0.5;
-  .noticeVan{
-    height: 76px; // 高度
+  height: $height;
+  //background-color: rgba(255, 255, 255, 0.5);
+  ::v-deep .van-notice-bar__content {
+    min-width: 100%;
+    text-align: center;
+  }
+  //::v-deep .van-notice-bar__wrap {
+  //  min-width: 100%;
+  //  justify-content: center;
+  //}
+  .van-notice-bar {
+    width: 100%;
+    height: $height;
     background: none;
-    color: #fff;
     padding: 0;
-    .showAreaDiv {
-      font-size: 26px;
-      font-weight: 500;
+    .textSwipeNoticeBarItem {
+      font-size: 24px;
+      color: #FFEF85;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border: 2px solid transparent;
+        background-color: #FFF4B8;
+        vertical-align: center;
+      }
+      .usernameDiv {
+        color: #FFEF85;
+        font-size: 24px;
+        vertical-align: top;
+        max-width: 60px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
-  .broadcastIcon{
-    width: 30px;
-    height: 29px;
-    margin: 0 5px 5px 5px;
-  }
-  .lightText{
-    color: #fff;
-  }
-  .blueText{
-    color: #FFEF85;
-  }
-  .avatarIcon{
-    width: 40px;
-    height: 40px;
-    border-radius: 50px;
-    margin: 0 5px 5px 5px;
-  }
-  .usernameText{
-    color: #FFEF85;
-    display: inline-block;
-    vertical-align: top;
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-// .noticeVan::v-deep .van-notice-bar__content {
-//   min-width: 100%;
-// }
-.noticeVan::v-deep .van-notice-bar__wrap {
-  justify-content: center;
 }
 </style>
