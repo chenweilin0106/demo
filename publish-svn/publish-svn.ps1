@@ -183,6 +183,13 @@ function Invoke-Svn {
   }
 }
 
+function Set-SvnConsoleEncoding {
+  $encoding = [System.Text.Encoding]::GetEncoding(936)
+  [Console]::InputEncoding = $encoding
+  [Console]::OutputEncoding = $encoding
+  $script:OutputEncoding = $encoding
+}
+
 function Test-SvnWorkingCopy {
   param(
     [string]$PathValue
@@ -192,8 +199,21 @@ function Test-SvnWorkingCopy {
     return $false
   }
 
-  & svn info $PathValue 2>$null | Out-Null
-  return ($LASTEXITCODE -eq 0)
+  if (-not (Test-Path -LiteralPath $PathValue -PathType Container)) {
+    return $false
+  }
+
+  try {
+    Push-Location -LiteralPath $PathValue
+    try {
+      & svn info . 2>$null | Out-Null
+      return ($LASTEXITCODE -eq 0)
+    } finally {
+      Pop-Location
+    }
+  } catch {
+    return $false
+  }
 }
 
 function Invoke-CommandUtf8 {
@@ -2368,6 +2388,8 @@ try {
       throw '未在 PATH 中找到 svn。'
     }
 
+    Set-SvnConsoleEncoding
+
     $TargetRoot = Join-Path $svnRoot $TargetRootRel
     if (-not (Test-Path $TargetRoot)) {
       throw "目标工作副本根目录不存在: $TargetRoot"
@@ -2592,7 +2614,7 @@ try {
           $commitEnd = Get-Date
           $commitDuration = Format-Duration ($commitEnd - $commitStart)
           Write-Host "svn commit 耗时: $commitDuration"
-          Invoke-Svn -SvnArgs @('cleanup', $TargetPath) -ErrorMessage 'svn cleanup 失败。'
+          Invoke-Svn -SvnArgs @('cleanup') -ErrorMessage 'svn cleanup 失败。'
         }
       } else {
         $commitSkipped = $true
