@@ -19,26 +19,21 @@
 <script>
 import { toRuneStoneTreasureHuntPanel } from '@/utils/toApp'
 
-// /**
-//  * 符石背包已满弹框处理
-//  * @param {Number} errno -5: 符石背包已满 -6: 符石背包已满，请升级到最新版本分解符石
-//  */
-// backpackFull(errno) {
-//   const flag = compareVersions('5.7.8')
-//   if (flag == -1) {
-//     return this.$toast('你的符石背包已满，请升级到最新版本分解符石')
-//   }
-//   this.openBackpackFullPopup(errno == -5 ? 1 : 2)
-// },
+// const res = await getPageData({ type: 'heart_meet_exchange', mark: { id: item.id, nums: 1 } })
+// if (res.errno == -5 || res.errno == -6) return this.openBackpackFullPopup(res.errno)
+// if (res.errno) return this.$toast(res.errmsg)
+// this.openReceivePopup(res, true)
+
 // /**
 //  * 打开背包已满弹窗
+//  * @param {Number} errno -5: 符石背包已满 -6: 符石背包已满，请升级到最新版本分解符石
 //  */
-// openBackpackFullPopup(type) {
-//   console.log('背包已满弹窗')
-//   // this.clickClose()
-//   setTimeout(() => {
-//     this.typeBackpackFull = type
-//     this.isShowBackpackFull = true
+// openBackpackFullPopup(errno) {
+//   console.log('符石背包已满弹窗')
+//   if (compareVersions('5.7.8') === -1) return this.$toast('你的符石背包已满，请升级到最新版本分解符石')
+//   this.$nextTick(() => {
+//     this.configBackpackFullPopup = errno == -5 ? 1 : 2
+//     this.isShowBackpackFullPopup = true
 //   })
 // },
 export default {
