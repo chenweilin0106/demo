@@ -16,6 +16,10 @@ const STORE_NAME = 'svga_list'
 let dbPromise = null
 const inflight = new Map()
 
+function getInflightKey(url, skipCache) {
+  return `${skipCache ? 'source' : 'cache'}:${url}`
+}
+
 /**
  * 当前环境是否可用 IndexedDB。
  * @returns {boolean}
@@ -95,6 +99,27 @@ function idbPut(db, record) {
 }
 
 /**
+ * 删除一条缓存记录。
+ * @param {IDBDatabase|null} db
+ * @param {string} url
+ * @returns {Promise<boolean>}
+ */
+function idbDelete(db, url) {
+  if (!db || !url) return Promise.resolve(false)
+  return new Promise((resolve) => {
+    try {
+      const tx = db.transaction([STORE_NAME], 'readwrite')
+      tx.oncomplete = () => resolve(true)
+      tx.onerror = () => resolve(false)
+      tx.onabort = () => resolve(false)
+      tx.objectStore(STORE_NAME).delete(url)
+    } catch (e) {
+      resolve(false)
+    }
+  })
+}
+
+/**
  * 通过 SVGA.Parser 解析 url，得到 videoItem。
  * @param {string} url
  * @returns {Promise<any>}
@@ -131,29 +156,58 @@ async function saveVideoItem(db, url, videoItem) {
 /**
  * 获取/加载 SVGA 的 videoItem（带 IndexedDB 缓存 + 同 url in-flight 去重）
  * @param {string} url 完整资源地址
+ * @param {{skipCache?: boolean, withCacheInfo?: boolean}} [options]
  * @returns {Promise<any>} videoItem
  */
-export function getSvgaVideoItem(url) {
-  if (!url) return Promise.resolve(null)
-  if (inflight.has(url)) return inflight.get(url)
+export function getSvgaVideoItem(url, options = {}) {
+  const { skipCache = false, withCacheInfo = false } = options
+  if (!url) {
+    const emptyResult = { videoItem: null, fromCache: false }
+    return Promise.resolve(withCacheInfo ? emptyResult : emptyResult.videoItem)
+  }
+
+  const inflightKey = getInflightKey(url, skipCache)
+  if (inflight.has(inflightKey)) {
+    const pending = inflight.get(inflightKey)
+    return withCacheInfo ? pending : pending.then((result) => result.videoItem)
+  }
 
   const task = (async () => {
     const db = await openDb()
-    try {
-      const cached = await idbGet(db, url)
-      if (cached && cached.videoItem) return cached.videoItem
-    } catch (e) {}
+    if (!skipCache) {
+      try {
+        const cached = await idbGet(db, url)
+        if (cached && cached.videoItem) {
+          return { videoItem: cached.videoItem, fromCache: true }
+        }
+      } catch (e) {}
+    }
 
     const videoItem = await parseViaSvgaParser(url)
     // 异步写缓存，不阻塞首帧显示
     saveVideoItem(db, url, videoItem)
-    return videoItem
+    return { videoItem, fromCache: false }
   })()
 
-  inflight.set(url, task)
-  const clear = () => inflight.delete(url)
+  inflight.set(inflightKey, task)
+  const clear = () => inflight.delete(inflightKey)
   task.then(clear, clear)
-  return task
+  return withCacheInfo ? task : task.then((result) => result.videoItem)
+}
+
+/**
+ * 删除当前 URL 对应的 SVGA 缓存。
+ * @param {string} url 完整资源地址
+ * @returns {Promise<boolean>}
+ */
+export async function deleteSvgaVideoItem(url) {
+  if (!url) return false
+  if (!canUseIndexedDB()) return false
+  inflight.delete(getInflightKey(url, false))
+
+  const db = await openDb()
+  if (!db) return false
+  return idbDelete(db, url)
 }
 
 /**

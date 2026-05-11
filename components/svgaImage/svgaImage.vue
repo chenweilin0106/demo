@@ -6,7 +6,7 @@
 
 <script>
 import SVGA from 'svgaplayerweb'
-import { getSvgaVideoItem } from './svgaVideoItemIdb'
+import { deleteSvgaVideoItem, getSvgaVideoItem } from './svgaVideoItemIdb'
 
 /**
  * @name svgaImage
@@ -111,22 +111,53 @@ export default {
         this.$emit('animOnFinished')
       })
       const url = this.getSvgaUrl(svgaName)
-      getSvgaVideoItem(url)
-        .then((videoItem) => {
-          if (token !== this.loadToken) return
-          svgaPlayer.setVideoItem(videoItem)
-          if (this.isPlaying) svgaPlayer.startAnimation()
-          const raf = window.requestAnimationFrame || ((cb) => setTimeout(cb, 0))
-          raf(() => {
-            if (token !== this.loadToken) return
-            this.isLoaded = true
-            this.$emit('loaded')
-          })
-        })
-        .catch((error) => {
-          this.handleError(error, token)
-        })
+      this.loadVideoItemWithFallback(url, svgaPlayer, token)
       return svgaPlayer
+    },
+    /**
+     * 加载并播放 videoItem；缓存数据播放失败时回源自愈一次。
+     */
+    async loadVideoItemWithFallback(url, svgaPlayer, token, hasRetried = false) {
+      let fromCache = false
+      try {
+        const result = await getSvgaVideoItem(url, {
+          skipCache: hasRetried,
+          withCacheInfo: true
+        })
+        if (token !== this.loadToken) return
+        fromCache = result.fromCache
+        svgaPlayer.setVideoItem(result.videoItem)
+        if (this.isPlaying) svgaPlayer.startAnimation()
+        this.emitLoaded(token)
+      } catch (error) {
+        if (token !== this.loadToken) return
+        if (fromCache && !hasRetried) {
+          await this.deleteBadSvgaCache(url, token)
+          if (token !== this.loadToken) return
+          return this.loadVideoItemWithFallback(url, svgaPlayer, token, true)
+        }
+        this.handleError(error, token)
+      }
+    },
+    /**
+     * 删除坏缓存；删除失败不阻塞本次跳过缓存回源。
+     */
+    async deleteBadSvgaCache(url, token) {
+      if (token !== this.loadToken) return
+      try {
+        await deleteSvgaVideoItem(url)
+      } catch (error) {}
+    },
+    /**
+     * 下一帧通知资源已开始渲染。
+     */
+    emitLoaded(token) {
+      const raf = window.requestAnimationFrame || ((cb) => setTimeout(cb, 0))
+      raf(() => {
+        if (token !== this.loadToken) return
+        this.isLoaded = true
+        this.$emit('loaded')
+      })
     },
     /**
      * 挂载svga
