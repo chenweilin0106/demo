@@ -16,11 +16,11 @@ import { deleteSvgaVideoItem, getSvgaVideoItem } from './svgaVideoItemIdb'
  * @prop {Boolean} loop 是否循环播放。
  *
  * @event loaded 动画资源加载并开始渲染后触发。
- * @event animOnFinished 非循环播放完成后触发。
+ * @event complete 非循环播放完成后触发。
  * @event error SVGA 加载或解析失败时触发。
  *
  * @example
- * <svgaImage imgName="activity/example.svga" :loop="false" @loaded="onLoaded" @animOnFinished="onFinished" />
+ * <svgaImage imgName="activity/example.svga" :loop="false" @loaded="onLoaded" @complete="onFinished" />
  */
 export default {
   name: 'svgaImage',
@@ -46,7 +46,7 @@ export default {
     imgName: {
       immediate: true,
       handler() {
-        this.loadSvga()
+        this.loadAnimation()
       }
     }
   },
@@ -108,7 +108,7 @@ export default {
       svgaPlayer.fillMode = 'forwards' // 播放完停留在最后一帧
       svgaPlayer.onFinished(() => {
         if (token !== this.loadToken) return
-        this.$emit('animOnFinished')
+        this.$emit('complete')
       })
       const url = this.getSvgaUrl(svgaName)
       this.loadVideoItemWithFallback(url, svgaPlayer, token)
@@ -155,14 +155,15 @@ export default {
       const raf = window.requestAnimationFrame || ((cb) => setTimeout(cb, 0))
       raf(() => {
         if (token !== this.loadToken) return
+        if (this.isLoaded) return
         this.isLoaded = true
         this.$emit('loaded')
       })
     },
     /**
-     * 挂载svga
+     * 挂载动画。
      */
-    loadSvga() {
+    loadAnimation() {
       const token = this.loadToken + 1
       this.loadToken = token
       this.$nextTick(() => {

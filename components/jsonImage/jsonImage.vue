@@ -16,13 +16,12 @@ import { deleteJsonZipData, getJsonZipData } from './jsonZipIdb'
  * @prop {String} imgName zip 文件、目录路径或完整 URL；非 zip 一律按目录处理。
  * @prop {Boolean} loop 是否循环播放。
  *
- * @event DOMLoaded lottie DOMLoaded 事件透传。
  * @event complete 非循环播放完成后触发。
  * @event loaded 动画完成首轮可渲染准备后触发。
  * @event error 目录/zip 加载、解压或解析失败时触发。
  *
  * @example
- * <jsonImage imgName="activity/example" :loop="true" @DOMLoaded="onDomLoaded" @loaded="onLoaded" @error="onError" />
+ * <jsonImage imgName="activity/example" :loop="true" @loaded="onLoaded" @error="onError" />
  *
  * @example
  * <jsonImage imgName="activity/example.zip" :loop="false" @complete="onComplete" />
@@ -51,7 +50,7 @@ export default {
     imgName: {
       immediate: true,
       handler() {
-        this.loadJsonImage()
+        this.loadAnimation()
       }
     }
   },
@@ -77,21 +76,27 @@ export default {
   },
   methods: {
     /**
-     * 挂载 json 动画
+     * 挂载动画。
      */
-    loadJsonImage() {
+    loadAnimation() {
       const token = this.loadToken + 1
       this.loadToken = token
-      this.destroyAnimation()
-      this.isLoaded = false
-      this.imgPath = this.imgName || ''
-
-      if (!this.imgPath) return
-      if (this.isZipResource(this.imgPath)) {
-        this.loadZip(this.imgPath, token)
-        return
-      }
-      this.loadJson(this.imgPath, token)
+      this.$nextTick(async () => {
+        try {
+          if (token !== this.loadToken) return
+          this.destroyAnimation()
+          this.imgPath = this.imgName || ''
+          this.isLoaded = false
+          if (!this.imgPath) return
+          if (this.isZipResource(this.imgPath)) {
+            await this.loadZip(this.imgPath, token)
+            return
+          }
+          this.loadJson(this.imgPath, token)
+        } catch (error) {
+          this.handleError(error, token)
+        }
+      })
     },
     /**
      * 是否为完整 http(s) 地址。
@@ -112,7 +117,7 @@ export default {
     /**
      * 远程动画资源路径。
      */
-    remotePathFn(name) {
+    getJsonUrl(name) {
       if (this.isHttpUrl(name)) return name
       const rawName = String(name || '')
       const normalizedName = rawName.startsWith('/') ? rawName.slice(1) : rawName
@@ -147,36 +152,24 @@ export default {
      * 执行普通 json 动画。
      */
     loadJson(imgName, token) {
-      this.$nextTick(() => {
-        try {
-          if (token !== this.loadToken) return
-          const res = this.normalizeJsonUrl(this.remotePathFn(imgName))
-          this.createAnimation(
-            {
-              path: res.path,
-              assetsPath: res.assetsPath
-            },
-            token,
-            this.jsonId
-          )
-        } catch (error) {
-          this.handleError(error, token)
-        }
-      })
+      if (token !== this.loadToken) return
+      const res = this.normalizeJsonUrl(this.getJsonUrl(imgName))
+      this.createAnimation(
+        {
+          path: res.path,
+          assetsPath: res.assetsPath
+        },
+        token,
+        this.jsonId
+      )
     },
     /**
      * 执行 zip 动画。
      */
     loadZip(imgName, token) {
-      this.$nextTick(async () => {
-        try {
-          if (token !== this.loadToken) return
-          const zipUrl = this.remotePathFn(imgName)
-          await this.loadZipWithFallback(zipUrl, token)
-        } catch (error) {
-          this.handleError(error, token)
-        }
-      })
+      if (token !== this.loadToken) return
+      const zipUrl = this.getJsonUrl(imgName)
+      return this.loadZipWithFallback(zipUrl, token)
     },
     /**
      * 加载并解析 zip；缓存数据解析或播放失败时重新下载自愈一次。
@@ -222,7 +215,6 @@ export default {
      * 创建 lottie 实例。
      */
     createAnimation(options, token, id, zipFallback = null) {
-      this.destroyAnimation()
       const container = document.querySelector(`#${id}`)
       if (!container) {
         throw new Error('jsonImage 容器不存在')
@@ -238,7 +230,6 @@ export default {
 
       this.animationInstance.addEventListener('DOMLoaded', (event) => {
         if (token !== this.loadToken) return
-        this.$emit('DOMLoaded', event)
         this.emitLoaded(token)
       })
       if (!this.loop) {

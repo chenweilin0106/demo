@@ -4,7 +4,7 @@
 
 This directory contains a reusable Vue 2 `jsonImage` Lottie animation component.
 
-- `jsonImage.vue` renders Lottie directory-form resources and `zip` packages, resolves OSS paths through `VUE_APP_OSS_PATH`, and emits lifecycle/error events.
+- `jsonImage.vue` renders Lottie directory-form resources and `zip` packages, resolves OSS paths through `VUE_APP_OSS_PATH`, and emits `loaded`, `complete`, and `error` events.
 - `jsonZipIdb.js` downloads zip packages with `axios`, caches raw `ArrayBuffer` data in IndexedDB, deduplicates same-URL requests, supports bypassing IndexedDB for a fresh network request, and exposes single-entry bad-cache deletion.
 
 There are no local assets, tests, or package files in this folder. Shared Vue CLI configuration for the wider `components` area is in `../js/vue.config.normal.js` and `../js/vue.config.weekly.js`.
