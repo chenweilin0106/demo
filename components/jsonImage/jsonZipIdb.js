@@ -14,6 +14,10 @@ const STORE_NAME = 'json_zip_list'
 let dbPromise = null
 const inflight = new Map()
 
+function getInflightKey(url, skipCache) {
+  return `${skipCache ? 'source' : 'cache'}:${url}`
+}
+
 /**
  * 当前环境是否支持 IndexedDB。
  * @returns {boolean}
@@ -92,6 +96,27 @@ function idbPut(db, record) {
 }
 
 /**
+ * 删除一条 zip 原包记录。
+ * @param {IDBDatabase|null} db
+ * @param {string} url
+ * @returns {Promise<boolean>}
+ */
+function idbDelete(db, url) {
+  if (!db || !url) return Promise.resolve(false)
+  return new Promise((resolve) => {
+    try {
+      const tx = db.transaction([STORE_NAME], 'readwrite')
+      tx.oncomplete = () => resolve(true)
+      tx.onerror = () => resolve(false)
+      tx.onabort = () => resolve(false)
+      tx.objectStore(STORE_NAME).delete(url)
+    } catch (e) {
+      resolve(false)
+    }
+  })
+}
+
+/**
  * 从网络拉取 zip 原包。
  * @param {string} url
  * @returns {Promise<ArrayBuffer>}
@@ -126,28 +151,57 @@ async function saveZipBuffer(db, url, zipBuffer) {
 /**
  * 获取 lottie zip 原包（带 IndexedDB 缓存 + 同 url inflight 去重）。
  * @param {string} url 完整资源地址
+ * @param {{skipCache?: boolean, withCacheInfo?: boolean}} [options]
  * @returns {Promise<ArrayBuffer|null>}
  */
-export function getJsonZipData(url) {
-  if (!url) return Promise.resolve(null)
-  if (inflight.has(url)) return inflight.get(url)
+export function getJsonZipData(url, options = {}) {
+  const { skipCache = false, withCacheInfo = false } = options
+  if (!url) {
+    const emptyResult = { zipBuffer: null, fromCache: false }
+    return Promise.resolve(withCacheInfo ? emptyResult : emptyResult.zipBuffer)
+  }
+
+  const inflightKey = getInflightKey(url, skipCache)
+  if (inflight.has(inflightKey)) {
+    const pending = inflight.get(inflightKey)
+    return withCacheInfo ? pending : pending.then((result) => result.zipBuffer)
+  }
 
   const task = (async () => {
     const db = await openDb()
-    try {
-      const cached = await idbGet(db, url)
-      if (cached && cached.zipBuffer) return cached.zipBuffer
-    } catch (e) {}
+    if (!skipCache) {
+      try {
+        const cached = await idbGet(db, url)
+        if (cached && cached.zipBuffer) {
+          return { zipBuffer: cached.zipBuffer, fromCache: true }
+        }
+      } catch (e) {}
+    }
 
     const zipBuffer = await fetchZipBuffer(url)
     saveZipBuffer(db, url, zipBuffer)
-    return zipBuffer
+    return { zipBuffer, fromCache: false }
   })()
 
-  inflight.set(url, task)
-  const clear = () => inflight.delete(url)
+  inflight.set(inflightKey, task)
+  const clear = () => inflight.delete(inflightKey)
   task.then(clear, clear)
-  return task
+  return withCacheInfo ? task : task.then((result) => result.zipBuffer)
+}
+
+/**
+ * 删除当前 URL 对应的 lottie zip 缓存。
+ * @param {string} url 完整资源地址
+ * @returns {Promise<boolean>}
+ */
+export async function deleteJsonZipData(url) {
+  if (!url) return false
+  if (!canUseIndexedDB()) return false
+  inflight.delete(getInflightKey(url, false))
+
+  const db = await openDb()
+  if (!db) return false
+  return idbDelete(db, url)
 }
 
 /**

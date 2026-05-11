@@ -7,7 +7,7 @@
 <script>
 import JSZip from 'jszip'
 import lottie from 'lottie-web'
-import { getJsonZipData } from './jsonZipIdb'
+import { deleteJsonZipData, getJsonZipData } from './jsonZipIdb'
 
 /**
  * @name jsonImage
@@ -172,21 +172,56 @@ export default {
         try {
           if (token !== this.loadToken) return
           const zipUrl = this.remotePathFn(imgName)
-          const zipBuffer = await getJsonZipData(zipUrl)
-          if (!zipBuffer || token !== this.loadToken) return
-          const zip = await JSZip.loadAsync(zipBuffer)
-          const animationData = await this.getZipAnimationData(zip)
-          if (token !== this.loadToken) return
-          this.createAnimation({ animationData }, token, this.jsonId)
+          await this.loadZipWithFallback(zipUrl, token)
         } catch (error) {
           this.handleError(error, token)
         }
       })
     },
     /**
+     * 加载并解析 zip；缓存数据解析或播放失败时重新下载自愈一次。
+     */
+    async loadZipWithFallback(zipUrl, token, hasRetried = false) {
+      let fromCache = false
+      try {
+        const result = await getJsonZipData(zipUrl, {
+          skipCache: hasRetried,
+          withCacheInfo: true
+        })
+        if (!result.zipBuffer || token !== this.loadToken) return
+        fromCache = result.fromCache
+        const zip = await JSZip.loadAsync(result.zipBuffer)
+        if (token !== this.loadToken) return
+        const animationData = await this.getZipAnimationData(zip)
+        if (token !== this.loadToken) return
+        this.createAnimation({ animationData }, token, this.jsonId, {
+          zipUrl,
+          fromCache,
+          hasRetried
+        })
+      } catch (error) {
+        if (token !== this.loadToken) return
+        if (fromCache && !hasRetried) {
+          await this.deleteBadJsonZipCache(zipUrl, token)
+          if (token !== this.loadToken) return
+          return this.loadZipWithFallback(zipUrl, token, true)
+        }
+        this.handleError(error, token)
+      }
+    },
+    /**
+     * 删除坏缓存；删除失败不阻塞本次重新下载。
+     */
+    async deleteBadJsonZipCache(zipUrl, token) {
+      if (token !== this.loadToken) return
+      try {
+        await deleteJsonZipData(zipUrl)
+      } catch (error) {}
+    },
+    /**
      * 创建 lottie 实例。
      */
-    createAnimation(options, token, id) {
+    createAnimation(options, token, id, zipFallback = null) {
       this.destroyAnimation()
       const container = document.querySelector(`#${id}`)
       if (!container) {
@@ -212,8 +247,16 @@ export default {
           this.$emit('complete', event)
         })
       }
-      this.animationInstance.addEventListener('data_failed', (event) => {
+      let isHandlingDataFailed = false
+      this.animationInstance.addEventListener('data_failed', async (event) => {
+        if (token !== this.loadToken) return
         const error = event || new Error('lottie data_failed')
+        if (zipFallback?.fromCache && !zipFallback.hasRetried && zipFallback.zipUrl && !isHandlingDataFailed) {
+          isHandlingDataFailed = true
+          await this.deleteBadJsonZipCache(zipFallback.zipUrl, token)
+          if (token !== this.loadToken) return
+          return this.loadZipWithFallback(zipFallback.zipUrl, token, true)
+        }
         this.handleError(error, token)
       })
     },

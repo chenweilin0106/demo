@@ -5,7 +5,7 @@
 This directory contains a reusable Vue 2 `jsonImage` Lottie animation component.
 
 - `jsonImage.vue` renders Lottie directory-form resources and `zip` packages, resolves OSS paths through `VUE_APP_OSS_PATH`, and emits lifecycle/error events.
-- `jsonZipIdb.js` downloads zip packages with `axios`, caches raw `ArrayBuffer` data in IndexedDB, and deduplicates same-URL requests.
+- `jsonZipIdb.js` downloads zip packages with `axios`, caches raw `ArrayBuffer` data in IndexedDB, deduplicates same-URL requests, supports bypassing IndexedDB for a fresh network request, and exposes single-entry bad-cache deletion.
 
 There are no local assets, tests, or package files in this folder. Shared Vue CLI configuration for the wider `components` area is in `../js/vue.config.normal.js` and `../js/vue.config.weekly.js`.
 
@@ -32,6 +32,7 @@ No automated tests are present. For behavior changes, test manually in a consumi
 - a directory path resolving to `data.json` and `images/`;
 - a full `http` or `https` directory URL;
 - a `.zip` package, including a repeated load that should hit IndexedDB;
+- a bad cached zip, a cached zip missing `data.json`, and a cached zip that triggers Lottie `data_failed`; each should delete the bad cache and retry once without emitting `error` if the fresh request succeeds;
 - rapid `imgName` changes, both `loop` values, destruction, and error fallback paths.
 
 If tests are added later, place them beside the component or in the host project's established test directory, and name them after the behavior under test.
