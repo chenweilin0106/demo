@@ -3,9 +3,9 @@
     <van-swipe-item v-for="(item,index) in swipeListShow" :key="index">
       <van-notice-bar class="textSwipeNoticeBar" v-bind="activeIndex === index ? {} : { scrollable: false }">
         <div class="textSwipeNoticeBarItem">
-          <img class="radius-50 fit-cover block avatar" v-lazy="IconPath(item.from_profile_image || 'avatarDefault.png')" alt="" @error="imgAtError" />&nbsp;
+          <img class="radius-50 fit-cover block avatar" v-lazy="IconPath(item.from_profile_image || avatarDefault)" alt="" @error="imgAtError" />&nbsp;
           <span :class="['usernameDiv']">{{item.from_username}}</span>&nbsp;为&nbsp;
-          <img class="radius-50 fit-cover block avatar" v-lazy="IconPath(item.to_profile_image || 'avatarDefault.png')" alt="" @error="imgAtError" />&nbsp;
+          <img class="radius-50 fit-cover block avatar" v-lazy="IconPath(item.to_profile_image || avatarDefault)" alt="" @error="imgAtError" />&nbsp;
           <span :class="['usernameDiv']">{{item.to_username}}</span>&nbsp;
           <span class="lightText">解锁了心动合约奖励，爱意成双，双向奔赴～</span>
         </div>
@@ -23,6 +23,7 @@ export default {
   components: {},
   data() {
     return {
+      avatarDefault: Object.freeze('avatarDefault.png'), // 默认头像
       swipeListShow: [],
       activeIndex: 0
     }
@@ -106,10 +107,10 @@ export default {
       .usernameDiv {
         color: #FFEF85;
         font-size: 24px;
-        /* max-width: 60px; */
-        /* white-space: nowrap; */
-        /* overflow: hidden; */
-        /* text-overflow: ellipsis; */
+        //max-width: 60px;
+        //white-space: nowrap;
+        //overflow: hidden;
+        //text-overflow: ellipsis;
       }
     }
   }
