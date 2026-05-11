@@ -4,7 +4,7 @@
 
 This folder contains a reusable Vue 2 SVGA animation component.
 
-- `svgaImage.vue` is the UI component. It accepts `imgName` and `loop`, emits `loaded` and `animOnFinished`, and resolves relative SVGA paths through `VUE_APP_OSS_PATH`.
+- `svgaImage.vue` is the UI component. It accepts `imgName` and `loop`, emits `loaded`, `animOnFinished`, and `error`, and resolves relative SVGA paths through `VUE_APP_OSS_PATH`.
 - `svgaVideoItemIdb.js` loads SVGA resources with `svgaplayerweb`, caches parsed `videoItem` values in IndexedDB, and exposes cache cleanup helpers.
 
 There are no local assets, tests, or package files in this directory. Shared Vue CLI configuration for the wider `components` area is in `../js/vue.config.normal.js` and `../js/vue.config.weekly.js`.

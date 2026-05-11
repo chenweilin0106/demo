@@ -6,7 +6,7 @@
 
 <script>
 import SVGA from 'svgaplayerweb'
-import { getSvgaVideoItem } from '../svgaVideoItemIdb'
+import { getSvgaVideoItem } from './svgaVideoItemIdb'
 
 /**
  * @name svgaImage
@@ -17,6 +17,7 @@ import { getSvgaVideoItem } from '../svgaVideoItemIdb'
  *
  * @event loaded 动画资源加载并开始渲染后触发。
  * @event animOnFinished 非循环播放完成后触发。
+ * @event error SVGA 加载或解析失败时触发。
  *
  * @example
  * <svgaImage imgName="activity/example.svga" :loop="false" @loaded="onLoaded" @animOnFinished="onFinished" />
@@ -29,6 +30,7 @@ export default {
   },
   data() {
     return {
+      animationInstance: null, // 动画实例
       isPlaying: true, // 是否处在播放状态
       imgPath: '', // 图像地址
       isLoaded: false, // 是否已开始渲染
@@ -44,62 +46,67 @@ export default {
     imgName: {
       immediate: true,
       handler() {
-        try {
-          this.loadSvga()
-        } catch (error) {
-          console.log('Error in watcher callback:', error)
-        }
+        this.loadSvga()
       }
     }
   },
   activated() {
-    console.log('activated')
-    if (this.isPlaying) return console.log('已经处于播放状态')
+    console.log('svgaImage activated')
+    if (this.isPlaying) return
     this.isPlaying = true
-    if (!this.isLoaded) return console.log('load回调还没回来')
+    if (!this.isLoaded) return console.log('svgaImage load回调还没回来')
     try {
-      this?.svga_data?.stepToFrame(0, true)
+      this.animationInstance?.stepToFrame(0, true)
     } catch (error) {
-      console.log(error)
+      this.handleError(error, this.loadToken)
     }
-    console.log('播放动画')
   },
   deactivated() {
-    console.log('deactivated')
-    if (!this.isPlaying) return console.log('已经处于停止状态')
+    console.log('svgaImage deactivated')
+    if (!this.isPlaying) return
     this.isPlaying = false
-    if (!this.isLoaded) return console.log('load回调还没回来')
+    if (!this.isLoaded) return console.log('svgaImage load回调还没回来')
     try {
-      this.svga_data?.pauseAnimation()
+      this.animationInstance?.pauseAnimation()
     } catch (error) {}
-    console.log('暂停动画')
   },
   methods: {
+    /**
+     * 是否为完整 http(s) 地址。
+     */
+    isHttpUrl(url) {
+      return /^https?:\/\//i.test(url)
+    },
+    /**
+     * 拼接 OSS 地址。
+     */
+    joinOssPath(path) {
+      const base = process.env.VUE_APP_OSS_PATH || ''
+      if (!base) return path
+      const normalizedBase = base.endsWith('/') ? base : `${base}/`
+      const normalizedPath = String(path || '').startsWith('/') ? String(path).slice(1) : String(path || '')
+      return `${normalizedBase}${normalizedPath}`
+    },
     /**
      * 统一生成 SVGA URL（支持直接传完整 http(s) 地址）
      */
     getSvgaUrl(svgaName) {
-      const isOnline = /^https?:\/\//i.test(svgaName)
-      if (isOnline) return svgaName
-      const base = process.env.VUE_APP_OSS_PATH || ''
-      const normalizedBase = base.endsWith('/') ? base : `${base}/`
+      if (this.isHttpUrl(svgaName)) return svgaName
       const rawName = String(svgaName || '')
       const normalizedName = rawName.startsWith('/') ? rawName.slice(1) : rawName
-      return normalizedName.includes('/')
-        ? `${normalizedBase}${normalizedName}`
-        : `${normalizedBase}activity/weekly/svga/${normalizedName}`
+      if (normalizedName.includes('/')) return this.joinOssPath(normalizedName)
+      return this.joinOssPath(`activity/weekly/svga/${normalizedName}`)
     },
     /**
      * svga前置函数
      * @prop {Boolean} loop 是否循环播放
      */
-    svgaFn(svgaName, id, loop = true) {
-      const token = this.loadToken
-      const svga_play = new SVGA.Player(`#${id}`)
-      svga_play.loops = loop ? 0 : 1
-      svga_play.clearsAfterStop = false // 播放完不清空画布
-      svga_play.fillMode = 'forwards' // 播放完停留在最后一帧
-      svga_play.onFinished(() => {
+    createAnimation(svgaName, id, loop = true, token) {
+      const svgaPlayer = new SVGA.Player(`#${id}`)
+      svgaPlayer.loops = loop ? 0 : 1
+      svgaPlayer.clearsAfterStop = false // 播放完不清空画布
+      svgaPlayer.fillMode = 'forwards' // 播放完停留在最后一帧
+      svgaPlayer.onFinished(() => {
         if (token !== this.loadToken) return
         this.$emit('animOnFinished')
       })
@@ -107,8 +114,8 @@ export default {
       getSvgaVideoItem(url)
         .then((videoItem) => {
           if (token !== this.loadToken) return
-          svga_play.setVideoItem(videoItem)
-          if (this.isPlaying) svga_play.startAnimation()
+          svgaPlayer.setVideoItem(videoItem)
+          if (this.isPlaying) svgaPlayer.startAnimation()
           const raf = window.requestAnimationFrame || ((cb) => setTimeout(cb, 0))
           raf(() => {
             if (token !== this.loadToken) return
@@ -117,38 +124,54 @@ export default {
           })
         })
         .catch((error) => {
-          console.log('svga load error:', error)
+          this.handleError(error, token)
         })
-      return svga_play
+      return svgaPlayer
     },
     /**
      * 挂载svga
      */
     loadSvga() {
+      const token = this.loadToken + 1
+      this.loadToken = token
       this.$nextTick(() => {
-        this.clearSvga()
-        this.imgPath = this.imgName
-        this.isLoaded = false
-        this.loadToken++
-        if (!this.imgPath) return
-        this.svga_data = this.svgaFn(this.imgPath, this.svgaId, this.loop)
+        try {
+          if (token !== this.loadToken) return
+          this.destroyAnimation()
+          this.imgPath = this.imgName || ''
+          this.isLoaded = false
+          if (!this.imgPath) return
+          this.animationInstance = this.createAnimation(this.imgPath, this.svgaId, this.loop, token)
+        } catch (error) {
+          this.handleError(error, token)
+        }
       })
+    },
+    /**
+     * 处理加载错误。
+     */
+    handleError(error, token) {
+      if (token !== this.loadToken) return
+      console.error(`svgaImage load error: ${this.imgPath}`, error)
+      this.$emit('error', error)
     },
     /**
      * 销毁svga
      */
-    clearSvga() {
-      if (this.imgPath && this.svga_data) {
-        this.loadToken++
-        this.svga_data.stopAnimation()
-        this.svga_data.clear()
-        this.svga_data.clearDynamicObjects()
-        this.svga_data = null
+    destroyAnimation() {
+      if (this.animationInstance) {
+        try {
+          this.animationInstance.stopAnimation()
+          this.animationInstance.clear()
+          this.animationInstance.clearDynamicObjects()
+        } catch (error) {}
+        this.animationInstance = null
       }
     }
   },
   beforeDestroy() {
-    this.clearSvga()
+    this.loadToken += 1
+    this.destroyAnimation()
   }
 }
 </script>
