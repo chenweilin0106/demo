@@ -45,6 +45,9 @@ export default {
       return +this.doubleNums >= 10
     }
   },
+  mounted() {
+    document.querySelector('body').append(this.$el)
+  },
   methods: {
     clickClose() {
       this.$emit('clickClose')
