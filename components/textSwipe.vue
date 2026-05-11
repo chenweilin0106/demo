@@ -60,6 +60,7 @@ export default {
         }
         // 切换为第一条后再跳转到第二条(为了有一个下切动画)
         this.$refs.vanSwipeRef.swipeTo(0, { immediate: true })
+        if (this.swipeListShow.length === 1) return
         this.$refs.vanSwipeRef.swipeTo(1, { immediate: false })
         this.activeIndex = 1
         // console.log('this.swipeListShow:', this.swipeListShow)
@@ -105,11 +106,10 @@ export default {
       .usernameDiv {
         color: #FFEF85;
         font-size: 24px;
-        vertical-align: top;
-        max-width: 60px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        /* max-width: 60px; */
+        /* white-space: nowrap; */
+        /* overflow: hidden; */
+        /* text-overflow: ellipsis; */
       }
     }
   }
