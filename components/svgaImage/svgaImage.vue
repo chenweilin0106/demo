@@ -30,12 +30,14 @@ export default {
   },
   data() {
     return {
-      animationInstance: null, // 动画实例
       isPlaying: true, // 是否处在播放状态
       imgPath: '', // 图像地址
       isLoaded: false, // 是否已开始渲染
       loadToken: 0 // 防止load异步加载，旧请求回调乱入
     }
+  },
+  created() {
+    this._animationInstance = null // 非响应式动画实例
   },
   computed: {
     svgaId() {
@@ -56,7 +58,7 @@ export default {
     this.isPlaying = true
     if (!this.isLoaded) return console.log('svgaImage load回调还没回来')
     try {
-      this.animationInstance?.stepToFrame(0, true)
+      this._animationInstance?.stepToFrame(0, true)
     } catch (error) {
       this.handleError(error, this.loadToken)
     }
@@ -67,7 +69,7 @@ export default {
     this.isPlaying = false
     if (!this.isLoaded) return console.log('svgaImage load回调还没回来')
     try {
-      this.animationInstance?.pauseAnimation()
+      this._animationInstance?.pauseAnimation()
     } catch (error) {}
   },
   methods: {
@@ -173,7 +175,7 @@ export default {
           this.imgPath = this.imgName || ''
           this.isLoaded = false
           if (!this.imgPath) return
-          this.animationInstance = this.createAnimation(this.imgPath, this.svgaId, this.loop, token)
+          this._animationInstance = this.createAnimation(this.imgPath, this.svgaId, this.loop, token)
         } catch (error) {
           this.handleError(error, token)
         }
@@ -191,13 +193,13 @@ export default {
      * 销毁svga
      */
     destroyAnimation() {
-      if (this.animationInstance) {
+      if (this._animationInstance) {
         try {
-          this.animationInstance.stopAnimation()
-          this.animationInstance.clear()
-          this.animationInstance.clearDynamicObjects()
+          this._animationInstance.stopAnimation()
+          this._animationInstance.clear()
+          this._animationInstance.clearDynamicObjects()
         } catch (error) {}
-        this.animationInstance = null
+        this._animationInstance = null
       }
     }
   },

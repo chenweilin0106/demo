@@ -243,18 +243,17 @@ export async function clearObjectStore(storeName) {
  * @param {string} dbName
  * @returns {Promise<boolean>} 是否触发成功（blocked/异常返回 false）
  */
-export function deleteIndexedDb(dbName) {
-  if (!dbName) return Promise.resolve(false)
-  if (!canUseIndexedDB()) return Promise.resolve(false)
+export async function deleteIndexedDb(dbName) {
+  if (!dbName) return false
+  if (!canUseIndexedDB()) return false
 
   // 删除本模块使用的库时，先关掉当前连接，避免自阻塞
   if (dbName === DB_NAME && dbPromise) {
     try {
-      dbPromise.then((db) => {
-        try {
-          db && db.close && db.close()
-        } catch (e) {}
-      })
+      const db = await dbPromise
+      try {
+        db && db.close && db.close()
+      } catch (e) {}
     } catch (e) {}
     dbPromise = null
   }

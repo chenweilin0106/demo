@@ -25,6 +25,8 @@ Follow the current Vue 2 Options API style: two-space indentation, single quotes
 
 Use lower camel case names such as `jsonImage`, `jsonBox`, `getJsonZipData`, and `clearObjectStore`. Keep changes scoped to Lottie animation behavior; do not add static image handling, framework upgrades, or broad abstractions unless required.
 
+Keep the Lottie animation instance out of `data()` so Vue 2 does not observe the large animation object. Initialize it in `created()` as the non-reactive `this._animationInstance` field, and use that name consistently for play, pause, event binding, and destroy logic. When zip cache playback triggers `data_failed` and retries from source, destroy the failed Lottie instance before creating the replacement instance.
+
 ## Testing Guidelines
 
 No automated tests are present. For behavior changes, test manually in a consuming page with:

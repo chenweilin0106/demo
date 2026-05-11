@@ -23,6 +23,8 @@ Before relying on a command, confirm it exists in the host project `package.json
 
 Follow the current Vue 2 Options API style. Use two-space indentation, single quotes, no semicolons, and concise Chinese comments for intent or constraints. Keep component names and CSS classes aligned with existing lower camel case names such as `svgaImage`, `svgaBox`, and `getSvgaVideoItem`.
 
+Keep the SVGA player instance out of `data()` so Vue 2 does not observe the large animation object. Initialize it in `created()` as the non-reactive `this._animationInstance` field, and use that name consistently for play, pause, and destroy logic.
+
 Keep changes small and direct. Do not add framework upgrades, new build tooling, or broad abstractions unless the consuming project requires them.
 
 ## Testing Guidelines

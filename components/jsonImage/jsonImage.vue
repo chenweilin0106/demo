@@ -34,12 +34,14 @@ export default {
   },
   data() {
     return {
-      animationInstance: null, // 动画实例
       isPlaying: true, // 是否处在播放状态
       imgPath: '', // 图像地址
       isLoaded: false, // 是否已开始渲染
       loadToken: 0 // 防止load异步加载，旧请求回调乱入
     }
+  },
+  created() {
+    this._animationInstance = null // 非响应式动画实例
   },
   computed: {
     jsonId() {
@@ -60,7 +62,7 @@ export default {
     this.isPlaying = true
     if (!this.isLoaded) return console.log('jsonImage load回调还没回来')
     try {
-      this.animationInstance?.goToAndPlay(0, true)
+      this._animationInstance?.goToAndPlay(0, true)
     } catch (error) {
       this.handleError(error, this.loadToken)
     }
@@ -71,7 +73,7 @@ export default {
     this.isPlaying = false
     if (!this.isLoaded) return console.log('jsonImage load回调还没回来')
     try {
-      this.animationInstance?.pause()
+      this._animationInstance?.pause()
     } catch (error) {}
   },
   methods: {
@@ -220,7 +222,7 @@ export default {
         throw new Error('jsonImage 容器不存在')
       }
 
-      this.animationInstance = lottie.loadAnimation({
+      this._animationInstance = lottie.loadAnimation({
         container,
         renderer: 'svg',
         loop: this.loop,
@@ -228,22 +230,23 @@ export default {
         ...options
       })
 
-      this.animationInstance.addEventListener('DOMLoaded', (event) => {
+      this._animationInstance.addEventListener('DOMLoaded', (event) => {
         if (token !== this.loadToken) return
         this.emitLoaded(token)
       })
       if (!this.loop) {
-        this.animationInstance.addEventListener('complete', (event) => {
+        this._animationInstance.addEventListener('complete', (event) => {
           if (token !== this.loadToken) return
           this.$emit('complete', event)
         })
       }
       let isHandlingDataFailed = false
-      this.animationInstance.addEventListener('data_failed', async (event) => {
+      this._animationInstance.addEventListener('data_failed', async (event) => {
         if (token !== this.loadToken) return
         const error = event || new Error('lottie data_failed')
         if (zipFallback?.fromCache && !zipFallback.hasRetried && zipFallback.zipUrl && !isHandlingDataFailed) {
           isHandlingDataFailed = true
+          this.destroyAnimation()
           await this.deleteBadJsonZipCache(zipFallback.zipUrl, token)
           if (token !== this.loadToken) return
           return this.loadZipWithFallback(zipFallback.zipUrl, token, true)
@@ -384,9 +387,9 @@ export default {
      * 销毁动画实例。
      */
     destroyAnimation() {
-      if (this.animationInstance) {
-        this.animationInstance.destroy()
-        this.animationInstance = null
+      if (this._animationInstance) {
+        this._animationInstance.destroy()
+        this._animationInstance = null
       }
     }
   },
