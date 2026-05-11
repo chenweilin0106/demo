@@ -4,9 +4,8 @@
 
 This directory contains a reusable Vue 2 `jsonImage` Lottie animation component.
 
-- `jsonImage.vue` renders Lottie `json` and `zip` animations, resolves OSS paths through `VUE_APP_OSS_PATH`, and emits lifecycle/error events.
+- `jsonImage.vue` renders Lottie directory-form resources and `zip` packages, resolves OSS paths through `VUE_APP_OSS_PATH`, and emits lifecycle/error events.
 - `jsonZipIdb.js` downloads zip packages with `axios`, caches raw `ArrayBuffer` data in IndexedDB, and deduplicates same-URL requests.
-- `开发文档.md` records goals, path rules, cache design, and manual acceptance points.
 
 There are no local assets, tests, or package files in this folder. Shared Vue CLI configuration for the wider `components` area is in `../js/vue.config.normal.js` and `../js/vue.config.weekly.js`.
 
@@ -30,8 +29,8 @@ Use lower camel case names such as `jsonImage`, `jsonBox`, `getJsonZipData`, and
 
 No automated tests are present. For behavior changes, test manually in a consuming page with:
 
-- a full `http` or `https` `.json` URL;
 - a directory path resolving to `data.json` and `images/`;
+- a full `http` or `https` directory URL;
 - a `.zip` package, including a repeated load that should hit IndexedDB;
 - rapid `imgName` changes, both `loop` values, destruction, and error fallback paths.
 
@@ -45,4 +44,4 @@ Pull requests should include the reason for the change, affected pages, manual t
 
 ## Agent-Specific Instructions
 
-Before editing files, inspect local code, docs, shared config, and git status. Do not assume standalone scripts exist. Preserve user changes and avoid unrelated cleanup.
+Before editing files, inspect local code, shared config, and git status. Do not assume standalone scripts exist. Preserve user changes and avoid unrelated cleanup.

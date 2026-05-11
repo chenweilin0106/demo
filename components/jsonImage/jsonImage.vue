@@ -11,18 +11,18 @@ import { getJsonZipData } from './jsonZipIdb'
 
 /**
  * @name jsonImage
- * @description lottie json/zip 动画组件，只处理 lottie 动画资源。
+ * @description lottie 目录/zip 动画组件，只处理 lottie 动画资源。
  *
- * @prop {String} imgName json 文件、zip 文件、目录路径或完整 URL。
+ * @prop {String} imgName zip 文件、目录路径或完整 URL；非 zip 一律按目录处理。
  * @prop {Boolean} loop 是否循环播放。
  *
  * @event DOMLoaded lottie DOMLoaded 事件透传。
  * @event complete 非循环播放完成后触发。
  * @event loaded 动画完成首轮可渲染准备后触发。
- * @event error json/zip 加载、解压或解析失败时触发。
+ * @event error 目录/zip 加载、解压或解析失败时触发。
  *
  * @example
- * <jsonImage imgName="activity/example/data.json" :loop="true" @DOMLoaded="onDomLoaded" @loaded="onLoaded" @error="onError" />
+ * <jsonImage imgName="activity/example" :loop="true" @DOMLoaded="onDomLoaded" @loaded="onLoaded" @error="onError" />
  *
  * @example
  * <jsonImage imgName="activity/example.zip" :loop="false" @complete="onComplete" />
@@ -35,6 +35,8 @@ export default {
   },
   data() {
     return {
+      animationInstance: null, // 动画实例
+      isPlaying: true, // 是否处在播放状态
       imgPath: '', // 图像地址
       isLoaded: false, // 是否已开始渲染
       loadToken: 0 // 防止load异步加载，旧请求回调乱入
@@ -52,6 +54,26 @@ export default {
         this.loadJsonImage()
       }
     }
+  },
+  activated() {
+    console.log('jsonImage activated')
+    if (this.isPlaying) return
+    this.isPlaying = true
+    if (!this.isLoaded) return console.log('jsonImage load回调还没回来')
+    try {
+      this.animationInstance?.goToAndPlay(0, true)
+    } catch (error) {
+      this.handleError(error, this.loadToken)
+    }
+  },
+  deactivated() {
+    console.log('jsonImage deactivated')
+    if (!this.isPlaying) return
+    this.isPlaying = false
+    if (!this.isLoaded) return console.log('jsonImage load回调还没回来')
+    try {
+      this.animationInstance?.pause()
+    } catch (error) {}
   },
   methods: {
     /**
@@ -171,26 +193,26 @@ export default {
         throw new Error('jsonImage 容器不存在')
       }
 
-      this.json_data = lottie.loadAnimation({
+      this.animationInstance = lottie.loadAnimation({
         container,
         renderer: 'svg',
         loop: this.loop,
-        autoplay: true,
+        autoplay: this.isPlaying,
         ...options
       })
 
-      this.json_data.addEventListener('DOMLoaded', (event) => {
+      this.animationInstance.addEventListener('DOMLoaded', (event) => {
         if (token !== this.loadToken) return
         this.$emit('DOMLoaded', event)
         this.emitLoaded(token)
       })
       if (!this.loop) {
-        this.json_data.addEventListener('complete', (event) => {
+        this.animationInstance.addEventListener('complete', (event) => {
           if (token !== this.loadToken) return
           this.$emit('complete', event)
         })
       }
-      this.json_data.addEventListener('data_failed', (event) => {
+      this.animationInstance.addEventListener('data_failed', (event) => {
         const error = event || new Error('lottie data_failed')
         this.handleError(error, token)
       })
@@ -328,9 +350,9 @@ export default {
      * 销毁动画实例。
      */
     destroyAnimation() {
-      if (this.json_data) {
-        this.json_data.destroy()
-        this.json_data = null
+      if (this.animationInstance) {
+        this.animationInstance.destroy()
+        this.animationInstance = null
       }
     }
   },
