@@ -3,22 +3,49 @@
     <!-- 任务列表 -->
     <OutBox class="tasksBox">
       <div v-for="(taskItem, taskKey) in task_list" :key="taskKey" class="taskItemDiv" :class="taskKey">
-        <div class="taskItemAward">
-          <div class="taskItemAwardIcon"><img :src="IconPath(pointIcon)" alt="" /></div>
-          <div class="taskItemAwardText">{{ pointName }}+{{ taskItem.award_nums }}</div>
-        </div>
-        <div class="taskItemDesc">
-          <div class="taskItemDescText1">
-            {{ taskItem.task_name }}<van-popover v-if="taskKey == 'keju'" v-model="taskItem.showPopover" trigger="click" placement="top" :get-container="''" :close-on-click-outside="true" class="taskBubble">
-            <div class="popoverMain">参与科举答题或竞猜<br>所得元宝都计算在内</div>
-          </van-popover>
+        <template v-if="taskKey !== 'keju'">
+          <div class="taskItemAward">
+            <div class="taskItemAwardIcon"><img :src="IconPath(pointIcon)" alt="" /></div>
+            <div class="taskItemAwardText">{{ pointName }}+{{ taskItem.award_nums }}</div>
           </div>
-          <div class="taskItemDescText2">
-            <div v-if="taskItem.task_name == '每充值10元'" class="taskItemDescText2Div1">系统自动派发，无需手动领取</div>
-            <div v-else class="taskItemDescText2Div2">（{{ taskItem.finish_times }}/{{ taskItem.max_times }}）</div>
+          <div class="taskItemDesc">
+            <div class="taskItemDescText1">
+              {{ taskItem.task_name }}
+              <!-- <van-popover v-if="taskKey == 'keju'" v-model="taskItem.showPopover" trigger="click" placement="top" :get-container="''" :close-on-click-outside="true" class="taskBubble"> -->
+              <!--   <div class="popoverMain" @click.stop>参与科举答题或竞猜<br>所得元宝都计算在内</div> -->
+              <!--   <template #reference> -->
+              <!--     <div class="taskBubbleBtn"></div> -->
+              <!--   </template> -->
+              <!-- </van-popover> -->
+            </div>
+            <div class="taskItemDescText2">
+              <div v-if="taskItem.task_name == '每充值10元'" class="taskItemDescText2Div1">系统自动派发，无需手动领取</div>
+              <div v-else class="taskItemDescText2Div2">（{{ taskItem.finish_times }}/{{ taskItem.max_times }}）</div>
+            </div>
           </div>
-        </div>
-        <div v-if="taskItem.need_rev" class="taskItemBtn" :class="`status${taskItem.has_right}`" @click="receive(taskItem, taskKey)">{{taskItem.has_right == 0 ? (taskItem.is_recharge ? '去完成' : '未完成') : taskItem.has_right == 1 ? '领取' : '已领取'}}</div>
+          <div v-if="taskItem.need_rev" class="taskItemBtn" :class="`status${taskItem.has_right}`" @click="receive(taskItem, taskKey)">{{taskItem.has_right == 0 ? (taskItem.is_recharge ? '去完成' : '未完成') : taskItem.has_right == 1 ? '领取' : '已领取'}}</div>
+        </template>
+        <template v-else-if="taskKey === 'keju'">
+          <div class="taskItemTitle">家族秘境挑战<i>完成以下任意目标</i></div>
+          <div class="taskItemDetails">
+            <div class="taskItemDetailsAward">
+              <div class="taskItemDetailsAwardIcon">
+                <img :src="IconPath(pointIcon)" alt="" />
+              </div>
+              <div class="taskItemDetailsAwardText">{{ pointName }}+{{ taskItem.award_nums }}</div>
+            </div>
+            <div class="taskItemDetailsGoal status1">
+              <p class="taskItemDetailsGoalP1">累计伤害达到{{ taskItem.max_times }}</p>
+              <p class="taskItemDetailsGoalP2">（{{ taskItem.finish_times }}/{{ taskItem.max_times }}）</p>
+            </div>
+            <div class="taskItemDetailsGoal status2">
+              <p class="taskItemDetailsGoalP1">参与挑战{{ taskItem.attend_max }}次</p>
+              <p class="taskItemDetailsGoalP2">（{{ taskItem.attend_times }}/{{ taskItem.attend_max }}）</p>
+            </div>
+            <div class="taskItemDetailsOrDiv">或</div>
+            <div class="taskItemDetailsButton" :class="`status${taskItem.has_right}`" @click="receive(taskItem, taskKey)">{{taskItem.has_right == 0 ? (taskItem.is_recharge ? '去完成' : '未完成') : taskItem.has_right == 1 ? '领取' : '已领取'}}</div>
+          </div>
+        </template>
       </div>
       <div class="rules-text">
         <ul>
@@ -359,7 +386,7 @@ export default {
           background-image: linear-gradient(0deg, #9D9D9D, #E7E7E7), -webkit-linear-gradient(#fff, #fff);
         }
       }
-      &.keju{
+      /* &.keju{
         .taskItemDesc{
           .taskItemDescText1{
             line-height: 36px;
@@ -368,6 +395,170 @@ export default {
         .taskItemDescText2{
           .taskItemDescText2Div2{
             margin-top: 5px;
+          }
+        }
+      } */
+      //&.keju{
+      //  .taskItemDesc{
+      //    .taskItemDescText1{
+      //      line-height: 36px;
+      //    }
+      //  }
+      //  .taskItemDescText2{
+      //    .taskItemDescText2Div2{
+      //      margin-top: 5px;
+      //    }
+      //  }
+      //}
+      &.keju {
+        position: relative;
+        width: 680px;
+        height: 280px;
+        background: url('@/pages/childrenDay/assets/mk1_19.png') no-repeat left top/100% 100%;
+        .taskItemTitle {
+          position: absolute;
+          left: 32px;
+          top: 25px;
+          font-size: 30px;
+          color: #FFFFFF;
+          line-height: 1;
+          display: flex;
+          align-items: center;
+          >i {
+            color: #F6E380;
+          }
+        }
+        .taskItemDetails {
+          position: absolute;
+          top: 64px;
+          left: 23px;
+          width: 634px;
+          height: 194px;
+          background: rgba(180,144,129,0.5);
+          border-radius: 23px;
+          border: 2px solid rgba(240,214,174,0.52);
+          .taskItemDetailsAward {
+            position: absolute;
+            top: 31px;
+            left: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 126px;
+            height: 123px;
+            //padding: 4px;
+            //border-radius: 16px;
+            //background-color: #ECD37C;
+            background: url('@/pages/childrenDay/assets/mk1_5.png') no-repeat left top/100% 100%;
+            .taskItemDetailsAwardIcon {
+              margin-top: 19px;
+              width: 100%;
+              height: 60px;
+              //border-radius: 12px 12px 0 0;
+              //background-color: #FFFFFF;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              > img {
+                width: 58px;
+                height: auto;
+              }
+            }
+            .taskItemDetailsAwardText {
+              margin-top: 3px;
+              //border-radius: 0 0 12px 12px;
+              border-radius: 16px;
+              font-weight: 500;
+              font-size: 24px;
+              background: linear-gradient(-90deg, #C14D48, #C14D48);
+              color: #fff;
+              //width: 100%;
+              width: 102px;
+              height: 32px;
+              //flex: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              line-height: 1;
+            }
+          }
+          .taskItemDetailsGoal {
+            position: absolute;
+            left: 174px;
+            width: 300px;
+            height: 80px;
+            background: rgb(115 36 36 / 0.5);
+            border-radius: 12px;
+            .taskItemDetailsGoalP1 {
+              position: absolute;
+              top: 10px;
+              left: 24px;
+              font-size: 28px;
+              color: #FFFFFF;
+              line-height: 1;
+            }
+            .taskItemDetailsGoalP2 {
+              position: absolute;
+              top: 45px;
+              left: 24px;
+              font-size: 24px;
+              color: #FFEF85;
+              line-height: 1;
+              margin-left: -0.5em;
+            }
+            &.status1 {
+              top: 9px;
+            }
+            &.status2 {
+              top: 103px;
+            }
+          }
+          .taskItemDetailsOrDiv {
+            position: absolute;
+            top: 78px;
+            left: 154px;
+            width: 52px;
+            height: 32px;
+            background: #AB3F3D;
+            border-radius: 16px;
+            border: 2px solid rgba(238,211,170,0.8);
+            font-size: 24px;
+            color: #FFE0B3;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .taskItemDetailsButton {
+            position: absolute;
+            right: 14px;
+            top: 62px;
+            width: 126px;
+            height: 66px;
+            font-size: 28px;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            white-space: nowrap;
+            // 渐变
+            border: 3px solid transparent;
+            border-radius: 99999px;
+            -webkit-background-clip: padding-box, border-box;
+            -webkit-background-orixgin: padding-box, border-box;
+            &.status0{
+              color: #6F2E37;
+              background-image: linear-gradient(0deg, #EDCFB2, #F3C08F), -webkit-linear-gradient(#6F2F37, #6F2F37);
+            }
+            &.status1{
+              color: #784120;
+              background-image: linear-gradient(0deg, #FFE4A6, #FFC267), -webkit-linear-gradient(#FFE2BC, #FFE2BC);
+            }
+            &.status2{
+              color: #fff;
+              background-image: linear-gradient(0deg, #9D9D9D, #BFBFBF), -webkit-linear-gradient(#fff, #fff);
+            }
           }
         }
       }
