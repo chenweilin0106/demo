@@ -13,7 +13,7 @@
       </div>
       <!--奖励列表-->
       <div class="rewardsTip position-relative"></div>
-      <div :class="['rewardsShowArea flex align-center justify-center position-relative',`status${rankChosen}`]">
+      <div :key="`${rankChosen}_${tagChosen}`" :class="['rewardsShowArea flex align-center justify-center position-relative',`status${rankChosen}`]">
         <div class="rewardItem position-relative" :class="rewardsList[`${rankChosen}${tagChosen}`].length>=4?'smallMargin':''" v-for="(item) in rewardsList[`${rankChosen}${tagChosen}`]" :key="item.id" @click="previewImgCk(item)">
           <div :class="['rewardIcon position-absolute position-row-center', item.type=='title'?'titleSp':item.type == 'mic' ? 'micSp' : null]">
             <PublicImg :imgName="item.icon" :imgType="item.type" />
