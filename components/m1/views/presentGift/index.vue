@@ -88,7 +88,7 @@ export default {
       // cp贺礼-------------------
       user_gender: '0', // 性别 0：男 1：女
       user_icon: '', // 头像
-      marriage_gift: { awards: [{ icon: 'ts_tslm.svga', id: 0, name: '天生浪漫', nums: 3, text: '头饰+3天', type: 'mic', show_text: '头饰+3天' }, { icon: 'yb_120_120.png', id: 'gamegold', name: '元宝', nums: 200000, text: '元宝+20万', type: 'property', show_text: '元宝+20万' }], has_right: 0 }, // cp贺礼
+      marriage_gift: { awards: [{ icon: 'ts_zazl.svga', id: 0, name: '追爱之旅', nums: 3, text: '头饰+3天', type: 'mic', show_text: '头饰+3天' }, { icon: 'yb_120_120.png', id: 'gamegold', name: '元宝', nums: 200000, text: '+20万', type: 'property', show_text: '+20万' }], has_right: 0 }, // cp贺礼
       // 消费有礼-----------------
       consume_status: {
         1000: { awards: [{ icon: 'yb_120_120.png', name: '元宝', nums: 50000, text: '5万', tool_id: 'gamegold', type: 'property' }, { icon: 'fsjc_60_60.png', name: '符石精粹', nums: 100, text: '100', tool_id: 142, type: 'hero_tools' }], condition: 1000, consume_nums: 0, has_right: 0, is_daily: true },

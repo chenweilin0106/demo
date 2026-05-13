@@ -6,7 +6,7 @@
         <div class="icon flex align-center justify-center position-relative">
           <PublicImg :class="item.type" :imgName="item.icon" :imgType="item.type" />
         </div>
-        <div class="text flex-1 flex align-center justify-center line-height-1">{{ item.id === 'gamegold' ? `元宝+${formatNumber(item.nums)}` : `头饰+${item.nums}天` }}</div>
+        <div class="text flex-1 flex align-center justify-center line-height-1">{{ item.id === 'gamegold' ? `元宝${item.show_text}` : item.show_text }}</div>
       </div>
     </div>
     <p class="desc position-absolute text-center">
@@ -27,7 +27,6 @@
 <script>
 import { getPageData } from '@/api'
 import ReceivePopup from './popups/receivePopup.vue'
-import { formatNumber } from '@/utils/tool'
 
 export default {
   name: 'cpRewards', // CP贺礼
@@ -41,7 +40,6 @@ export default {
     }
   },
   methods: {
-    formatNumber,
     /**
      * 领取新婚贺礼
      */
