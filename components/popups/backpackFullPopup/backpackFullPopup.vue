@@ -80,23 +80,22 @@ export default {
       color: #FFFAA6;
     }
     .backpackIcon {
-      margin: 0 auto 37px;
-      width: 119px;
-      height: 119px;
+      margin: 0 auto 34px;
+      width: 139px;
+      height: 139px;
       background: url('@/pages/520/assets/runeStoneBackpack.png') no-repeat left top/100% 100%;
     }
     .tip {
       width: 508px;
-      min-height: 80px;
-      white-space: nowrap;
+      height: 80px;
       margin: 0 auto 30px;
-      font-size: 30px;
+      font-size: 28px;
       color: #ffffff;
       p {
         text-align: center;
         line-height: 40px;
         &:nth-of-type(2) {
-          text-align: start;
+          //text-align: start;
         }
       }
     }
