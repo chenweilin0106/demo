@@ -415,9 +415,10 @@ export default {
             border-radius: 16px;
             border: 4px solid #FBE0A7;
             position: relative;
+            z-index: 1;
             margin: 0 16.5px;
             .imgCompo {
-              z-index: 1;
+              z-index: -1;
             }
             .rewardText{
               font-size: 21px;
