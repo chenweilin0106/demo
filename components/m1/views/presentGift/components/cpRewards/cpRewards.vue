@@ -41,7 +41,7 @@ export default {
     async receiveRobRewards() {
       const res = await getPageData({ type: 'marriage_gift_receive' })
       if (res.errno) return this.$toast(res.errmsg)
-      this.configReceivePopup = this.config.marriage_gift.awards.map(item => { return { ...item, unit: item.type == 'mic' ? '天' : '' } })
+      this.configReceivePopup = this.config.marriage_gift.awards
       this.isShowReceivePopup = true
       this.$emit('update')
     }
