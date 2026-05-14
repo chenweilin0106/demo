@@ -45,10 +45,8 @@
       </div>
       <!-- 榜单 -->
       <div class="rulesBtn position-absolute" @click="isShowRulesPopup=true"></div>
-      <!-- <RankCom1 v-if="rankChosen==1" ref="rankCom1Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @isShowBtnCk="isShowBtnCk" /> -->
-      <!-- <RankCom2 v-if="rankChosen==2" ref="rankCom2Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @isShowBtnCk="isShowBtnCk" /> -->
-      <!-- <RankCom3 v-else-if="rankChosen==2" ref="rankCom2Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @isShowBtnCk="isShowBtnCk" /> -->
-      <!-- <RankCom4 ref="rankCom4Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @routerJump="routerJump" @isShowBtnCk="isShowBtnCk" /> -->
+       <RankCom1 v-if="rankChosen==1" ref="rankCom1Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @isShowBtnCk="isShowBtnCk" />
+       <RankCom2 v-if="rankChosen==2" ref="rankCom2Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @isShowBtnCk="isShowBtnCk" />
       <div class="rules-text">
         <ul>
           <li><span></span>活动期间绑定用户互送钻石礼物、表白、参与<img :src="IconPath('mk7_51.png')" class="icon2 position-absolute position-column-center" @click="routerJump('/gift')" /></li>
@@ -90,15 +88,16 @@ import { getPageData } from '@/api'
 import { scrollToHeight, _throttle } from '@/utils/tool'
 import PreviewPopup from './previewPopup.vue'
 import RulesPopup from './rulesPopup.vue'
-import RankCom4 from './rankCom4.vue'
+import RankCom1 from './rankCom1.vue'
+import RankCom2 from './rankCom2.vue'
 
 export default {
   name: 'rankVue',
-  components: { PreviewPopup, RulesPopup, RankCom4 },
+  components: { PreviewPopup, RulesPopup, RankCom1, RankCom2 },
   data() {
     return {
-      tabsArray: Object.freeze([{ rank: 1, tabName: '魔力榜' }, { rank: 2, tabName: '神豪榜' }]),
-      rankChosen: 1, // todo 榜单 4:爱意榜 用于数据请求/rewardsList（奖励列表）/selectDate（默认日期）/榜单滚动（榜单滚动需要同时配置rankCom${rankChosen}Ref）
+      tabsArray: Object.freeze([{ rank: 1, tabName: '人气榜' }, { rank: 2, tabName: '神豪榜' }]),
+      rankChosen: 1, // 榜单 1-人气榜 2-神豪榜 用于数据请求/rewardsList（奖励列表）/selectDate（默认日期）/榜单滚动（榜单滚动需要同时配置rankCom${rankChosen}Ref）
       tagChosen: 1, // 榜单选择: 1:日榜 2:总榜
       rewardsList: Object.freeze({
         11: [
@@ -133,10 +132,10 @@ export default {
           { id: 221, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
           { id: 222, type: '', icon: '', text: '', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false }
         ]
-      }), // todo 榜单奖励列表
-      day_list: { 20250516: '05月16日', 20250517: '05月17日', 20250518: '05月18日', 20250519: '05月19日', 20250520: '05月20日', 20250521: '05月21日', 20250522: '05月22日', 20250523: '05月23日' }, // todo 日期列表
-      todaySelectDate: 20250516, // todo 当天日期
-      selectDate: { 1: 20250516 }, // todo 所选日期
+      }), // 榜单奖励列表
+      day_list: { 20250516: '05月16日', 20250517: '05月17日', 20250518: '05月18日', 20250519: '05月19日', 20250520: '05月20日', 20250521: '05月21日', 20250522: '05月22日', 20250523: '05月23日' }, // 日期列表
+      todaySelectDate: 20250516, // 当天日期
+      selectDate: { 1: 20250516, 2: 20250516 }, // 所选日期
       isShowDateList: false, // 是否显示日期选择列表
       rankListShow: [
         { uidStr: 0, uid: 0, code: 0, pretty_type: 0, username: '虚位以待', profile_image: '', tuid: 0, tuid_code: 0, tuid_pretty_type: 0, tusername: '虚位以待', tprofile_image: '', num: 0, rank: 1, relation: 0, virtual_info: [], tvirtual_info: [], gender: '0', tgender: '1', time: 0, diff: 0, score: 0, pet_info: { id: 1, category: '1', subcategory: '1', quality: 0, current_stage: '0', feature_list: { change_one: '0', change_two: '0', change_three: '0' } } },
@@ -167,7 +166,7 @@ export default {
     }
   },
   created() {
-    // axios({ url: `${process.env.VUE_APP_OSS_PATH}activity/weekly/svga/20240614_m2_lottery.svga`, method: 'get', responseType: 'arraybuffer' })
+    axios({ url: `${process.env.VUE_APP_OSS_PATH}activity/weekly/svga/20240614_m2_lottery.svga`, method: 'get', responseType: 'arraybuffer' })
     if (this.$route.query.rankChosen) this.rankChosen = this.$route.query.rankChosen
     if (this.$route.query.tagChosen) this.tagChosen = this.$route.query.tagChosen
     this.getHomePage()
@@ -201,17 +200,12 @@ export default {
       })
     },
     /**
-     * 切换榜单
+     * 切换榜单 新版本
      */
     selectChosen(r, t, date, isThinking = false) {
       this.isShowDateList = false
-      // const rankStrategies = {
-      //   1: () => getPageData({ type: 'white_love_daily_rank', mark: { rank_type: r, date: date || this.todaySelectDate } }), // 日榜 多个榜单需要mark字段
-      //   2: () => getPageData({ type: 'white_love_tot_rank', mark: r }) // 总榜 多个榜单需要mark字段
-      // }
-      // if (!rankStrategies[t]) return console.log('切换榜单数据错误')
+      if (!rankStrategies[t]) return console.log('切换榜单数据错误')
       if (isThinking) this.$thinking.track('WebClick', { module: '问鼎江山', element: this.tabsArray[r - 1].tabName })
-      // rankStrategies[t]().then((res) => {
       getPageData({ type: 'sweet_top_get_rank_list', mark: { type: t, category: r, date: date || this.todaySelectDate } }).then((res) => {
         if (res.errno) return this.$toast(res.errmsg)
         this.rankChosen = r
@@ -219,7 +213,29 @@ export default {
         if (this.tagChosen == 1) this.selectDate[this.rankChosen] = date || res.data.select_date // 日榜 存储日期数据
         this.rankListShow = res.data.rank_list
         this.userRankShow = res.data.my_rank ? res.data.my_rank : { ...res.data.user_info, time: res.data.my_score }
-        // if (res.data.hide_name) this.userRankShow.hide_name = res.data.hide_name
+        this.findUserRankInList() // 查找用户在榜单中的排名
+        this.$nextTick(() => this.$refs[`rankCom${this.rankChosen}Ref`].scrollRank()) // 还原榜单滚动
+      })
+    },
+    /**
+     * 切换榜单 老版本
+     */
+    selectChosen(r, t, date, isThinking = false) {
+      this.isShowDateList = false
+      const rankStrategies = {
+        1: () => getPageData({ type: 'white_love_daily_rank', mark: { rank_type: r, date: date || this.todaySelectDate } }), // 日榜 多个榜单需要mark字段
+        2: () => getPageData({ type: 'white_love_tot_rank', mark: r }) // 总榜 多个榜单需要mark字段
+      }
+      if (!rankStrategies[t]) return console.log('切换榜单数据错误')
+      if (isThinking) this.$thinking.track('WebClick', { module: '问鼎江山', element: this.tabsArray[r - 1].tabName })
+      rankStrategies[t]().then((res) => {
+        if (res.errno) return this.$toast(res.errmsg)
+        this.rankChosen = r
+        this.tagChosen = t
+        if (this.tagChosen == 1) this.selectDate[this.rankChosen] = date || res.data.select_date // 日榜 存储日期数据
+        this.rankListShow = res.data.rank_list
+        this.userRankShow = res.data.my_rank ? res.data.my_rank : { ...res.data.user_info, time: res.data.my_score }
+        if (res.data.hide_name) this.userRankShow.hide_name = res.data.hide_name
         this.findUserRankInList() // 查找用户在榜单中的排名
         this.$nextTick(() => this.$refs[`rankCom${this.rankChosen}Ref`].scrollRank()) // 还原榜单滚动
       })
@@ -262,14 +278,23 @@ export default {
       })
     },
     /**
-     * 切换是否公开昵称
+     * 切换是否公开昵称 新版本
      */
     isShowBtnCk: _throttle(function() {
-      // this.userRankShow.hide_name = !this.userRankShow.hide_name
-      // getPageData({ type: 'white_love_top_name_set', mark: this.userRankShow.hide_name ? '2' : '1' }).then((res) => {
       getPageData({ type: 'white_love_top_name_set', mark: this.userRankShow.is_show_name == 1 ? '2' : '1' }).then((res) => {
         if (res.errno == 0) {
-          // this.userRankShow.hide_name = !this.userRankShow.hide_name
+          this.selectChosen(this.rankChosen, this.tagChosen, this.selectDate[this.rankChosen])
+        } else {
+          this.$toast(res.errmsg)
+        }
+      })
+    })，
+    /**
+     * 切换是否公开昵称 老版本
+     */
+    isShowBtnCk: _throttle(function() {
+      getPageData({ type: 'white_love_top_name_set', mark: this.userRankShow.hide_name ? '2' : '1' }).then((res) => {
+        if (res.errno == 0) {
           this.selectChosen(this.rankChosen, this.tagChosen, this.selectDate[this.rankChosen])
         } else {
           this.$toast(res.errmsg)
