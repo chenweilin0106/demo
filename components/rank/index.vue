@@ -45,10 +45,10 @@
       </div>
       <!-- 榜单 -->
       <div class="rulesBtn position-absolute" @click="isShowRulesPopup=true"></div>
-      <!-- <RankCom1 v-if="rankChosen==1" ref="rankCom1Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" /> -->
+      <!-- <RankCom1 v-if="rankChosen==1" ref="rankCom1Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @isShowBtnCk="isShowBtnCk" /> -->
       <!-- <RankCom2 v-if="rankChosen==2" ref="rankCom2Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @isShowBtnCk="isShowBtnCk" /> -->
       <!-- <RankCom3 v-else-if="rankChosen==2" ref="rankCom2Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @isShowBtnCk="isShowBtnCk" /> -->
-      <RankCom4 ref="rankCom4Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @routerJump="routerJump" />
+      <!-- <RankCom4 ref="rankCom4Ref" :rankListShow="rankListShow" :userRankShow="userRankShow" :tagChosen="tagChosen" :rankChosen="rankChosen" @routerJump="routerJump" @isShowBtnCk="isShowBtnCk" /> -->
       <div class="rules-text">
         <ul>
           <li><span></span>活动期间绑定用户互送钻石礼物、表白、参与<img :src="IconPath('mk7_51.png')" class="icon2 position-absolute position-column-center" @click="routerJump('/gift')" /></li>
@@ -57,19 +57,24 @@
           <li>计宠爱值排行榜</li>
           <li><span></span>同服绑定的用户进入本服榜单，跨服绑定的用户进</li>
           <li>入跨服榜单</li>
-          <li><span></span><i>详细榜单规则和奖励可查看页面【奖励详情】</i></li>
-          <li><span></span>活动期间收到钻石礼物，可获得双倍经验值和双倍</li>
-          <li>基础魅力值，魅力值上限提高50%</li>
+
+          <!-- <li><span></span>荣誉社员榜为<i>活动期间赠送钻石礼物总价值排行榜</i>，</li> -->
+          <!-- <li>1钻石=10荣誉值，榜单分服统计</li> -->
+
           <!-- <li v-show="rankChosen==1&&tagChosen==1"><span></span>人气榜日榜为用户获赠钻石礼物总价值排行榜，榜</li> -->
           <!-- <li v-show="rankChosen==1&&tagChosen==1">单分服统计，自己赠送自己计算在内</li> -->
-          <!-- <li v-show="rankChosen==1&&tagChosen==2"><span></span>人气榜总榜为用户获赠钻石礼物总价值排行榜，榜</li> -->
-          <!-- <li v-show="rankChosen==1&&tagChosen==2">单分服统计，自己赠送自己计算在内</li> -->
+
           <!-- <li v-show="rankChosen==1&&tagChosen==1"><span></span>魔力榜日榜为每日用户单人/组队新增魔力值排行</li> -->
           <!-- <li v-show="rankChosen==1&&tagChosen==1">榜，榜单分服统计</li> -->
-          <!-- <li v-show="rankChosen==1&&tagChosen==2"><span></span>魔力榜总榜为活动期间单人/组队累计魔力值排行</li> -->
-          <!-- <li v-show="rankChosen==1&&tagChosen==2">榜，榜单分服统计</li> -->
+
           <!-- <li v-show="rankChosen==2"><span></span>风云榜为活动期间<i>本服用户赠送钻石礼物</i>排行榜，</li> -->
           <!-- <li v-show="rankChosen==2">榜单分服统计，自己赠送自己计算在内</li> -->
+
+          <!-- <li><span></span><i>详细榜单规则和奖励可查看页面【奖励详情】</i></li> -->
+
+          <!-- <li><span></span>活动期间收到钻石礼物，可获得双倍经验值和双倍</li> -->
+          <!-- <li>基础魅力值，魅力值上限提高50%</li> -->
+
           <!-- <li v-show="rankChosen==2"><span></span>购买礼包、会员（含超值兑换中兑换会员）、活力</li> -->
           <!-- <li v-show="rankChosen==2">卡不计算在内</li> -->
         </ul>
