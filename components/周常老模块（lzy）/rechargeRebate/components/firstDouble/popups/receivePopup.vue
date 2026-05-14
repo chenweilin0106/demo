@@ -2,28 +2,21 @@
   <transition name="fade" appear>
     <div class="popup-overly position-fixed flex align-center justify-center" @click.self="clickClose" @touchmove.prevent.stop>
       <div class="popup-content" :class="isBigContent ? 'bigContent' : 'smallContent'" @touchmove.prevent.stop>
-        <!--天降好运 || 好运爆棚-->
         <div class="title margin-row-center"></div>
-
-        <!--绿晶石奖励翻到10倍!-->
         <div class="text margin-row-center flex align-center justify-center text-nowrap line-height-100">
           绿晶石奖励翻到<i class="deep">{{ doubleNums }}倍</i>!
         </div>
-
         <div class="awardsList flex justify-center align-center">
           <div v-for="(item, index) in config" :key="index" class="award">
             <div class="awardIcon position-relative">
-              <img v-if="item.mark && item.type == 'car'" :src="IconPath('tk_8.png')" class="firstLabel position-absolute" alt="" />
-              <!-- <img v-if="item.mark && item.type == 'mic'" :src="IconPath('mk2_16.png')" class="micFirstLabel position-absolute" /> -->
-              <img v-else-if="item.mark && item.type != 'car' && item.type != 'mic'" :src="IconPath(item.mark)" class="multipleLabel position-absolute" alt="" />
-              <!--用户头像 用于静态头像-->
-              <img v-if="item.type == 'mic'" :src="$store.state.user_icon" alt="" class="avatar position-absolute position-center" @error="imgAtError" />
-              <img :src="IconPath(item.icon)" class="icon position-relative h-100 width-auto" alt="" />
+              <img v-if="item.mark && item.type === 'tool' && item.tool_id == 2" :src="IconPath(item.mark)" class="multipleLabel position-absolute" alt="" />
+              <img v-else-if="item.mark && index === config.length - 1" :src="IconPath('tk_8.png')" class="firstLabel position-absolute" alt="" />
+              <div v-if="$store.state.typeToNameMap[item.type]" class="typeLabel flex align-center justify-center pointer-none position-absolute line-height-1">{{ $store.state.typeToNameMap[item.type] }}</div>
+              <PublicImg class="icon position-relative" :imgName="item.icon" :imgType="item.type" />
             </div>
             <div class="awardText flex align-center justify-center line-height-100 text-nowrap">{{ item.text }}</div>
           </div>
         </div>
-
         <div class="popupButton margin-row-center flex align-center justify-center line-height-100" @click="clickClose">开心收下</div>
       </div>
     </div>
@@ -32,6 +25,7 @@
 
 <script>
 import { imgAtError } from '@/utils/tool'
+
 export default {
   props: ['config'],
   data() {
@@ -121,8 +115,9 @@ export default {
         border-radius: 50%;
       }
       .firstLabel {
-        z-index: 1;
+        z-index: 2;
         top: -31px;
+        //bottom: -10px;
         right: -42px;
         width: 91px;
         height: 75px;
@@ -142,6 +137,18 @@ export default {
         height: 41px;
         width: auto;
       }
+      .typeLabel {
+        font-weight: 500;
+        font-size: 18px;
+        color: #FFFFFF;
+        background: #449D96;
+        z-index: 2;
+        top: 0;
+        transform: translateY(-50%);
+        right: -12px;
+        border-radius: 999999999px;
+        padding: 6px 10px;
+      }
     }
     .awardText {
       width: 100%;
@@ -157,14 +164,14 @@ export default {
 .smallContent {
   width: 522px;
   height: 523px;
-  background-image: url('@/pages/labaFestival/assets/tk_9.png');
+  background-image: url('@/pages/childrenDay/assets/tk_9.png');
   .title {
     margin-top: -43px;
-    background-image: url('@/pages/labaFestival/assets/tk_4.png');
+    background-image: url('@/pages/childrenDay/assets/tk_4.png');
   }
   .text {
     width: 556px;
-    background-image: url('@/pages/labaFestival/assets/tk_6.png');
+    background-image: url('@/pages/childrenDay/assets/tk_6.png');
   }
   .awardText {
     color: #ffffff;
@@ -177,14 +184,14 @@ export default {
   position: relative;
   width: 646px;
   height: 644px;
-  background-image: url('@/pages/labaFestival/assets/tk_10.png');
+  background-image: url('@/pages/childrenDay/assets/tk_10.png');
   .title {
     margin-top: 26px;
-    background-image: url('@/pages/labaFestival/assets/tk_5.png');
+    background-image: url('@/pages/childrenDay/assets/tk_5.png');
   }
   .text {
     width: 569px;
-    background-image: url('@/pages/labaFestival/assets/tk_7.png');
+    background-image: url('@/pages/childrenDay/assets/tk_7.png');
   }
   .awardText {
     color: #e02424;
