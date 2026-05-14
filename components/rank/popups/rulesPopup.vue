@@ -201,13 +201,21 @@ export default {
           id: 1,
           name: '第1名',
           rewards: [
-            { type: 'car', icon: 'ydlg_120_120.png', text: '【云巅恋歌】\n座驾+60天' },
-            { type: 'ring', icon: 'jz_qqmx.svga', text: '【奇趣萌行】\n戒指+3', isNew: false, quality: '', mark: '13140' },
+            // { type: 'pst_privilege', icon: 'geyn_120_120.png', text: '【感恩予你】\礼物赠送权+60天', isNew: false, quality: '', mark: '' },
+            // { type: 'chat_bubble_pub', icon: 'xyqd_120_120.png', text: '【心愿清单】\n公屏气泡+60天', isNew: false, quality: '', mark: '' },
+            // { type: 'chat_bubble', icon: 'xyqd_120_120.png', text: '【心愿清单】\n私聊气泡+60天', isNew: false, quality: '', mark: '' },
+            // { type: 'title', icon: 'ch_addd', text: '【啊对对对】\n称号+60天', isNew: false, quality: '', mark: '' },
+            // { type: 'costume', icon: 'qxnd_120_120.png', text: '【千禧年代】\n主页特效+60天', isNew: false, quality: '', mark: '' },
+            // { type: 'voice', icon: 'sb_jxxy', text: '【巨蟹星语】\n声波+60天', isNew: false, quality: '', mark: '' },
+            // { type: 'car', icon: 'ydlg_120_120.png', text: '【云巅恋歌】\n座驾+60天', isNew: false, quality: '', mark: '' },
+            // { type: 'ring', icon: 'jz_qqmx.svga', text: '【奇趣萌行】\n戒指+3', isNew: false, quality: '', mark: '13140' },
+            // { type: 'tool', icon: 'lhq_120_120.png', text: '靓号券\n+2', isNew: false, quality: '', mark: '' },
+            // { type: 'tool', icon: 'cbt_120_120.png', text: '藏宝图\n+15', isNew: false, quality: '', mark: '' },
+            // { type: 'tool', icon: 'fsjc_120_120.png', text: '符石精粹\n+1000', isNew: false, quality: '', mark: '' },
+            // { type: 'tool', icon: 'ljs_120_120.png', text: '绿晶石\n+1000', isNew: false, quality: '', mark: '' },
+            // { type: 'tool', icon: 'zjs_120_120.png', text: '紫晶石\n+1000', isNew: false, quality: '', mark: '' },
             { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+30天', isNew: false, quality: '', mark: ''  },
-            { type: 'tool', icon: 'hjcbt_120_120.png', text: '黄金藏宝图\n+2', isNew: false, quality: '', mark: '' },
-            { type: 'tool', icon: 'cbt_120_120.png', text: '藏宝图\n+15', isNew: false, quality: '', mark: '' },
-            { type: 'tool', icon: 'fsjc_120_120.png', text: '符石精粹\n+1000', isNew: false, quality: '', mark: '' },
-            { type: 'tool', icon: 'ljs_120_120.png', text: '绿晶石\n+1000', isNew: false, quality: '', mark: '' }
+            { type: 'tool', icon: 'hjcbt_120_120.png', text: '黄金藏宝图\n+2', isNew: false, quality: '', mark: '' }
           ]
         }, {
           id: 2,
