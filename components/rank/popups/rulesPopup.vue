@@ -483,7 +483,7 @@ export default {
             }
           }
           .reward2{
-            margin: 0px 8px;
+            margin:  8px;
           }
         }
       }
