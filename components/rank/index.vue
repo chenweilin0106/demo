@@ -24,7 +24,6 @@
           <div v-if="item.mark1" class="doublePersonMark position-absolute"></div>
           <div v-if="item.isNew" class="newMark flex align-center justify-center position-absolute pointer-none">新</div>
         </div>
-        <!--<div class="rewardsDetail" @click="rewardsDetailCk"></div>-->
       </div>
       <!-- 日期选择 -->
       <div v-if="tagChosen==1" class="dayBox position-absolute flex-column align-center">
