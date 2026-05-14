@@ -207,15 +207,17 @@ export default {
             // { type: 'title', icon: 'ch_addd', text: '【啊对对对】\n称号+60天', isNew: false, quality: '', mark: '' },
             // { type: 'costume', icon: 'qxnd_120_120.png', text: '【千禧年代】\n主页特效+60天', isNew: false, quality: '', mark: '' },
             // { type: 'voice', icon: 'sb_jxxy', text: '【巨蟹星语】\n声波+60天', isNew: false, quality: '', mark: '' },
+            // { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+30天', isNew: false, quality: '', mark: ''  },
             // { type: 'car', icon: 'ydlg_120_120.png', text: '【云巅恋歌】\n座驾+60天', isNew: false, quality: '', mark: '' },
             // { type: 'ring', icon: 'jz_qqmx.svga', text: '【奇趣萌行】\n戒指+3', isNew: false, quality: '', mark: '13140' },
             // { type: 'tool', icon: 'lhq_120_120.png', text: '靓号券\n+2', isNew: false, quality: '', mark: '' },
+            // { type: 'tool', icon: 'hjcbt_120_120.png', text: '黄金藏宝图\n+2', isNew: false, quality: '', mark: '' }.
             // { type: 'tool', icon: 'cbt_120_120.png', text: '藏宝图\n+15', isNew: false, quality: '', mark: '' },
             // { type: 'tool', icon: 'fsjc_120_120.png', text: '符石精粹\n+1000', isNew: false, quality: '', mark: '' },
             // { type: 'tool', icon: 'ljs_120_120.png', text: '绿晶石\n+1000', isNew: false, quality: '', mark: '' },
             // { type: 'tool', icon: 'zjs_120_120.png', text: '紫晶石\n+1000', isNew: false, quality: '', mark: '' },
-            { type: 'mic', icon: 'ts_mhsj.svga', text: '【梦幻水晶】\n头饰+30天', isNew: false, quality: '', mark: ''  },
-            { type: 'tool', icon: 'hjcbt_120_120.png', text: '黄金藏宝图\n+2', isNew: false, quality: '', mark: '' }
+            { type: '', icon: '', text: '', isNew: false, quality: '', mark: '' },
+            { type: '', icon: '', text: '', isNew: false, quality: '', mark: '' }
           ]
         }, {
           id: 2,
