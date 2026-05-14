@@ -317,7 +317,7 @@ export default {
       margin: 30px auto 20px;
     }
     .rewardsShowArea{
-      margin: 0 auto 20px;
+      margin: 0 auto;
       padding: 18px 0 27px;
       background: url('@/pages/520/assets/mk7_6.png') no-repeat left top/100% 100%;
       width: 625px;
