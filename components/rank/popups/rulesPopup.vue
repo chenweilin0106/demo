@@ -201,6 +201,8 @@ export default {
           id: 1,
           name: '第1名',
           rewards: [
+            // { type: 'room_dec_suit', icon: 'wysk_120_120.png', text: '【无垠深空】\世界消息皮肤+60天', isNew: false, quality: '', mark: '' },
+            // { type: 'world_msg_skins', icon: 'ymmg_120_120.png', text: '【房间装扮】\房间装扮+60天', isNew: false, quality: '', mark: '' },
             // { type: 'pst_privilege', icon: 'geyn_120_120.png', text: '【感恩予你】\礼物赠送权+60天', isNew: false, quality: '', mark: '' },
             // { type: 'chat_bubble_pub', icon: 'xyqd_120_120.png', text: '【心愿清单】\n公屏气泡+60天', isNew: false, quality: '', mark: '' },
             // { type: 'chat_bubble', icon: 'xyqd_120_120.png', text: '【心愿清单】\n私聊气泡+60天', isNew: false, quality: '', mark: '' },
@@ -216,6 +218,7 @@ export default {
             // { type: 'tool', icon: 'fsjc_120_120.png', text: '符石精粹\n+1000', isNew: false, quality: '', mark: '' },
             // { type: 'tool', icon: 'ljs_120_120.png', text: '绿晶石\n+1000', isNew: false, quality: '', mark: '' },
             // { type: 'tool', icon: 'zjs_120_120.png', text: '紫晶石\n+1000', isNew: false, quality: '', mark: '' },
+            // { type: 'tool', icon: 'mjfyx_120_120.png', text: '摸金符·一星\n+1000', isNew: false, quality: '', mark: '' },
             { type: '', icon: '', text: '', isNew: false, quality: '', mark: '' },
             { type: '', icon: '', text: '', isNew: false, quality: '', mark: '' }
           ]
