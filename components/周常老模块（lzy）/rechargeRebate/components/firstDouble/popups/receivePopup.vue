@@ -11,7 +11,7 @@
             <div class="awardIcon position-relative">
               <img v-if="item.mark && item.type === 'tool' && item.tool_id == 2" :src="IconPath(item.mark)" class="multipleLabel position-absolute" alt="" />
               <img v-else-if="item.mark && index === config.length - 1" :src="IconPath('tk_8.png')" class="firstLabel position-absolute" alt="" />
-              <div v-if="$store.state.typeToNameMap[item.type]" class="typeLabel flex align-center justify-center pointer-none position-absolute line-height-1">{{ $store.state.typeToNameMap[item.type] }}</div>
+              <!-- <div v-if="$store.state.typeToNameMap[item.type]" class="typeLabel flex align-center justify-center pointer-none position-absolute line-height-1">{{ $store.state.typeToNameMap[item.type] }}</div> -->
               <PublicImg class="icon position-relative" :imgName="item.icon" :imgType="item.type" />
             </div>
             <div class="awardText flex align-center justify-center line-height-100 text-nowrap">{{ item.text }}</div>
