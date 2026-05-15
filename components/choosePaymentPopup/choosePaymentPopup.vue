@@ -3,13 +3,13 @@
     <div class="popupOverly position-fixed flex align-end justify-center" @click.self="clickClose" @touchmove.prevent.stop>
       <div class="popupContent" @touchmove.prevent.stop>
         <div class="paymentWay flex align-center justify-center">
-          <div class="wxPayWay flex align-center justify-center line-height-100" :class="{currentPayment:checkedPayment==='wx'}" @click="checkedPayment='wx'"><img :src="IconPath('wechatpay_01.png')" />微信支付</div>
-          <div class="aliPayWay flex align-center justify-center line-height-100" :class="{currentPayment:checkedPayment==='alipay'}" @click="checkedPayment='alipay'"><img :src="IconPath('alipay_01.png')" />支付宝支付</div>
+          <div class="wxPayWay flex align-center justify-center line-height-100" :class="{currentPayment:checkedPayment==='wx'}" @click="checkedPayment='wx'"><img :src="IconPath('wechatpay_01.png')" alt="" />微信支付</div>
+          <div class="aliPayWay flex align-center justify-center line-height-100" :class="{currentPayment:checkedPayment==='alipay'}" @click="checkedPayment='alipay'"><img :src="IconPath('alipay_01.png')" alt="" />支付宝支付</div>
         </div>
-        <div class="confirmPaymentButton flex align-center justify-center line-height-100" @click="confirmPay">确认支付 ￥{{config.goods_info.price}}</div>
+        <div class="confirmPaymentButton flex align-center justify-center line-height-100" @click="confirmPay">确认支付 ￥{{config.price}}</div>
         <div class="rechargeAgreement">
           <p class="flex align-center justify-center line-height-100">
-            <img :src="IconPath(isAgreement?'select_01.png':'unselected__01.png')" @click="isAgreement=!isAgreement" />同意&nbsp;<span>充值服务协议</span>
+            <img :src="IconPath(isAgreement?'select_01.png':'unselected__01.png')" alt="" @click="isAgreement=!isAgreement" />同意&nbsp;<span>充值服务协议</span>
           </p>
           <p class="flex align-center justify-center line-height-100">温馨提示：未成年人请在监护人的陪同或许可</p>
         </div>
@@ -69,7 +69,7 @@ export default {
      * 阻止滚动条滚动
      */
     stopScroll() {
-      let scrollTop = window.scrollY
+      const scrollTop = window.scrollY
       this.pageScroll = scrollTop
       document.body.style.width = '100%'
       document.body.style.position = 'fixed'
@@ -89,9 +89,9 @@ export default {
 <style scoped lang="scss">
 .moveTopFade-enter-active,
 .moveTopFade-leave-active {
-  transition: all 0.3s;
+  transition: opacity 0.3s ease-in-out;
   .popupContent {
-    transition: all 0.3s;
+    transition: transform 0.3s ease-in-out;
   }
 }
 .moveTopFade-enter,
@@ -102,7 +102,7 @@ export default {
   }
 }
 .popupOverly {
-  z-index: 1999;
+  z-index: 9999;
   width: 100%;
   height: 100%;
   top: 0;
