@@ -16,7 +16,7 @@
         </ul>
       </div>
     </OutBox>
-    <OutBox class="skillGiftBox" title="技能礼包">
+    <OutBox class="skillGiftBox" title="技能礼包" left right>
       <div class="skillPointNum">我的积分：{{ skill_gifts }}</div>
       <div class="giftList">
         <div v-for="(gift, key) in hot_gift" :key="key" class="giftItem">
