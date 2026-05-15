@@ -32,7 +32,7 @@ export default {
       task_list: {
         login: { award_nums: 5, finish_times: 0, has_right: '0', is_recharge: false, max_times: 1, need_rev: 1, show_text: '5', task_name: '每日登录', piece: 2 },
         // keju: { award_nums: 5, finish_times: 0, has_right: 0, is_recharge: false, max_times: 5000, need_rev: 1, show_text: '5', task_name: '在科举游戏中至少获得5000元宝奖励', piece: 2 },
-        keju: { task_name: '每日在家族秘境挑战中累计伤害达到10000或挑战2次', award_nums: 5, show_text: '5', finish_times: 0, max_times: 10000, need_rev: true, has_right: 0, is_recharge: false, attend_times: 0, attend_max: 2 },
+        keju: { task_name: '家族秘境', award_nums: 5, show_text: '5', finish_times: 0, max_times: 10000, need_rev: true, has_right: 0, is_recharge: false, attend_times: 0, attend_max: 2 },
         recharge_once: { award_nums: 5, finish_times: 0, has_right: 0, is_recharge: true, max_times: 1, need_rev: 1, show_text: '5', task_name: '完成一笔充值', piece: 2 },
         masonry_consume: { award_nums: 10, finish_times: 0, has_right: 0, is_recharge: false, max_times: 1000, need_rev: 1, piece: 4, show_text: '10', task_name: '消费1000钻' },
         recharge: { award_nums: 6, finish_times: 0, has_right: 0, is_recharge: false, max_times: 10, need_rev: 0, show_text: '6', task_name: '每充值10元' }
