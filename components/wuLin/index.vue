@@ -61,12 +61,20 @@ export default {
     this.getHomePage()
   },
   methods: {
+    /**
+     * 兑换技能礼包
+     * @param {Object} gift 礼包数据
+     * @param {Number} mark 礼包标识
+     */
     exchange: _throttle(async function (gift, mark) {
-      if (gift.spend > Number(this.skill_gifts)) return this.$toast('技能积分不足')
+      if (Number(gift.spend) > Number(this.skill_gifts)) return this.$toast('技能积分不足')
       const res = await getPageData({ mark, type: 'skill_gift' })
       this.$toast(res.errmsg)
       if (!res.errno) this.skill_gifts = res.hots
     }),
+    /**
+     * 获取首页数据
+     */
     async getHomePage() {
       const res = await getPageData('m5')
       if (res.errno) return this.$toast(res.errmsg)
