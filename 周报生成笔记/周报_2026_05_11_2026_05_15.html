@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>周报（2026-05-11 ~ 2026-05-15）</title>
+  </head>
+  <body>
+    <p>使用方式：点击“复制（不带字体）”后，直接到钉钉日志里粘贴。</p>
+    <p><button id="copy">复制（不带字体）</button></p>
+
+    <div id="copy-source">
+      <ol id="weekly">
+        <li>
+          520活动
+          <ol>
+            <li>
+              首页
+              <ol>
+                <li>更新奖励橱窗</li>
+                <li>修复玩法概览样式</li>
+              </ol>
+            </li>
+            <li>
+              心动际遇
+              <ol>
+                <li>更新尺寸</li>
+                <li>去除文本</li>
+                <li>调整轮播宽度</li>
+                <li>处理描边兼容</li>
+                <li>修复符石概率弹框换行</li>
+                <li>新增轮播默认头像</li>
+                <li>去除轮播用户名省略并修复滚动逻辑</li>
+              </ol>
+            </li>
+            <li>
+              真爱榜单
+              <ol>
+                <li>更新奖励并修复奖励列表渲染</li>
+                <li>优化样式</li>
+              </ol>
+            </li>
+            <li>
+              消费有礼
+              <ol>
+                <li>更新新婚贺礼默认数据和奖励文本展示逻辑</li>
+                <li>更新新婚贺礼目录</li>
+                <li>修复恭喜获得弹框文本</li>
+              </ol>
+            </li>
+            <li>
+              充值有礼
+              <ol>
+                <li>修复弹框挂载元素和角标逻辑</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          六一活动
+          <ol>
+            <li>
+              基础建设
+              <ol>
+                <li>搭建活动框架（3次提交）</li>
+                <li>新增技能狂欢和荣誉社员页面</li>
+                <li>更新m1路由</li>
+                <li>更新基础组件样式</li>
+                <li>新增popupBox尺寸</li>
+                <li>调整popupBox最小大小</li>
+              </ol>
+            </li>
+            <li>
+              资源更新
+              <ol>
+                <li>补充图片</li>
+                <li>去除多余图片</li>
+              </ol>
+            </li>
+            <li>
+              首页
+              <ol>
+                <li>更新首页样式（2次提交）</li>
+                <li>去除红点获取</li>
+                <li>新增倒计时图标</li>
+                <li>更新背景色</li>
+              </ol>
+            </li>
+            <li>
+              样式/交互优化
+              <ol>
+                <li>更新m1样式</li>
+                <li>更新popupBox样式（2次提交）</li>
+                <li>更新outBox样式</li>
+                <li>更新弹框文本样式</li>
+              </ol>
+            </li>
+            <li>
+              充值有礼
+              <ol>
+                <li>更新样式</li>
+                <li>更新恭喜获得弹框样式、角标逻辑和挂载元素</li>
+              </ol>
+            </li>
+            <li>
+              消费有礼
+              <ol>
+                <li>更新样式</li>
+                <li>去除榜单</li>
+              </ol>
+            </li>
+            <li>
+              积分兑奖
+              <ol>
+                <li>更新样式</li>
+                <li>新增任务字段</li>
+                <li>新增秘境任务样式</li>
+              </ol>
+            </li>
+            <li>
+              技能狂欢
+              <ol>
+                <li>搭建框架</li>
+                <li>补充样式</li>
+              </ol>
+            </li>
+            <li>
+              荣誉社员
+              <ol>
+                <li>搭建框架</li>
+                <li>更新奖励（3次提交）</li>
+                <li>新增选中图片</li>
+                <li>优化奖励详情样式</li>
+                <li>更新预览弹框和奖励弹框样式</li>
+                <li>更新规则按钮样式</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          会员日
+          <ol>
+            <li>
+              奖励配置
+              <ol>
+                <li>更新5月奖励</li>
+                <li>更新头饰默认数据</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </div>
+
+    <script>
+      const copySource = document.getElementById("copy-source");
+      const weeklyList = document.getElementById("weekly");
+      const copyButton = document.getElementById("copy");
+
+      function toPlainText(element) {
+        const lines = [];
+        const walk = (node, level) => {
+          if (node.nodeName === "LI") {
+            const textNodes = [];
+            for (const child of node.childNodes) {
+              if (child.nodeType === Node.TEXT_NODE) {
+                const t = child.nodeValue.replace(/\s+/g, " ").trim();
+                if (t) textNodes.push(t);
+              } else if (
+                child.nodeType === Node.ELEMENT_NODE &&
+                child.nodeName !== "OL"
+              ) {
+                const t = child.textContent.replace(/\s+/g, " ").trim();
+                if (t) textNodes.push(t);
+              }
+            }
+            const text = textNodes.join(" ").trim();
+            if (text) {
+              lines.push("  ".repeat(level) + text);
+            }
+            const childOl = node.querySelector(":scope > ol");
+            if (childOl) {
+              for (const childLi of childOl.children) {
+                if (childLi.nodeName === "LI") walk(childLi, level + 1);
+              }
+            }
+            return;
+          }
+
+          if (node.nodeName === "OL") {
+            for (const child of node.children) {
+              if (child.nodeName === "LI") walk(child, level);
+            }
+          }
+        };
+        walk(element, 0);
+        return lines.join("\n");
+      }
+
+      function setClipboard(event) {
+        // 复制时生成“紧凑HTML”：避免缩进/换行产生的空白文本节点被部分编辑器当作空行处理
+        const buildCompactHtml = () => {
+          const esc = (s) =>
+            String(s)
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;");
+
+          const olType = (depth) => {
+            const mod = (depth - 1) % 3;
+            if (mod === 0) return "1";
+            if (mod === 1) return "a";
+            return "i";
+          };
+
+          const liText = (li) => {
+            const parts = [];
+            for (const child of li.childNodes) {
+              if (child.nodeType === Node.TEXT_NODE) {
+                const t = child.nodeValue.replace(/\s+/g, " ").trim();
+                if (t) parts.push(t);
+              } else if (
+                child.nodeType === Node.ELEMENT_NODE &&
+                child.nodeName !== "OL"
+              ) {
+                const t = child.textContent.replace(/\s+/g, " ").trim();
+                if (t) parts.push(t);
+              }
+            }
+            return parts.join(" ").trim();
+          };
+
+          const renderOl = (ol, depth) => {
+            const type = olType(depth);
+            let html = `<ol type="${type}" style="margin:0;padding-left:1.6em;">`;
+            for (const li of ol.children) {
+              if (li.nodeName !== "LI") continue;
+              const text = liText(li);
+              html += "<li>" + esc(text);
+              const childOl = li.querySelector(":scope > ol");
+              if (childOl) html += renderOl(childOl, depth + 1);
+              html += "</li>";
+            }
+            html += "</ol>";
+            return html;
+          };
+
+          return renderOl(weeklyList, 1);
+        };
+
+        const html = buildCompactHtml();
+        const text = toPlainText(weeklyList);
+
+        window.__lastCopiedHtml = html;
+        window.__lastCopiedText = text;
+
+        event.clipboardData.setData("text/html", html);
+        event.clipboardData.setData("text/plain", text);
+        event.preventDefault();
+      }
+
+      function selectionInside(node) {
+        const sel = document.getSelection();
+        if (!sel || sel.rangeCount === 0) return false;
+        const range = sel.getRangeAt(0);
+        let common = range.commonAncestorContainer;
+        if (common.nodeType === Node.TEXT_NODE) common = common.parentNode;
+        return node.contains(common);
+      }
+
+      let forceCopy = false;
+      document.addEventListener("copy", (event) => {
+        if (!event.clipboardData) return;
+        if (forceCopy || selectionInside(copySource)) setClipboard(event);
+      });
+
+      copyButton.addEventListener("click", () => {
+        forceCopy = true;
+        const range = document.createRange();
+        range.selectNodeContents(copySource);
+        const sel = document.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand("copy");
+        sel.removeAllRanges();
+        forceCopy = false;
+      });
+    </script>
+  </body>
+</html>
