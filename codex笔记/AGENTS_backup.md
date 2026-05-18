@@ -1,21 +1,56 @@
-# 代理指令
+# Global Agent Rules
 
-- 默认使用简体中文；仅在用户明确要求或内容必须时使用英文；代码标识符、命令、日志与报错信息保持原语言不翻译。
-- 你输出的是最终用户看到的界面文字，不是设计文档或 UX 说明，保持简单、易懂、直接。
+## Language
 
-## 工作流
-- 在修改任何代码/文件（包括新增、删除、重命名或批量重构）之前，先给出计划并等待用户确认。
-- 如存在明显阻塞因素或缺少关键信息，先向用户提问澄清再继续，如果用户思路或方向明显不对，直接指出。
-- 先自行核实信息来源；不要把猜测当事实。不确定的信息先查证，以仓库文件与命令输出为准。
-- 遇到问题，必须先定位根因再修复；禁止用降级、跳过、吞错、假成功来掩盖问题，临时绕过只能用于排查，不能作为最终方案。
-- 完成任务后做自检；如涉及变更，检查影响范围、用户可见结果与相关文件是否符合预期。
+Default to Chinese in user-facing replies unless the user explicitly requests another language.
 
-## 代码风格
-- 代码风格遵循简单、易懂的实现方式。
-- 避免过度兜底、过度拆分、过度兼容设计；不要想着既要又要、新的老的全部通吃。
-- 及时移除过期内容与冗余实现，避免死代码、无用抽象与“预埋式”脚手架。
-- 优先采用当前项目已有的写法/语言/工具/框架进行开发。
+## Response Style
 
-## PowerShell
-- 执行 PowerShell 命令前，先将当前会话的 `$OutputEncoding`、`[Console]::InputEncoding`、`[Console]::OutputEncoding`、`$PSNativeCommandEncoding` 统一设置为 UTF-8。
-- 在 `bash`/`wsl` 中调用 PowerShell 的 `-Command` 时，优先使用单引号包裹脚本内容，避免 `$` 被提前展开。
+Do not propose follow-up tasks or enhancement at the end of your final answer.
+
+## Debug-First Policy (No Silent Fallbacks)
+
+- Do **not** introduce new boundary rules / guardrails / blockers / caps (e.g. max-turns), fallback behaviors, or silent degradation **just to make it run**.
+- Do **not** add mock/simulation fake success paths (e.g. returning `(mock) ok`, templated outputs that bypass real execution, or swallowing errors).
+- Do **not** write defensive or fallback code; it does not solve the root problem and only increases debugging cost.
+- Prefer **full exposure**: let failures surface clearly (explicit errors, exceptions, logs, failing tests) so bugs are visible and can be fixed at the root cause.
+- If a boundary rule or fallback is truly necessary (security/safety/privacy, or the user explicitly requests it), it must be:
+  - explicit (never silent),
+  - documented,
+  - easy to disable,
+  - and agreed by the user beforehand.
+
+## Engineering Quality Baseline
+
+- Follow SOLID, DRY, separation of concerns, and YAGNI.
+- Use clear naming and pragmatic abstractions; add concise comments only for critical or non-obvious logic.
+- Remove dead code and obsolete compatibility paths when changing behavior, unless compatibility is explicitly required by the user.
+- Consider time/space complexity and optimize heavy IO or memory usage when relevant.
+- Handle edge cases explicitly; do not hide failures.
+
+## Code Metrics (Hard Limits)
+
+- **Function length**: 50 lines (excluding blanks). Exceeded  extract helper immediately.
+- **File size**: 300 lines. Exceeded  split by responsibility.
+- **Nesting depth**: 3 levels. Use early returns / guard clauses to flatten.
+- **Parameters**: 3 positional. More  use a config/options object.
+- **Cyclomatic complexity**: 10 per function. More  decompose branching logic.
+- **No magic numbers**: extract to named constants (`MAX_RETRIES = 3`, not bare `3`).
+
+## Decoupling & Immutability
+
+- **Dependency injection**: business logic never `new`s or hard-imports concrete implementations; inject via parameters or interfaces.
+- **Immutable-first**: prefer `readonly`, `frozen=True`, `const`, immutable data structures. Never mutate function parameters or global state; return new values.
+
+## Security Baseline
+
+- Never hardcode secrets, API keys, or credentials in source code; use environment variables or secret managers.
+- Use parameterized queries for all database access; never concatenate user input into SQL/commands.
+- Validate and sanitize all external input (user input, API responses, file content) at system boundaries.
+- **Conversation keys  code leaks**: When the user shares an API key in conversation (e.g. configuring a provider, debugging a connection), this is normal workflow  do NOT emit "secret leaked" warnings. Only alert when a key is written into a source code file. Frontend display is already masked; no need to remind repeatedly.
+
+## Testing and Validation
+
+- Keep code testable and verify with automated checks whenever feasible.
+- When running backend unit tests, enforce a hard timeout of 60 seconds to avoid stuck tasks.
+- Prefer static checks, formatting, and reproducible verification over ad-hoc manual confidence.
