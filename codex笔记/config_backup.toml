@@ -1,14 +1,24 @@
-suppress_unstable_features_warning = true
+model_provider = "openai_http"
 model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
+suppress_unstable_features_warning = true
 personality = "pragmatic"
 web_search = "live"
 sandbox_mode = "danger-full-access"
 
+[model_providers.openai_http]
+name = "OpenAI HTTP only"
+wire_api = "responses"
+requires_openai_auth = true
+supports_websockets = false
+
+[skills]
+
 [features]
-fast_mode = false
 terminal_resize_reflow = true
 
 [tui]
-status_line = ["model-with-reasoning", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size",
-"context-remaining"]
+status_line = ["model-with-reasoning", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "context-remaining", "fast-mode"]
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
