@@ -52,23 +52,6 @@
       "svnTargetRootRel": "normal"
     },
     {
-      "name": "2025ServerOpening",
-      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2025ServerOpening",
-      "officialDistRoot": "D:\\officialDist\\normal",
-      "officialProjectRel": "2025ServerOpening",
-      "svnRoots": {
-        "dev": "D:\\Project\\开发分支\\web\\vue",
-        "test": "D:\\Project\\测试分支\\web\\vue"
-      },
-      "defaultBuildScripts": {
-        "dev": "npm run build:test",
-        "test": "npm run build:test",
-        "official": "npm run build:officialPro"
-      },
-      "svnDefaultTargetRel": "2025ServerOpening",
-      "svnTargetRootRel": "normal"
-    },
-    {
       "name": "newerBox",
       "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\2025InviteFriend",
       "officialDistRoot": "D:\\officialDist\\normal",
@@ -84,35 +67,6 @@
       },
       "svnDefaultTargetRel": "newerBox",
       "svnTargetRootRel": "normal"
-    },
-    {
-      "name": "repeat",
-      "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\repeat",
-      "officialDistRoot": "D:\\officialDist\\weekly",
-      "officialProjectRelFromEnv": "VUE_APP_ICON_PATH",
-      "officialProjectRelMap": {
-        "crazyEgg": "crazyEgg",
-        "skillGift": "skillGift",
-        "sparParty": "sparParty",
-        "luckyFlop": "luckyFlop"
-      },
-      "svnRoots": {
-        "dev": "D:\\Project\\开发分支\\web\\vue",
-        "test": "D:\\Project\\测试分支\\web\\vue"
-      },
-      "defaultBuildScripts": {
-        "dev": "npm run build:test",
-        "test": "npm run build:test",
-        "official": "npm run build:officialPro"
-      },
-      "svnDefaultTargetRelFromEnv": "VUE_APP_ICON_PATH",
-      "svnDefaultTargetRelMap": {
-        "crazyEgg": "crazyEgg",
-        "skillGift": "skillGift",
-        "sparParty": "sparParty",
-        "luckyFlop": "luckyFlop"
-      },
-      "svnTargetRootRel": "weekly"
     },
     {
       "name": "treasure",
@@ -147,6 +101,35 @@
       },
       "svnDefaultTargetRel": "newerBenefit",
       "svnTargetRootRel": "normal"
+    },
+    {
+      "name": "repeat",
+      "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\repeat",
+      "officialDistRoot": "D:\\officialDist\\weekly",
+      "officialProjectRelFromEnv": "VUE_APP_ICON_PATH",
+      "officialProjectRelMap": {
+        "crazyEgg": "crazyEgg",
+        "skillGift": "skillGift",
+        "sparParty": "sparParty",
+        "luckyFlop": "luckyFlop"
+      },
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue",
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      },
+      "defaultBuildScripts": {
+        "dev": "npm run build:test",
+        "test": "npm run build:test",
+        "official": "npm run build:officialPro"
+      },
+      "svnDefaultTargetRelFromEnv": "VUE_APP_ICON_PATH",
+      "svnDefaultTargetRelMap": {
+        "crazyEgg": "crazyEgg",
+        "skillGift": "skillGift",
+        "sparParty": "sparParty",
+        "luckyFlop": "luckyFlop"
+      },
+      "svnTargetRootRel": "weekly"
     }
   ]
 }
