@@ -115,6 +115,23 @@
       "svnTargetRootRel": "weekly"
     },
     {
+      "name": "treasure",
+      "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\treasure",
+      "officialDistRoot": "D:\\officialDist\\normal",
+      "officialProjectRel": "treasure",
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue",
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      },
+      "defaultBuildScripts": {
+        "dev": "npm run build:test",
+        "test": "npm run build:test",
+        "official": "npm run build:officialPro"
+      },
+      "svnDefaultTargetRel": "treasure",
+      "svnTargetRootRel": "normal"
+    },
+    {
       "name": "newerBenefit",
       "projectRoot": "D:\\Project\\dandan-activity-web\\normal\\newerBenefit",
       "officialDistRoot": "D:\\officialDist\\normal",
