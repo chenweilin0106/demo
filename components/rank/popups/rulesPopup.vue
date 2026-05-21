@@ -155,37 +155,6 @@
         </ul>
       </div> -->
     </template>
-    <div class="img5"></div>
-    <!-- <table class="publicTable" style="width: 70%;"> -->
-    <!--   <thead class="tableHead"> -->
-    <!--     <tr class="tableTr"> -->
-    <!--       <th class="tableCell tableTh" style="width: 60%">奖励</th> -->
-    <!--       <th class="tableCell tableTh" style="width: 40%">概率</th> -->
-    <!--     </tr> -->
-    <!--   </thead> -->
-    <!--   <tbody class="tableBody"> -->
-    <!--     <tr class="tableTr"> -->
-    <!--       <td class="tableCell tableTd">元宝+188</td> -->
-    <!--       <td class="tableCell tableTd deep">50%</td> -->
-    <!--     </tr> -->
-    <!--     <tr class="tableTr stripe"> -->
-    <!--       <td class="tableCell tableTd">元宝+588</td> -->
-    <!--       <td class="tableCell tableTd deep">30%</td> -->
-    <!--     </tr> -->
-    <!--     <tr class="tableTr"> -->
-    <!--       <td class="tableCell tableTd">元宝+1888</td> -->
-    <!--       <td class="tableCell tableTd deep">12%</td> -->
-    <!--     </tr> -->
-    <!--     <tr class="tableTr stripe"> -->
-    <!--       <td class="tableCell tableTd">元宝+2888</td> -->
-    <!--       <td class="tableCell tableTd deep">5%</td> -->
-    <!--     </tr> -->
-    <!--     <tr class="tableTr"> -->
-    <!--       <td class="tableCell tableTd">元宝+5888</td> -->
-    <!--       <td class="tableCell tableTd deep">3%</td> -->
-    <!--     </tr> -->
-    <!--   </tbody> -->
-    <!-- </table> -->
   </PopupBox>
 </template>
 
@@ -378,12 +347,6 @@ export default {
       background: url('@/assets/tk_51.png') no-repeat left top/100% 100%;
       margin: 38px auto 25px;
     }
-    //.img5{
-    //  width: 488px;
-    //  height: 27px;
-    //  background: url('@/assets/tk_46.png') no-repeat left top/100% 100%;
-    //  margin: 20px auto;
-    //}
     .rewardsArea{
       display: flex;
       flex-direction: row;
