@@ -1,0 +1,16 @@
+# 保留目录结构，避免提交开发产物和第三方文件。
+backups/*
+external-mods/*
+package/*
+releases/*
+
+!backups/.gitkeep
+!external-mods/.gitkeep
+!package/.gitkeep
+!releases/.gitkeep
+
+*.bak
+*.log
+*.tmp
+package/*.zip
+releases/*.zip
