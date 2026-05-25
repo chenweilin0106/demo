@@ -12,5 +12,3 @@ releases/*
 *.bak
 *.log
 *.tmp
-package/*.zip
-releases/*.zip
