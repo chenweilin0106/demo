@@ -13,11 +13,12 @@ Before modifying any file:
 
 1. Read `AGENTS.md`.
 2. Read root `manifest.json`.
-3. Read the current version file, such as `docs/v1.md`, if known.
-4. List `docs/rules/`, `knowledge/`, `external-mods/`, `scripts/`, `mod-files/`, and `package/`.
-5. Read only the files relevant to the current task.
+3. List `docs/`, `docs/rules/`, `knowledge/`, `external-mods/`, `scripts/`, `mod-files/`, and `package/`.
+4. Read the current version file, such as `docs/v1.md`, when the version is known or can be inferred.
+5. For rollback, release, or delivery tasks, also list `backups/` and `releases/`.
+6. Read only the files relevant to the current task.
 
-Do not read every file in `docs/` or `knowledge/` by default.
+Do not read every file in `docs/`, `knowledge/`, `backups/`, or `releases/` by default.
 
 ## Single Rule Source
 
@@ -60,6 +61,7 @@ Rules live only in project `docs/rules/`; do not copy rule files from skill reso
 The expected project structure is:
 
 ```text
+.codex/skills/game-mod-dev/SKILL.md
 docs/
 docs/rules/
 knowledge/
