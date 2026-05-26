@@ -14,7 +14,7 @@ Before modifying any file:
 1. Read `AGENTS.md`.
 2. Read root `manifest.json`.
 3. Read `docs/status.md`.
-4. List `docs/`, `docs/rules/`, `knowledge/`, `external-mods/`, `scripts/`, `mod-files/`, and `package/`.
+4. List only the top level of `docs/`, `docs/rules/`, `knowledge/`, `external-mods/`, `scripts/`, `mod-files/`, and `package/`.
 5. Read the current version file, such as `docs/v1.md`, only for version development, history tracing, or when the task explicitly needs version details.
 6. For rollback, release, or delivery tasks, also list `backups/` and `releases/`.
 7. Read only the files relevant to the current task.
