@@ -64,6 +64,7 @@ The expected project structure is:
 
 ```text
 .codex/skills/game-mod-dev/SKILL.md
+.codex/skills/game-mod-dev/assets/templates/
 docs/
 docs/status.md
 docs/v1.md
