@@ -66,6 +66,8 @@ The expected project structure is:
 .codex/skills/game-mod-dev/SKILL.md
 docs/
 docs/status.md
+docs/v1.md
+docs/常规开发流程.md
 docs/rules/
 knowledge/
 external-mods/
