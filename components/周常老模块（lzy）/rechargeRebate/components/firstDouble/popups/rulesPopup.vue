@@ -63,7 +63,9 @@
           <tbody class="tableBody">
           <tr class="tableTr">
             <td class="tableCell tableTd position-relative">
-              【<i>趣玩卡丁车</i>】座驾+1天
+              <!-- 【<i>动感DJ</i>】头饰+1天 -->
+              <!-- 【萌熊出击】声波+3天 -->
+              【趣玩卡丁车】座驾+3天
             </td>
             <td class="tableCell tableTd deep">25%</td>
           </tr>
