@@ -487,7 +487,7 @@ export default {
             left: 174px;
             width: 300px;
             height: 80px;
-            background: rgb(115 36 36 / 0.5);
+            background: rgba(63, 45, 22, 0.5);
             border-radius: 12px;
             .taskItemDetailsGoalP1 {
               position: absolute;
@@ -515,8 +515,9 @@ export default {
           }
           .taskItemDetailsOrDiv {
             position: absolute;
-            top: 78px;
+            top: 50%;
             left: 154px;
+            transform: translateY(-50%);
             width: 52px;
             height: 32px;
             background: #AB3F3D;
