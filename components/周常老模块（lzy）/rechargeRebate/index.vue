@@ -577,7 +577,7 @@ export default {
         align-items: flex-start;
         justify-content: flex-start;
         width: 664px;
-        height: 380px;
+        height: 360px;
         .taskDetail {
           width: 100%;
           color: #fff;
@@ -652,15 +652,15 @@ export default {
           }
         }
         .taskBtn {
-          top: 250px;
-          right: 228px;
+          top: 222px;
+          right: 236px;
           width: 206px;
           height: 66px;
         }
         .prestigeText {
           position: absolute;
-          left: 15px;
-          bottom: -140px;
+          left: 29px;
+          bottom: -110px;
           transform: translateY(100%);
           font-size: 22px;
           color: #FFFAA6;
