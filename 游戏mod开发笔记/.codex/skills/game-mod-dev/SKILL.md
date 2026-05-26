@@ -1,6 +1,6 @@
 ---
 name: game-mod-dev
-description: Use when working in a copied game-mod-dev template or when the user asks to create, initialize, develop, debug, package, install, uninstall, rollback, document, or release a game Mod project.
+description: Use when working in a copied game-mod-dev template or when the user asks to create, initialize, develop, debug, test, verify, package, install, uninstall, rollback, document, or release a game Mod project.
 ---
 
 # Game Mod Dev
