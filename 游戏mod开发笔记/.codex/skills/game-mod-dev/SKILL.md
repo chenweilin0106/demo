@@ -9,7 +9,7 @@ description: Use when working in a copied game-mod-dev template or when the user
 
 Treat the project directory as the source of truth.
 
-Before modifying any file:
+At the start of any project task and before modifying any file:
 
 1. Read `AGENTS.md`.
 2. Read root `manifest.json`.

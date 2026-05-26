@@ -5,7 +5,7 @@
 
 开发目录为当前根目录。
 
-先读取 `docs/status.md` 确认当前状态。
+先按顺序读取：`AGENTS.md`、根目录 `manifest.json`、`docs/status.md`。
 
 目标：
 为《游戏名》开发 xxx Mod。
