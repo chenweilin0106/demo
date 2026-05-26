@@ -430,18 +430,20 @@ export default {
         }
         .taskItemDetails {
           position: absolute;
-          top: 64px;
-          left: 23px;
-          width: 634px;
+          top: 61px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 624px;
           height: 194px;
-          background: rgba(180,144,129,0.5);
+          background: rgba(63, 45, 22, 0.5);
           border-radius: 23px;
-          border: 2px solid rgba(240,214,174,0.52);
+          border: 2px solid rgba(236, 215, 179, 0.52);
           .taskItemDetailsAward {
             position: absolute;
-            top: 31px;
-            left: 14px;
+            top: 50%;
+            left: 9px;
             display: flex;
+            transform: translateY(-50%);
             flex-direction: column;
             align-items: center;
             width: 126px;
@@ -449,28 +451,28 @@ export default {
             //padding: 4px;
             //border-radius: 16px;
             //background-color: #ECD37C;
-            background: url('@/pages/childrenDay/assets/mk1_5.png') no-repeat left top/100% 100%;
+            background: url('@/pages/618/assets/mk1_2.png') no-repeat left top/100% 100%;
             .taskItemDetailsAwardIcon {
-              margin-top: 19px;
+              margin-top: 0;
               width: 100%;
-              height: 60px;
+              height: 102px;
               //border-radius: 12px 12px 0 0;
               //background-color: #FFFFFF;
               display: flex;
               align-items: center;
               justify-content: center;
               > img {
-                width: 58px;
+                width: 78px;
                 height: auto;
               }
             }
             .taskItemDetailsAwardText {
-              margin-top: 3px;
+              margin-top: -20px;
               //border-radius: 0 0 12px 12px;
               border-radius: 16px;
               font-weight: 500;
               font-size: 24px;
-              background: linear-gradient(-90deg, #C14D48, #C14D48);
+              background: linear-gradient(-90deg, #A48353, #A48353);
               color: #fff;
               //width: 100%;
               width: 102px;
@@ -484,7 +486,7 @@ export default {
           }
           .taskItemDetailsGoal {
             position: absolute;
-            left: 174px;
+            left: 169px;
             width: 300px;
             height: 80px;
             background: rgba(63, 45, 22, 0.5);
@@ -500,17 +502,20 @@ export default {
             .taskItemDetailsGoalP2 {
               position: absolute;
               top: 45px;
-              left: 24px;
+              left: 28px;
               font-size: 24px;
               color: #FFEF85;
               line-height: 1;
               margin-left: -0.5em;
             }
+            $gap: 7px;
             &.status1 {
-              top: 9px;
+              top: 50%;
+              transform: translateY(calc(-100% - #{$gap}));
             }
             &.status2 {
-              top: 103px;
+              top: 50%;
+              transform: translateY($gap);
             }
           }
           .taskItemDetailsOrDiv {
@@ -518,13 +523,13 @@ export default {
             top: 50%;
             left: 154px;
             transform: translateY(-50%);
-            width: 52px;
-            height: 32px;
-            background: #AB3F3D;
-            border-radius: 16px;
-            border: 2px solid rgba(238,211,170,0.8);
+            width: 48px;
+            height: 28px;
+            background: #A7702A;
+            border-radius: 14px;
+            border: 2px solid rgba(234,212,175,0.8);
             font-size: 24px;
-            color: #FFE0B3;
+            color: #FAE1B8;
             line-height: 1;
             display: flex;
             align-items: center;
@@ -532,8 +537,9 @@ export default {
           }
           .taskItemDetailsButton {
             position: absolute;
-            right: 14px;
-            top: 62px;
+            right: 9px;
+            top: 50%;
+            transform: translateY(-50%);
             width: 126px;
             height: 66px;
             font-size: 28px;
@@ -548,15 +554,15 @@ export default {
             border-radius: 99999px;
             -webkit-background-clip: padding-box, border-box;
             -webkit-background-orixgin: padding-box, border-box;
-            &.status0{
-              color: #6F2E37;
-              background-image: linear-gradient(0deg, #EDCFB2, #F3C08F), -webkit-linear-gradient(#6F2F37, #6F2F37);
+            &.status0 {
+              color: #4D7DDD;
+              background-image: linear-gradient(0deg, #CAE7FF, #FFFFFF), -webkit-linear-gradient(#fff, #fff);
             }
-            &.status1{
-              color: #784120;
-              background-image: linear-gradient(0deg, #FFE4A6, #FFC267), -webkit-linear-gradient(#FFE2BC, #FFE2BC);
+            &.status1 {
+              color: #714427;
+              background-image: linear-gradient(0deg, #FFF5B0, #FFFFFF), -webkit-linear-gradient(#FFFFFF, #FFFFFF);
             }
-            &.status2{
+            &.status2 {
               color: #fff;
               background-image: linear-gradient(0deg, #9D9D9D, #BFBFBF), -webkit-linear-gradient(#fff, #fff);
             }
