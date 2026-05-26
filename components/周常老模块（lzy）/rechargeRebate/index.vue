@@ -659,7 +659,7 @@ export default {
         }
         .prestigeText {
           position: absolute;
-          left: 29px;
+          left: 8;
           bottom: -110px;
           transform: translateY(100%);
           font-size: 22px;
