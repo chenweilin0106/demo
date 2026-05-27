@@ -31,7 +31,10 @@
       <div :class="['totalRankName ellipsis position-absolute position-column-center']">{{ userRankShow.username }}</div>
       <div class="isShowNameDiv position-absolute flex align-center">
         <span>公开昵称&nbsp;</span>
-        <div :class="['isShowBtn', userRankShow.is_show_name == '1' ? null : 'statusShow']" @click="$emit('isShowBtnCk')"></div>
+        <!-- 新版本 -->
+        <div :class="['isShowBtn', userRankShow.is_show_name == 1 ? null : 'statusShow']" @click="$emit('isShowBtnCk')"></div>
+        <!-- 老版本 -->
+        <!-- <div :class="['isShowBtn', userRankShow.hide_name ? null : 'statusShow']" @click="$emit('isShowBtnCk')"></div> -->
       </div>
       <div :class="['totalRankTime position-absolute line-height-1']">
         {{ userRankShow.score }}<span>{{ valueName }}</span>
