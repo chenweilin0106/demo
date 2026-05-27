@@ -408,16 +408,21 @@ export default {
               text-align: center;
             }
             .rewardMark{
-              z-index: 2;
-              background: linear-gradient(-90deg, #75B9FF, #FF84F8);
-              border-radius: 17px;
-              font-size: 20px;
-              color: #FFFFFF;
-              padding: 4px 5px 4px 10px;
               position: absolute;
-              right: -11px;
+              z-index: 2;
+              right: -13px;
               top: 0;
               transform: translateY(-50%);
+              background: linear-gradient(-90deg, #75B9FF, #FF84F8);
+              border-radius: 999999999px;
+              font-size: 20px;
+              font-weight: 500;
+              color: #FFFFFF;
+              padding: 6px 5px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              line-height: 1;
               img{
                 width: 27px;
                 height: 20px;
@@ -426,15 +431,17 @@ export default {
             }
             .newMark{
               z-index: 2;
-              top: -18px;
+              top: 0;
               left: -13px;
-              font-weight: 500;
-              font-size: 22px;
-              color: #FFFFFF;
+              transform: translateY(-50%);
               width: 40px;
               height: 34px;
               background: linear-gradient(-90deg, #FF7FA6, #FD5AB6);
-              border-radius: 17px 19px 0 17px;
+              border-radius: 19px 19px 0 19px;
+              font-weight: 500;
+              font-size: 22px;
+              color: #FFFFFF;
+              line-height: 1;
             }
             .qualityIcon{
               z-index: 2;
@@ -446,7 +453,7 @@ export default {
             }
           }
           .reward2{
-            margin:  8px;
+            margin: 0 8px;
           }
         }
       }
