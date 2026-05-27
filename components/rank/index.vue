@@ -223,26 +223,26 @@ export default {
     /**
      * 切换榜单 老版本
      */
-    selectChosen(r, t, date, isThinking = false) {
-      this.isShowDateList = false
-      const rankStrategies = {
-        1: () => getPageData({ type: 'white_love_daily_rank', mark: { rank_type: r, date: date || this.todaySelectDate } }), // 日榜 多个榜单需要mark字段
-        2: () => getPageData({ type: 'white_love_tot_rank', mark: r }) // 总榜 多个榜单需要mark字段
-      }
-      if (!rankStrategies[t]) return console.log('切换榜单数据错误')
-      if (isThinking) this.$thinking.track('WebClick', { module: '问鼎江山', element: this.tabsArray[r - 1].tabName })
-      rankStrategies[t]().then((res) => {
-        if (res.errno) return this.$toast(res.errmsg)
-        this.rankChosen = r
-        this.tagChosen = t
-        if (this.tagChosen == 1) this.selectDate[this.rankChosen] = date || res.data.select_date // 日榜 存储日期数据
-        this.rankListShow = res.data.rank_list
-        this.userRankShow = res.data.my_rank ? res.data.my_rank : { ...res.data.user_info, time: res.data.my_score }
-        if (res.data.hide_name) this.userRankShow.hide_name = res.data.hide_name
-        this.findUserRankInList() // 查找用户在榜单中的排名
-        this.$nextTick(() => this.$refs[`rankCom${this.rankChosen}Ref`].scrollRank()) // 还原榜单滚动
-      })
-    },
+    // selectChosen(r, t, date, isThinking = false) {
+    //   this.isShowDateList = false
+    //   const rankStrategies = {
+    //     1: () => getPageData({ type: 'white_love_daily_rank', mark: { rank_type: r, date: date || this.todaySelectDate } }), // 日榜 多个榜单需要mark字段
+    //     2: () => getPageData({ type: 'white_love_tot_rank', mark: r }) // 总榜 多个榜单需要mark字段
+    //   }
+    //   if (!rankStrategies[t]) return console.log('切换榜单数据错误')
+    //   if (isThinking) this.$thinking.track('WebClick', { module: '问鼎江山', element: this.tabsArray[r - 1].tabName })
+    //   rankStrategies[t]().then((res) => {
+    //     if (res.errno) return this.$toast(res.errmsg)
+    //     this.rankChosen = r
+    //     this.tagChosen = t
+    //     if (this.tagChosen == 1) this.selectDate[this.rankChosen] = date || res.data.select_date // 日榜 存储日期数据
+    //     this.rankListShow = res.data.rank_list
+    //     this.userRankShow = res.data.my_rank ? res.data.my_rank : { ...res.data.user_info, time: res.data.my_score }
+    //     if (res.data.hide_name) this.userRankShow.hide_name = res.data.hide_name
+    //     this.findUserRankInList() // 查找用户在榜单中的排名
+    //     this.$nextTick(() => this.$refs[`rankCom${this.rankChosen}Ref`].scrollRank()) // 还原榜单滚动
+    //   })
+    // },
     /**
      * 在榜单中查找用户排名
      */
@@ -295,15 +295,15 @@ export default {
     /**
      * 切换是否公开昵称 老版本
      */
-    isShowBtnCk: _throttle(function() {
-      getPageData({ type: 'white_love_top_name_set', mark: this.userRankShow.hide_name ? '2' : '1' }).then((res) => {
-        if (res.errno == 0) {
-          this.selectChosen(this.rankChosen, this.tagChosen, this.selectDate[this.rankChosen])
-        } else {
-          this.$toast(res.errmsg)
-        }
-      })
-    })
+    // isShowBtnCk: _throttle(function() {
+    //   getPageData({ type: 'white_love_top_name_set', mark: this.userRankShow.hide_name ? '2' : '1' }).then((res) => {
+    //     if (res.errno == 0) {
+    //       this.selectChosen(this.rankChosen, this.tagChosen, this.selectDate[this.rankChosen])
+    //     } else {
+    //       this.$toast(res.errmsg)
+    //     }
+    //   })
+    // })
   }
 }
 </script>
