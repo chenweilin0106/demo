@@ -58,7 +58,7 @@
           <li><span></span>购买礼包、会员（含超值兑换中兑换会员）、活力</li>
           <li>卡不计算在内</li>
           <li><span></span>消耗<img :src="IconPath('cbt_43_35.png')" alt="" />及<img :src="IconPath('hjcbt_45_37.png')" alt="" />分别可进行1/30次符石寻宝</li>
-          <li><span></span>消耗<img class="pydIcon" :src="IconPath('pyd_43_44.png')" alt="" />可抵用一次天赋修炼</li>
+          <!-- <li><span></span>消耗<img class="pydIcon" :src="IconPath('pyd_43_44.png')" alt="" />可抵用一次天赋修炼</li> -->
         </ul>
       </div>
     </OutBox>
@@ -592,8 +592,9 @@ export default {
           .bigAwards {
             margin-top: 15px;
             display: flex;
-            position: relative;
             justify-content: center;
+            width: 664px;
+            height: 352px;
             .bigAwardItemDiv {
               position: relative;
               width: 128px;
@@ -634,7 +635,6 @@ export default {
                 font-weight: 500;
                 font-size: 22px;
                 color: #FFEA8A;
-
                 > img {
                   width: 33px;
                   height: 40px;
@@ -649,6 +649,14 @@ export default {
                 }
               }
             }
+            .prestigeText {
+              position: absolute;
+              left: 8px;
+              bottom: 16px;
+              font-size: 22px;
+              color: #FFFAA6;
+              line-height: 1;
+            }
           }
         }
         .taskBtn {
@@ -656,14 +664,6 @@ export default {
           right: 236px;
           width: 206px;
           height: 66px;
-        }
-        .prestigeText {
-          position: absolute;
-          left: 8;
-          bottom: -110px;
-          transform: translateY(100%);
-          font-size: 22px;
-          color: #FFFAA6;
         }
       }
     }
