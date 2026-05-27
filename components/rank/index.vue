@@ -55,22 +55,25 @@
           <li><span></span>同服绑定的用户进入本服榜单，跨服绑定的用户进</li>
           <li>入跨服榜单</li>
 
-          <!-- <li><span></span>荣誉社员榜为<i>活动期间赠送钻石礼物总价值排行榜</i>，</li> -->
-          <!-- <li>1钻石=10荣誉值，榜单分服统计</li> -->
+          <!-- <li v-show="rankChosen==1"><span></span>荣誉社员榜为<i>活动期间赠送钻石礼物总价值排行榜</i>，</li> -->
+          <!-- <li v-show="rankChosen==1">1钻石=10荣誉值，榜单分服统计</li> -->
 
-          <!-- <li v-show="rankChosen==1&&tagChosen==1"><span></span>人气榜日榜为用户获赠钻石礼物总价值排行榜，榜</li> -->
-          <!-- <li v-show="rankChosen==1&&tagChosen==1">单分服统计，自己赠送自己计算在内</li> -->
+          <!-- <li v-show="rankChosen==1"><span></span>人气榜日榜为用户获赠钻石礼物总价值排行榜，榜</li> -->
+          <!-- <li v-show="rankChosen==1">单分服统计，自己赠送自己计算在内</li> -->
 
-          <!-- <li v-show="rankChosen==1&&tagChosen==1"><span></span>魔力榜日榜为每日用户单人/组队新增魔力值排行</li> -->
-          <!-- <li v-show="rankChosen==1&&tagChosen==1">榜，榜单分服统计</li> -->
+          <!-- <li v-show="rankChosen==1"><span></span>魔力榜日榜为每日用户单人/组队新增魔力值排行</li> -->
+          <!-- <li v-show="rankChosen==1">榜，榜单分服统计</li> -->
 
           <!-- <li v-show="rankChosen==2"><span></span>风云榜为活动期间<i>本服用户赠送钻石礼物</i>排行榜，</li> -->
           <!-- <li v-show="rankChosen==2">榜单分服统计，自己赠送自己计算在内</li> -->
 
+          <!-- <li v-show="rankChosen==2"><span></span>最强神豪榜为活动期间<i>本服用户累计充值</i>排行榜，</li> -->
+          <!-- <li v-show="rankChosen==2">榜单分服统计</li> -->
+
           <!-- <li><span></span><i>详细榜单规则和奖励可查看页面【奖励详情】</i></li> -->
 
-          <!-- <li><span></span>活动期间收到钻石礼物，可获得双倍经验值和双倍</li> -->
-          <!-- <li>基础魅力值，魅力值上限提高50%</li> -->
+          <!-- <li v-show="rankChosen==1"><span></span>活动期间收到钻石礼物，可获得双倍经验值和双倍</li> -->
+          <!-- <li v-show="rankChosen==1">基础魅力值，魅力值上限提高50%</li> -->
 
           <!-- <li v-show="rankChosen==2"><span></span>购买礼包、会员（含超值兑换中兑换会员）、活力</li> -->
           <!-- <li v-show="rankChosen==2">卡不计算在内</li> -->
