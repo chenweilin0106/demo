@@ -52,7 +52,7 @@
             <lazy-component class="reward" v-for="(it,i) in item.rewards" :key="i">
               <PublicImg :imgName="it.icon" :imgType="it.type"></PublicImg>
               <div class="rewardText" v-html="it.text"></div>
-              <div class="rewardMark" v-if="it.mark">{{ it.mark }}<img :src="IconPath('zs_27_20.png')" /></div>
+              <div class="rewardMark" v-if="it.mark">{{ it.mark }}<img :src="IconPath('zs_42_32.png')" alt="" /></div>
               <div v-if="it.isNew" class="newMark flex align-center justify-center position-absolute pointer-none">新</div>
               <img v-if="it.quality" :src="IconPath(it.quality)" class="qualityIcon" alt="" />
             </lazy-component>
@@ -106,7 +106,7 @@
             <lazy-component class="reward" v-for="(it,i) in item.rewards" :key="i">
               <PublicImg :imgName="it.icon" :imgType="it.type"></PublicImg>
               <div class="rewardText" v-html="it.text"></div>
-              <div class="rewardMark" v-if="it.mark">{{ it.mark }}<img :src="IconPath('zs_27_20.png')" /></div>
+              <div class="rewardMark" v-if="it.mark">{{ it.mark }}<img :src="IconPath('zs_42_32.png')" alt="" /></div>
               <div v-if="it.isNew" class="newMark flex align-center justify-center position-absolute pointer-none">新</div>
               <img v-if="it.quality" :src="IconPath(it.quality)" class="qualityIcon" alt="" />
             </lazy-component>

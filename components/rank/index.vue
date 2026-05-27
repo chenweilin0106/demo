@@ -20,7 +20,7 @@
           </div>
           <div class="rewardText radius-999 position-absolute position-row-center w-100 text-center line-height-1 flex align-center justify-center">{{item.text}}<img v-if="item.quality" :src="IconPath(item.quality)" class="qualityIcon" alt="" /></div>
           <div class="rewardPreview position-row-center position-absolute" v-if="item.previewImg"></div>
-          <div class="rewardMark position-absolute radius-999" v-if="item.mark">{{item.mark}}<img :src="IconPath('zs_27_20.png')" /></div>
+          <div class="rewardMark position-absolute radius-999" v-if="item.mark">{{item.mark}}<img :src="IconPath('zs_42_32.png')" alt="" /></div>
           <div v-if="item.mark1" class="doublePersonMark position-absolute"></div>
           <div v-if="item.isNew" class="newMark flex align-center justify-center position-absolute pointer-none">新</div>
         </div>
@@ -369,15 +369,20 @@ export default {
           margin-right: 5px;
         }
         .rewardIcon{
+          top: 0;
+          z-index: 1;
           width: 120px;
           height: 120px;
-          top: 0;
           &.micSp{
             width: 97px;
             height: 97px;
           }
+          .imgCompo {
+            z-index: -1;
+          }
         }
         .rewardText{
+          z-index: 2;
           height: 34px;
           background: #D2635E;
           padding: 0 10px;
@@ -391,27 +396,36 @@ export default {
           }
         }
         .rewardPreview{
+          z-index: 2;
           width: 140px;
           height: 26px;
           background: url('@/pages/520/assets/mk7_49.png') no-repeat left top/100% 100%;
           top: 74px;
         }
         .rewardMark {
-          background: linear-gradient(-90deg, #75b9ff, #ff84f8);
+          position: absolute;
+          z-index: 2;
+          right: -13px;
+          top: 0;
+          transform: translateY(-50%);
+          background: linear-gradient(-90deg, #75B9FF, #FF84F8);
+          border-radius: 999999999px;
           font-size: 20px;
-          color: #ffffff;
-          padding: 4px 5px 4px 10px;
-          right: -11px;
-          top: -13px;
-          // transform: translateY(-50%);
-          img {
+          font-weight: 500;
+          color: #FFFFFF;
+          padding: 6px 5px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+          img{
             width: 27px;
             height: 20px;
             margin: 0 0 0 2px;
           }
         }
         .newMark {
-          z-index: 3;
+          z-index: 2;
           top: -13px;
           left: -12px;
           width: 44px;
@@ -423,6 +437,7 @@ export default {
           color: #ffffff;
         }
         .doublePersonMark{
+          z-index: 2;
           width: 56px;
           height: 32px;
           background: url('@/pages/520/assets/mk7_14.png') no-repeat left top/100% 100%;
