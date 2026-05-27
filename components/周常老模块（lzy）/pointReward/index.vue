@@ -1,6 +1,5 @@
 <template>
   <div class="pointReward">
-    <!-- 任务列表 -->
     <OutBox class="tasksBox">
       <div v-for="(taskItem, taskKey) in task_list" :key="taskKey" class="taskItemDiv" :class="taskKey">
         <template v-if="taskKey !== 'keju'">
@@ -56,8 +55,7 @@
         </ul>
       </div>
     </OutBox>
-    <!-- 兑换好礼 -->
-    <OutBox class="exchangeBox" title="title_1.png" left right>
+    <OutBox class="exchangeBox" title="兑换好礼" left right>
       <div class="exchangeBoxPointNum">我的{{ pointName }}&nbsp;<img :src="IconPath(pointIcon)" alt="" />：{{ my_goods }}</div>
       <div v-for="(goods, index) in goods_list" :key="index" class="exchangeItemDiv">
         <div class="exchangeItemAward">
@@ -93,7 +91,6 @@
         </ul>
       </div>
     </OutBox>
-    <!-- 跳转晶石淬炼活动 -->
     <OutBox class="jumpBox" size="2">
       <div class="rules-text">
         <ul>

@@ -1,5 +1,5 @@
 <template>
-  <OutBox class="FirstDouble" title="title_2.png">
+  <OutBox class="FirstDouble" title="充值领礼包">
     <img :src="IconPath('mk2_2.png')" class="ruleIcon position-absolute" @click="isShowRulesPopup = true" alt="" />
     <!-- <img :src="IconPath('mk2_31.png')" class="yearCelebrationLabel position-absolute" /> -->
     <div class="RechargeRebate_TopBox_Title line-height-1 text-center">

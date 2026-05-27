@@ -1,5 +1,5 @@
 <template>
-  <PopupBox title="title_21.png" size="2" @clickClose="clickClose">
+  <PopupBox title="规则说明" size="2" @clickClose="clickClose">
     <div class="scrollBox">
       <div class="rules-text-popup">
         <ul>

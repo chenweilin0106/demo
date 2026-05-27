@@ -1,5 +1,5 @@
 <template>
-  <PopupBox title="title_1.png" @clickClose="clickClose">
+  <PopupBox title="兑换好礼" @clickClose="clickClose">
     <div class="ownedNumText">剩余{{ pointName }}<img :src="IconPath(pointIcon)" alt="" />：{{ my_goods }}</div>
     <PublicImg class="goodsIcon" :class="`${config.goods_type}Icon`" :imgName="config.goods_icon_t" :imgType="config.goods_type" />
     <div class="goodsDesc">{{ config.goods_num_text }}</div>
