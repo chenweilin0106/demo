@@ -4,7 +4,7 @@
       <div class="topArea position-relative">
         <div v-for="(item,index) in rankListShow.slice(0,3)" :key="`${item.uid}+${index}`" class="topItem flex-shrink-0 position-absolute line-height-1" :class="`topItem_${item.rank}`">
           <div class="topItemAvatarBorder position-row-center position-absolute">
-            <img class="radius-50 fit-cover block position-absolute position-row-center topItemAvatar" v-lazy="IconPath(item.profile_image || avatarDefault)" @error="imgAtError" />
+            <img class="radius-50 fit-cover block position-absolute position-row-center topItemAvatar" v-lazy="IconPath(item.profile_image || avatarDefault)" alt="" @error="imgAtError" />
           </div>
           <div class="topItemUsername ellipsis position-absolute">{{ item.username }}</div>
           <template v-if="item.rank != 1">
@@ -16,7 +16,7 @@
       <div class="remainArea">
         <div class="remainItem position-relative" v-for="(item,index) in rankListShow.slice(3)" :key="`${item.uid}+${index}`">
           <div class="totalRankItemIcon flex align-center justify-center position-absolute position-column-center">{{item.rank}}</div>
-          <img class="totalRankItemAvatar fit-cover radius-50 position-absolute position-column-center" v-lazy="IconPath(item.profile_image || avatarDefault)" @error="imgAtError" />
+          <img class="totalRankItemAvatar fit-cover radius-50 position-absolute position-column-center" v-lazy="IconPath(item.profile_image || avatarDefault)" alt="" @error="imgAtError" />
           <div class="totalRankItemName position-absolute position-column-center ellipsis">{{item.username}}</div>
           <div class="totalRankItemTime position-absolute position-column-center">
             <p>距离上一名</p>
@@ -27,7 +27,7 @@
     </div>
     <div class="userRankArea position-relative line-height-1">
       <div class="totalRankIcon position-absolute position-column-center flex align-center justify-center">{{userRankShow.rank?userRankShow.rank:`${rankListShow.length}+`}}</div>
-      <img class="totalRankAvatar position-absolute position-column-center" v-lazy="IconPath(userRankShow.profile_image||avatarDefault)" @error="imgAtError" />
+      <img class="totalRankAvatar position-absolute position-column-center" v-lazy="IconPath(userRankShow.profile_image||avatarDefault)" alt="" @error="imgAtError" />
       <div :class="['totalRankName ellipsis position-absolute position-column-center']">{{userRankShow.username}}</div>
       <div class="isShowNameDiv position-absolute flex align-center">
         <span>公开昵称&nbsp;</span>

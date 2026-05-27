@@ -5,7 +5,7 @@
         <div class="topItem flex-shrink-0 position-absolute line-height-1" v-for="(item, index) in rankListShow.slice(0, 3)" :key="`${item.uid}+${index}`" :class="`topItem_${item.rank}`">
           <div v-if="item.rank != 1" class="topItemRankBorder position-absolute"></div>
           <div class="topItemUserDiv topItemLeftUser position-absolute flex-column align-center">
-            <img class="topItemAvatar" v-lazy="IconPath(item.cp_info[0].profile_image || avatarDefault)" @click="toUserMain(item.cp_info[0].uid)" @error="imgAtError" />
+            <img class="topItemAvatar" v-lazy="IconPath(item.cp_info[0].profile_image || avatarDefault)" alt="" @click="toUserMain(item.cp_info[0].uid)" @error="imgAtError" />
             <span class="topItemNameDiv text-center ellipsis">{{ item.cp_info[0].username }}</span>
             <div :class="['topItemUid', 'userPrettyCode']">
               <lazy-component class="havenBg" v-if="item.cp_info[0].pretty_type != 0">
@@ -16,7 +16,7 @@
             </div>
           </div>
           <div class="topItemUserDiv topItemRightUser position-absolute flex-column align-center">
-            <img class="topItemAvatar" v-lazy="IconPath(item.cp_info[1].profile_image || avatarDefault)" @click="toUserMain(item.cp_info[1].uid)" @error="imgAtError" />
+            <img class="topItemAvatar" v-lazy="IconPath(item.cp_info[1].profile_image || avatarDefault)" alt="" @click="toUserMain(item.cp_info[1].uid)" @error="imgAtError" />
             <span class="topItemNameDiv text-center ellipsis">{{ item.cp_info[1].username }}</span>
             <div :class="['topItemUid', 'userPrettyCode']">
               <lazy-component class="havenBg" v-if="item.cp_info[1].pretty_type != 0">
@@ -36,7 +36,7 @@
         <div class="reaminItem position-relative line-height-1" v-for="(item, index) in rankListShow.slice(3)" :key="`${item.uid}+${index}`">
           <div class="totalRankItemIcon flex align-center justify-center position-absolute position-column-center">{{ item.rank }}</div>
           <div class="totalRankItemUserDiv totalRankItemLeftUser position-absolute flex-column align-center">
-            <img class="totalRankItemAvatar" v-lazy="IconPath(item.cp_info[0].profile_image || avatarDefault)" @click="toUserMain(item.cp_info[0].uid)" @error="imgAtError" />
+            <img class="totalRankItemAvatar" v-lazy="IconPath(item.cp_info[0].profile_image || avatarDefault)" alt="" @click="toUserMain(item.cp_info[0].uid)" @error="imgAtError" />
             <span class="totalRankItemNameDiv text-center ellipsis">{{ item.cp_info[0].username }}</span>
             <div :class="['totalRankItemUid', 'userPrettyCode']">
               <lazy-component class="havenBg" v-if="item.cp_info[0].pretty_type != 0">
@@ -47,7 +47,7 @@
             </div>
           </div>
           <div class="totalRankItemUserDiv totalRankItemRightUser position-absolute flex-column align-center">
-            <img class="totalRankItemAvatar" v-lazy="IconPath(item.cp_info[1].profile_image || avatarDefault)" @click="toUserMain(item.cp_info[1].uid)" @error="imgAtError" />
+            <img class="totalRankItemAvatar" v-lazy="IconPath(item.cp_info[1].profile_image || avatarDefault)" alt="" @click="toUserMain(item.cp_info[1].uid)" @error="imgAtError" />
             <span class="totalRankItemNameDiv text-center ellipsis">{{ item.cp_info[1].username }}</span>
             <div :class="['totalRankItemUid', 'userPrettyCode']">
               <lazy-component class="havenBg" v-if="item.cp_info[1].pretty_type != 0">
@@ -69,7 +69,7 @@
       <!-- <template v-if="userRankShow.tuid && userRankShow.tuid > 0"> -->
       <div class="userRankBorder position-absolute position-column-center flex align-center justify-center">{{ userRankShow.rank ? userRankShow.rank : `${rankListShow.length}+` }}</div>
       <div class="userRankUserDiv userRankLeftUser position-absolute flex-column align-center">
-        <img class="userRankAvatar" v-lazy="IconPath(userRankShow.cp_info[0].profile_image || avatarDefault)" @click="toUserMain(userRankShow.cp_info[0].uid)" @error="imgAtError" />
+        <img class="userRankAvatar" v-lazy="IconPath(userRankShow.cp_info[0].profile_image || avatarDefault)" alt="" @click="toUserMain(userRankShow.cp_info[0].uid)" @error="imgAtError" />
         <span class="userRankNameDiv ellipsis text-center">{{ userRankShow.cp_info[0].username }}</span>
         <div :class="['userRankUid', 'userPrettyCode']">
           <lazy-component class="havenBg" v-if="userRankShow.cp_info[0].pretty_type != 0">
@@ -80,7 +80,7 @@
         </div>
       </div>
       <div class="userRankUserDiv userRankRightUser position-absolute flex-column align-center">
-        <img class="userRankAvatar" v-lazy="IconPath(userRankShow.cp_info[1].profile_image || avatarDefault)" @click="toUserMain(userRankShow.cp_info[1].uid)" @error="imgAtError" />
+        <img class="userRankAvatar" v-lazy="IconPath(userRankShow.cp_info[1].profile_image || avatarDefault)" alt="" @click="toUserMain(userRankShow.cp_info[1].uid)" @error="imgAtError" />
         <span class="userRankNameDiv ellipsis text-center">{{ userRankShow.cp_info[1].username }}</span>
         <div :class="['userRankUid', 'userPrettyCode']">
           <lazy-component class="havenBg" v-if="userRankShow.cp_info[1].pretty_type != 0">

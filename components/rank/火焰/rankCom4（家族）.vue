@@ -4,7 +4,7 @@
       <div class="topArea position-relative">
         <div v-for="(item, index) in rankListShow.slice(0, 3)" :key="`${item.family_id}+${index}`" class="topItem flex-shrink-0 position-absolute line-height-1" :class="`topItem_${item.rank}`">
           <div class="topItemAvatarBorder position-row-center position-absolute">
-            <img class="radius-50 fit-cover block position-absolute position-row-center topItemAvatar" v-lazy="IconPath(item.icon || avatarDefault)" @error="imgAtError" @click="toFamilyHome(item.family_id)" />
+            <img class="radius-50 fit-cover block position-absolute position-row-center topItemAvatar" v-lazy="IconPath(item.icon || avatarDefault)" alt="" @error="imgAtError" @click="toFamilyHome(item.family_id)" />
           </div>
           <div class="topItemUsername ellipsis position-absolute position-row-center">{{ item.family_name }}</div>
           <div class="position-absolute position-row-center userPrettyCode topItemUid">
@@ -21,7 +21,7 @@
       <div class="remainArea">
         <div class="remainItem position-relative line-height-1" v-for="(item, index) in rankListShow.slice(3)" :key="`${item.family_id}+${index}`">
           <div class="totalRankItemIcon flex align-center justify-center position-absolute position-column-center">{{ item.rank }}</div>
-          <img class="totalRankItemAvatar fit-cover radius-50 position-absolute position-column-center" v-lazy="IconPath(item.icon || avatarDefault)" @error="imgAtError" @click="toFamilyHome(item.family_id)" />
+          <img class="totalRankItemAvatar fit-cover radius-50 position-absolute position-column-center" v-lazy="IconPath(item.icon || avatarDefault)" alt="" @error="imgAtError" @click="toFamilyHome(item.family_id)" />
           <div class="totalRankItemName position-absolute ellipsis">{{ item.family_name }}</div>
           <div class="position-absolute userPrettyCode totalRankItemUid">
             <!-- <lazy-component class="havenBg" v-if="item.pretty_type != 0">
@@ -40,7 +40,7 @@
     <div class="userRankArea position-relative line-height-1">
       <template v-if="Number(userRankShow.family_id)">
         <div class="totalRankIcon position-absolute position-column-center flex align-center justify-center">{{ userRankShow.rank ? userRankShow.rank : `${rankListShow.length}+` }}</div>
-        <img class="totalRankAvatar position-absolute position-column-center" v-lazy="IconPath(userRankShow.icon || avatarDefault)" @error="imgAtError" @click="toFamilyHome(userRankShow.family_id)" />
+        <img class="totalRankAvatar position-absolute position-column-center" v-lazy="IconPath(userRankShow.icon || avatarDefault)" alt="" @error="imgAtError" @click="toFamilyHome(userRankShow.family_id)" />
         <div :class="['totalRankName ellipsis position-absolute', 'status1']">{{ userRankShow.family_name }}</div>
         <div class="position-absolute userPrettyCode totalRankCode">
           <!-- <lazy-component class="havenBg" v-if="userRankShow.pretty_type != 0"> -->
