@@ -103,6 +103,7 @@ export default {
       tagChosen: 1, // 榜单选择: 1:日榜 2:总榜
       rewardsList: Object.freeze({
         11: [
+          // { id: 111, type: 'pst_privilege', icon: 'sjdw_120_120.png', text: '礼物赠送权', mark: '888', previewImg: 'gift_sjdw.png', previewTip1: '商界帝王·礼物赠送权', mark1: false, isNew: false },
           // { id: 121, type: 'costume', icon: 'qqjcl_120_120.png', text: '主页特效', mark: '', previewImg: 'zyp_qqjcl.svga', previewTip1: '千骑卷尘来·主页特效', mark1: '', isNew: false },
           // { id: 321, type: 'chat_bubble', icon: 'qp_xdsk_sc', text: '私聊气泡', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
           // { id: 421, type: 'chat_bubble_pub', icon: 'fhjb_120_120.png', text: '公屏气泡', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
