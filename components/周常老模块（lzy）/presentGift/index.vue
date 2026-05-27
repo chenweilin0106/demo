@@ -1,6 +1,6 @@
 <template>
   <div class="presentGift">
-    <OutBox class="consumeListBox" title="title_3.png">
+    <OutBox class="consumeListBox" title="累计消费有礼">
       <img :src="IconPath('mk2_1.png')" alt="" class="resetIcon position-absolute" />
       <transition-group class="listMain" tag="ul" :name="transitionClass">
         <div class="taskItem flex align-center" v-for="item in consume_status" :key="item.condition">
@@ -17,9 +17,10 @@
       </transition-group>
       <div class="rules-text">
         <ul>
-          <!-- <li><span></span>消耗<img :src="IconPath('cbt_43_35.png')"  alt=""/>及<img :src="IconPath('hjcbt_45_37.png')" alt="" />分别可进行1/30次符石寻宝</li> -->
-          <li><span></span>消耗<img :src="IconPath('hjcbt_45_37.png')" alt="" />可进行30次符石寻宝</li>
-          <li><span></span>消耗<img class="pydIcon" :src="IconPath('pyd_43_44.png')" alt="" />可抵用一次天赋修炼</li>
+          <li><span></span>求婚时购买求婚物品的消费计算在内</li>
+          <li><span></span>消耗<img :src="IconPath('cbt_43_35.png')"  alt=""/>及<img :src="IconPath('hjcbt_45_37.png')" alt="" />分别可进行1/30次符石寻宝</li>
+          <!-- <li><span></span>消耗<img :src="IconPath('hjcbt_45_37.png')" alt="" />可进行30次符石寻宝</li> -->
+          <!-- <li><span></span>消耗<img class="pydIcon" :src="IconPath('pyd_43_44.png')" alt="" />可抵用一次天赋修炼</li> -->
         </ul>
       </div>
     </OutBox>
