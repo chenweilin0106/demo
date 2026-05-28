@@ -246,12 +246,12 @@ export const quitView = () => {
 }
 
 /**
- * url跳转(通过app)
+ * 打开一个新的webview页面
  *
- * @param {string} router 路由
+ * @param {string} router url `dandan-${window.location.origin}/vue/xxxx/xxxx/index.html?show_full=0`
+ * @param {0 | 1} show_full 0-非全屏 1-全屏
  * @example urlRouterWithApp(`dandan-${window.location.origin}/vue/normal/friendsBeCash/index.html?show_full=0&uid=${this.$store.state.uid}&access_token=${this.$store.state.access_token}#/invite?a=1`)
- * 尾部的?a=1是因为客户端并不会判断是否有问号，手动拼接防止路由错误
- * show_full 0-非全屏 1-全屏
+ * 当尾部出现锚点时，如#/invite，需要拼接上?a=1
  */
 export const urlRouterWithApp = (router) => {
   if (compareVersions('5.9.6') == -1) return Vue.prototype.$toast('请更新至最新版本')
