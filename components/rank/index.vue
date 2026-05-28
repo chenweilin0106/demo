@@ -169,7 +169,11 @@ export default {
     }
   },
   created() {
-    axios({ url: `${process.env.VUE_APP_OSS_PATH}activity/weekly/svga/20240614_m2_lottery.svga`, method: 'get', responseType: 'arraybuffer' })
+    try {
+      axios({ url: `${process.env.VUE_APP_OSS_PATH}activity/weekly/svga/car_qlpt.svga`, method: 'get', responseType: 'arraybuffer' })
+    } catch (error) {
+      console.log(error)
+    }
     if (this.$route.query.rankChosen) this.rankChosen = this.$route.query.rankChosen
     if (this.$route.query.tagChosen) this.tagChosen = this.$route.query.tagChosen
     this.getHomePage()
