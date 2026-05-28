@@ -660,3 +660,19 @@ export const toVitalityHome = () => {
     console.log('环境错误', error)
   }
 }
+
+/**
+ * 跳转家族秘境（6.2.2）
+ */
+export const toFamilySecret = () => {
+  if (compareVersions('6.2.2') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://family/secret_realm' })
+    } else {
+      window.external.dispatch('dandan://family/secret_realm')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
