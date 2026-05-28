@@ -676,3 +676,38 @@ export const toFamilySecret = () => {
     console.log('环境错误', error)
   }
 }
+
+/**
+ * 跳转商城首页
+ */
+export const toMallHome = () => {
+  try {
+    if (isIOS()) {
+      window.webkit.messageHandlers.PushView.postMessage({ vcName: 'DDIndividualityVC' })
+    } else {
+      window.external.action('/personal/dress')
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
+
+/**
+ * 跳转商城中各分类页面（5.7.0）
+ * @param {number | string} [category = 1] 类别 1-道具，2-座驾，3-头饰，4-主页特效，5-戒指
+ */
+export const toMall = (category) => {
+  console.log('开始跳转商城', category)
+  if (compareVersions('5.7.0') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  try {
+    if (isIOS()) {
+      console.log('IOS跳转商城')
+      window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://mall/list?category=' + category })
+    } else {
+      console.log('Android跳转商城')
+      window.external.dispatch('dandan://mall/list?category=' + category)
+    }
+  } catch (error) {
+    console.log('环境错误', error)
+  }
+}
