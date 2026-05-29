@@ -42,7 +42,7 @@
               <p class="taskItemDetailsGoalP2">（{{ taskItem.attend_times }}/{{ taskItem.attend_max }}）</p>
             </div>
             <div class="taskItemDetailsOrDiv">或</div>
-            <div class="taskItemDetailsButton" :class="`status${taskItem.has_right}`" @click="receive(taskItem, taskKey)">{{taskItem.has_right == 0 ? (taskItem.is_recharge ? '去完成' : '未完成') : taskItem.has_right == 1 ? '领取' : '已领取'}}</div>
+            <div class="taskItemDetailsButton" :class="`status${taskItem.has_right}`" @click="receive(taskItem, taskKey)">{{ taskItem.has_right == 0 ? '去完成' : taskItem.has_right == 1 ? '领取' : '已领取' }}</div>
           </div>
         </template>
       </div>
@@ -106,7 +106,7 @@
 
 <script>
 import { getPageData } from '@/api'
-import { recharge, compareVersions, urlRouterWithApp } from '@/utils/toApp'
+import { recharge, compareVersions, urlRouterWithApp, toFamilySecret } from '@/utils/toApp'
 import { _throttle } from '@/utils/tool'
 import visibilityMixin from '@/mixins/visibilityMixin'
 import ExchangePopup from './popups/exchangePopup.vue'
@@ -165,10 +165,10 @@ export default {
      */
     receive: _throttle(async function (task, key) {
       if (task.has_right == 2) return
-      if (task.has_right == 0) {
-        if (!task.is_recharge) return
+      if (task.has_right == 0 && ['recharge_once', 'keju'].includes(key)) {
         this.addVisibilityListen(this.createVisibilityFn({ showFn: this.getHomePage }))
-        return recharge()
+        if (key === 'recharge_once') return recharge()
+        if (key === 'keju') return toFamilySecret()
       }
       const res = await getPageData({ mark: key, type: 'task_award_new' })
       this.$toast(res.errmsg)
