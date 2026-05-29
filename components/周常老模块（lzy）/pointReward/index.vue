@@ -435,6 +435,8 @@ export default {
           background: rgba(63, 45, 22, 0.5);
           border-radius: 23px;
           border: 2px solid rgba(236, 215, 179, 0.52);
+          -webkit-background-clip: padding-box, border-box;
+          -webkit-background-origin: padding-box, border-box;
           .taskItemDetailsAward {
             position: absolute;
             top: 50%;
@@ -531,6 +533,8 @@ export default {
             display: flex;
             align-items: center;
             justify-content: center;
+            -webkit-background-clip: padding-box, border-box;
+            -webkit-background-origin: padding-box, border-box;
           }
           .taskItemDetailsButton {
             position: absolute;
@@ -550,7 +554,7 @@ export default {
             border: 3px solid transparent;
             border-radius: 99999px;
             -webkit-background-clip: padding-box, border-box;
-            -webkit-background-orixgin: padding-box, border-box;
+            -webkit-background-origin: padding-box, border-box;
             &.status0 {
               color: #4D7DDD;
               background-image: linear-gradient(0deg, #CAE7FF, #FFFFFF), -webkit-linear-gradient(#fff, #fff);
