@@ -277,14 +277,15 @@ window.onload = function () {
 /**
  * App支付
  *
- * @param {Object} data
- * @param {number | string} data.price 价格
- * @param {number | string} data.id 商品ID
- * @param {'wx' | 'alipay'} data.pay_type 支付类型
- * @param {number | string} data.apple_id 苹果内购ID
- * @param {string} data.goods_type 商品类型
+ * @param {Object} msg
+ * @param {number | string} msg.price 价格
+ * @param {number | string} msg.id 商品ID
+ * @param {'wx' | 'alipay'} msg.pay_type 支付类型
+ * @param {number | string} msg.apple_id 苹果内购ID
+ * @param {string} msg.goods_type 商品类型
  */
-export const appPay = (data) => {
+export const appPay = (msg) => {
+  let data = JSON.parse(JSON.stringify(msg))
   for (const key in data) {
     if (data[key] == null || data[key] == undefined) return console.log(`缺少${data[key]}`)
   }
@@ -299,7 +300,7 @@ export const appPay = (data) => {
       console.log('进入Android支付方法')
       data.price = data.price * 100
       const { price, id, pay_type, goods_type } = data
-        window.external.action('/pay?price=' + price + '&goods_type=' + goods_type + '&goods_id=' + id + '&pay_type=' + pay_type)
+      window.external.action('/pay?price=' + price + '&goods_type=' + goods_type + '&goods_id=' + id + '&pay_type=' + pay_type)
     }
   } catch (error) {
     console.log('环境错误', error)
@@ -379,6 +380,20 @@ export const toConfessionWall = (fn) => {
     }
   } catch (error) {
     console.log('环境错误', error)
+  }
+}
+
+/**
+ * 打开婚姻页面
+ * @param {Function} fn 监听visibilitychange事件
+ */
+export const marriageF = (fn) => {
+  document.addEventListener('visibilitychange', fn)
+  // const params = { uid: store.state.uid }
+  if (isIOS() || window.navigator.userAgent.indexOf('Safari') === -1) {
+    window.webkit.messageHandlers.DDMarriageMainViewController.postMessage('')
+  } else {
+    window.external.action('/love/house')
   }
 }
 
@@ -612,6 +627,34 @@ export const toFriendsList = () => {
 }
 
 /**
+ * 跳转消息列表页面（5.5.8）
+ * @param {Function} fn 监听visibilitychange事件
+ */
+export const toMessageList = (fn) => {
+  if (compareVersions('5.5.8') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  document.addEventListener('visibilitychange', fn)
+  if (isIOS()) {
+    window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://message/list' })
+  } else {
+    window.external.action('dandan://message/list')
+  }
+}
+
+/**
+ * 跳转邀请页（5.5.8）
+ * @param {Function} fn 监听visibilitychange事件
+ */
+export const toInvite = (fn) => {
+  if (compareVersions('5.5.8') == -1) return Vue.prototype.$toast('请更新至最新版本')
+  document.addEventListener('visibilitychange', fn)
+  if (isIOS()) {
+    window.webkit.messageHandlers.PushView.postMessage({ vcName: 'DDInvitationFriendsViewController' })
+  } else {
+    window.external.action('/invite/friends')
+  }
+}
+
+/**
  * 跳转APP绑定手机号
  */
 export const toBindPhone = () => {
@@ -696,15 +739,12 @@ export const toMallHome = () => {
  * 跳转商城中各分类页面（5.7.0）
  * @param {number | string} [category = 1] 类别 1-道具，2-座驾，3-头饰，4-主页特效，5-戒指
  */
-export const toMall = (category) => {
-  console.log('开始跳转商城', category)
+export const toMall = (category = 1) => {
   if (compareVersions('5.7.0') == -1) return Vue.prototype.$toast('请更新至最新版本')
   try {
     if (isIOS()) {
-      console.log('IOS跳转商城')
       window.webkit.messageHandlers.routerJump.postMessage({ router: 'dandan://mall/list?category=' + category })
     } else {
-      console.log('Android跳转商城')
       window.external.dispatch('dandan://mall/list?category=' + category)
     }
   } catch (error) {
