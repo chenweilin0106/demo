@@ -522,10 +522,10 @@ export default {
             top: 50%;
             left: 154px;
             transform: translateY(-50%);
-            width: 48px;
-            height: 28px;
+            width: 52px;
+            height: 32px;
             background: #A7702A;
-            border-radius: 14px;
+            border-radius: 16px;
             border: 2px solid rgba(234,212,175,0.8);
             font-size: 24px;
             color: #FAE1B8;
