@@ -130,6 +130,31 @@
         "luckyFlop": "luckyFlop"
       },
       "svnTargetRootRel": "weekly"
+    },
+    {
+      "name": "repeat3",
+      "projectRoot": "D:\\Project\\dandan-activity-web\\weekly\\repeat3",
+      "officialDistRoot": "D:\\officialDist\\normal",
+      "officialProjectRelFromEnv": "VUE_APP_ICON_PATH",
+      "officialProjectRelMap": {
+        "weeklySkill": "weeklySkill",
+        "weeklySpar": "weeklySpar"
+      },
+      "svnRoots": {
+        "dev": "D:\\Project\\开发分支\\web\\vue",
+        "test": "D:\\Project\\测试分支\\web\\vue"
+      },
+      "defaultBuildScripts": {
+        "dev": "npm run build:test",
+        "test": "npm run build:test",
+        "official": "npm run build:officialPro"
+      },
+      "svnDefaultTargetRelFromEnv": "VUE_APP_ICON_PATH",
+      "svnDefaultTargetRelMap": {
+        "weeklySkill": "weeklySkill",
+        "weeklySpar": "weeklySpar"
+      },
+      "svnTargetRootRel": "normal"
     }
   ]
 }
