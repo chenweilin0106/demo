@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1080, initial-scale=1">
+  <title>朝汐里·海边小院 V4</title>
+  <style>
+    @font-face {
+      font-family: "PingFangSC";
+      src: url("file:///mnt/c/Users/dcw220/AppData/Local/Microsoft/Windows/Fonts/PingFang%20SC.ttf") format("truetype");
+      font-weight: 400;
+    }
+
+    @font-face {
+      font-family: "PingFangSC";
+      src: url("file:///mnt/c/Users/dcw220/AppData/Local/Microsoft/Windows/Fonts/PingFang%20SC%20Semibold.ttf") format("truetype");
+      font-weight: 700;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #dfeef4;
+      font-family: "PingFangSC", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif;
+      color: #173746;
+    }
+
+    .poster {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 80% 8%, rgba(125, 204, 232, .42), transparent 28%),
+        linear-gradient(180deg, #eef9fc 0%, #f8fbf8 42%, #eef7fa 100%);
+    }
+
+    .hero {
+      position: relative;
+      height: 455px;
+      overflow: hidden;
+      border-bottom-left-radius: 56px;
+      border-bottom-right-radius: 56px;
+      box-shadow: 0 24px 50px rgba(42, 100, 120, .14);
+    }
+
+    .hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 42% 42%;
+      display: block;
+      filter: saturate(1.04) contrast(1.02);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(90deg, rgba(10, 36, 47, .18) 0%, rgba(10, 36, 47, .05) 38%, rgba(255, 255, 255, .72) 74%, rgba(255, 255, 255, .94) 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0) 62%, #eef9fc 100%);
+    }
+
+    .brand {
+      position: absolute;
+      top: 54px;
+      right: 50px;
+      z-index: 2;
+      width: 470px;
+      padding: 34px 40px 30px;
+      border-radius: 36px;
+      background: rgba(255, 255, 255, .84);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 40px rgba(35, 91, 115, .16);
+    }
+
+    .brand .eyebrow {
+      margin-bottom: 10px;
+      color: #287fa5;
+      font-size: 24px;
+      letter-spacing: .22em;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 46px;
+      line-height: 1.05;
+      letter-spacing: -.04em;
+      color: #102f3d;
+      white-space: nowrap;
+    }
+
+    .subtitle {
+      margin-top: 14px;
+      color: #187bad;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .chips {
+      position: absolute;
+      left: 60px;
+      bottom: 32px;
+      z-index: 2;
+      display: flex;
+      gap: 18px;
+    }
+
+    .chip {
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .86);
+      color: #1d7fa9;
+      font-size: 22px;
+      font-weight: 700;
+      box-shadow: 0 12px 28px rgba(29, 127, 169, .14);
+    }
+
+    .content {
+      position: relative;
+      z-index: 3;
+      padding: 34px 60px 0;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 40px;
+      line-height: 1;
+      color: #143543;
+    }
+
+    .section-title span {
+      color: #6b8c9c;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .rooms {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .card {
+      overflow: hidden;
+      border-radius: 34px;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 24px 48px rgba(37, 83, 98, .14);
+    }
+
+    .card.large {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 52% 48%;
+      min-height: 208px;
+    }
+
+    .card img {
+      width: 100%;
+      height: 168px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card.large img {
+      height: 100%;
+      min-height: 208px;
+      object-position: 50% 48%;
+    }
+
+    .card-body {
+      padding: 18px 24px 20px;
+    }
+
+    .card.large .card-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 22px 34px;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, .66), rgba(255, 255, 255, .96)),
+        #fff;
+    }
+
+    h3 {
+      margin: 0 0 14px;
+      font-size: 28px;
+      line-height: 1.2;
+      color: #143543;
+    }
+
+    p {
+      margin: 0;
+      color: #5d7a88;
+      font-size: 20px;
+      line-height: 1.42;
+      font-weight: 500;
+    }
+
+    .list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #e9f7fb;
+      color: #207da6;
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .view-section {
+      margin-top: 22px;
+      padding: 22px;
+      border-radius: 38px;
+      background: rgba(255, 255, 255, .86);
+      box-shadow: 0 24px 50px rgba(37, 83, 98, .12);
+    }
+
+    .view-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .view {
+      position: relative;
+      height: 126px;
+      overflow: hidden;
+      border-radius: 24px;
+    }
+
+    .view img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .view::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 45%, rgba(0, 37, 54, .55) 100%);
+    }
+
+    .view b {
+      position: absolute;
+      left: 18px;
+      bottom: 14px;
+      z-index: 1;
+      color: white;
+      font-size: 18px;
+    }
+
+    .footer {
+      position: absolute;
+      left: 60px;
+      right: 60px;
+      bottom: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #6f8e9a;
+      font-size: 21px;
+      font-weight: 600;
+    }
+
+    .footer strong {
+      color: #1b789d;
+    }
+  </style>
+</head>
+<body>
+  <main class="poster">
+    <section class="hero">
+      <img src="assets/DSC_9107.jpg" alt="朝汐里海边露台">
+      <div class="brand">
+        <div class="eyebrow">SEASIDE STAY</div>
+        <h1>朝汐里·海边小院</h1>
+        <div class="subtitle">住进海边，推窗见海</div>
+      </div>
+      <div class="chips">
+        <div class="chip">海景房型</div>
+        <div class="chip">露台看海</div>
+        <div class="chip">石墙小院</div>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="section-title">
+        <h2>房型与空间</h2>
+        <span>真实原图展示</span>
+      </div>
+
+      <div class="rooms">
+        <article class="card large">
+          <img src="assets/DSC_9511.jpg" alt="海景双床房">
+          <div class="card-body">
+            <h3>海景双床房</h3>
+            <p>双床配置，窗边看海，适合亲友同行。可选观海、朝晖、枕浪等海景双床房。</p>
+            <div class="list">
+              <span class="tag">双床</span>
+              <span class="tag">海景窗边</span>
+              <span class="tag">阳台氛围</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="assets/DSC_9533.jpg" alt="舒适大床房">
+          <div class="card-body">
+            <h3>舒适大床房</h3>
+            <p>清爽大床房型，搭配独立卫浴，适合双人休憩。</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="assets/ef0d664eb7e43fb8b317c7a710ed6143.jpg" alt="海景阳台">
+          <div class="card-body">
+            <h3>海景阳台</h3>
+            <p>近海阳台视野，把海风和日光留在房间里。</p>
+          </div>
+        </article>
+
+        <article class="card large">
+          <img src="assets/DSC_8984.jpg" alt="公共客厅">
+          <div class="card-body">
+            <h3>公共客厅</h3>
+            <p>石墙、原木、绿植和暖色软装，形成轻松的海边小院公共空间。</p>
+            <div class="list">
+              <span class="tag">原木暖调</span>
+              <span class="tag">石墙质感</span>
+              <span class="tag">小院氛围</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <section class="view-section">
+        <div class="section-title">
+          <h2>周边风景</h2>
+      <span>悬崖海岸｜海岛渔港｜海边廊道｜礁石景观</span>
+        </div>
+        <div class="view-grid">
+          <div class="view">
+            <img src="assets/DJI_20260531085732_0146_D.jpg" alt="悬崖海岸">
+            <b>悬崖海岸</b>
+          </div>
+          <div class="view">
+            <img src="assets/DJI_20260531090304_0159_D_1.jpg" alt="海岛渔港">
+            <b>海岛渔港</b>
+          </div>
+          <div class="view">
+            <img src="assets/微信图片_20260519113641_2122_70.jpg" alt="海边建筑">
+            <b>海边小院</b>
+          </div>
+          <div class="view">
+            <img src="assets/微信图片_20260517161038_1958_45.jpg" alt="海边廊道">
+            <b>海边廊道</b>
+          </div>
+          <div class="view">
+            <img src="assets/DJI_20260531133232_0191_D.jpg" alt="礁石景观">
+            <b>礁石景观</b>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <footer class="footer">
+      <strong>朝汐里·海边小院</strong>
+    </footer>
+  </main>
+</body>
+</html>
