@@ -15,7 +15,7 @@
 4. 当前版本目录内放置 `assets/`、`design/`、`提示词.md`、`poster.html`、`dist/`。
 5. 启用子 agent 在根目录 `assets/` 中选择合适素材，使用 `$imagegen` 设计 1 张 UI 效果图，保存到当前版本 `design/`。
 6. 启用子 agent 按设计稿获取选中的素材，复制到当前版本 `assets/`。
-7. 使用 HTML + CSS 开发 `poster.html`，按设计稿完成排版。
+7. 使用 `$frontend-design` 完成 HTML + CSS 开发，生成 `poster.html`，并按设计稿完成排版。
 8. 启用子 agent 使用 `$agent-browser` 打开本地 HTML、截图调试，并导出最终图片到 `dist/`。
 9. 子 agent 按还原度、构图、民宿感、文字层级和最终截图质量评分。
 10. 主线程每次只针对一个主要问题迭代 HTML 或设计提示词。
