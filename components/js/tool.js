@@ -177,7 +177,8 @@ export function toShowText(item, moreList = {}, nameList = []) {
     car: '座驾',
     voice: '声波',
     title: '称号',
-    pst_privilege: '赠送权'
+    pst_privilege: '赠送权',
+    emoji: '表情包'
   }
   if (moreList) {
     typeNameList = { ...typeNameList, ...moreList }
