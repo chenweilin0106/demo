@@ -17,7 +17,6 @@ terminal_resize_reflow = true
 
 [tui]
 status_line = ["model-with-reasoning", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "context-remaining", "fast-mode"]
-alternate_screen = "never"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
