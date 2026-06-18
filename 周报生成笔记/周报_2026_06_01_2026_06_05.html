@@ -208,6 +208,12 @@
             return "i";
           };
 
+          const listStyleType = (type) => {
+            if (type === "1") return "decimal";
+            if (type === "a") return "lower-alpha";
+            return "lower-roman";
+          };
+
           const liText = (li) => {
             const parts = [];
             for (const child of li.childNodes) {
@@ -227,11 +233,12 @@
 
           const renderOl = (ol, depth) => {
             const type = olType(depth);
-            let html = `<ol type="${type}" style="margin:0;padding-left:1.6em;">`;
+            const styleType = listStyleType(type);
+            let html = `<ol type="${type}" style="margin:0;padding-left:1.6em;list-style-type:${styleType};">`;
             for (const li of ol.children) {
               if (li.nodeName !== "LI") continue;
               const text = liText(li);
-              html += "<li>" + esc(text);
+              html += `<li style="list-style-type:${styleType};">` + esc(text);
               const childOl = li.querySelector(":scope > ol");
               if (childOl) html += renderOl(childOl, depth + 1);
               html += "</li>";
