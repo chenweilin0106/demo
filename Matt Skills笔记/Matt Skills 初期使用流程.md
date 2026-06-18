@@ -142,7 +142,7 @@ diagnose
 
 ## 常见场景
 
-### 场景 1：按现有流程文档执行
+### 场景 1：执行现有流程文档
 
 推荐流程：
 
@@ -158,20 +158,21 @@ implement + tdd
 3. 如果流程有歧义，先用 `grill-me` 问清楚。
 4. 如果执行失败，切到 `diagnose`。
 
-### 场景 2：新功能
+### 场景 2：开发新功能
 
 推荐流程：
 
 ```text
-grill-me -> to-prd -> to-issues -> implement + tdd
+grill-me -> to-prd -> implement + tdd
 ```
 
-说明：
+大型功能：
 
-- 任务较大时再接 `to-issues -> triage`
-- 任务不大时直接进入 `implement + tdd`
+```text
+grill-me -> to-prd -> to-issues -> triage -> implement + tdd
+```
 
-### 场景 3：修 bug
+### 场景 3：修复 bug
 
 推荐流程：
 
@@ -179,13 +180,21 @@ grill-me -> to-prd -> to-issues -> implement + tdd
 diagnose -> implement + tdd
 ```
 
+大范围修复：
+
+```text
+diagnose -> to-prd -> to-issues -> triage -> implement + tdd
+```
+
 重点：
 
 - 先复现，不先猜原因。
+- `diagnose` 已包含复现、分析、定位和修复计划。
+- 范围很大时，再补 `to-prd -> to-issues -> triage`。
 - 能写回归测试就先写。
 - 修完后用原复现路径验证。
 
-### 场景 4：重构/架构
+### 场景 4：优化重构/架构
 
 推荐流程：
 
@@ -206,47 +215,32 @@ improve-codebase-architecture -> grill-with-docs -> to-issues -> triage -> imple
 grill-me -> implement + tdd
 ```
 
-### 场景 5：学习/文档沉淀
+### 场景 5：执行测试/验证
 
 推荐流程：
 
 ```text
-grill-me -> implement + tdd
+grill-me -> to-prd -> implement + tdd
 ```
 
-适合：
-
-- 写学习笔记
-- 整理工具使用流程
-- 把对话沉淀成文档
-
-只有文档很复杂时，再加：
+大型测试：
 
 ```text
-to-prd -> to-issues
+grill-me -> to-prd -> to-issues -> triage -> implement + tdd
 ```
 
-### 场景 6：测试/验证
-
-推荐流程：
+异常时：
 
 ```text
-implement + tdd
-异常时 -> diagnose
+diagnose
 ```
-
-适合：
-
-- 功能已写完，需要补测试
-- 需要跑测试验证质量
-- 测试失败，需要定位原因
-- 交付前需要确认主要行为没问题
 
 使用方式：
 
-1. 先确认要验证哪些用户可见行为。
-2. 用 `tdd` 补最关键的测试。
-3. 测试失败且原因不清楚时，切到 `diagnose`。
+1. 用 `grill-me` 确认测试目标和范围。
+2. 用 `to-prd` 整理成测试计划/测试文档。
+3. 用 `implement + tdd` 按测试文档执行并记录结果。
+4. 测试失败且原因不清楚时，切到 `diagnose`。
 
 ## 初期最佳实践
 
