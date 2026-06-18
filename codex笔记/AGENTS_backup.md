@@ -25,8 +25,10 @@
 
 ### 使用规则
 
-- 需求不清：使用 `grill-me`；需要结合 `CONTEXT.md`、ADR、项目术语或流程文档时，使用 `grill-with-docs`。
-- 目标清楚后：使用 `to-prd` 沉淀执行计划。
+- 新项目需要把 PRD 或 issue 接入 tracker、初始化标签和领域文档规则时，使用 `setup-matt-pocock-skills`；老项目维护任务不要为此新增目录。
+- Matt Skills 是按需调用的工程工具箱，不是所有任务都固定走完整流程。
+- 需求不清、范围不清：使用 `grill-me`；需要结合 `CONTEXT.md`、ADR、项目术语或流程文档时，使用 `grill-with-docs`。
+- 只要已经使用 `grill-me` 或 `grill-with-docs` 对齐目标，下一步必须先使用 `to-prd` 沉淀计划，不得直接修改文件或进入 `implement + tdd`。
 - `to-prd` 后判断任务规模：小任务直接 `implement + tdd`；大任务先 `to-issues + triage`，再 `implement + tdd`。
 - 小任务：一次能完成、边界清楚、无需拆阶段；大任务：需要拆阶段、跨模块、风险高或一次做不完。
 - `diagnose` 只在 bug、报错、失败、性能退化、结果不符合预期时切入；不是固定步骤。
@@ -34,11 +36,11 @@
 
 ### 常规场景
 
-- 执行现有流程文档：流程清楚时直接 `implement + tdd`；流程不清时先 `grill-me`；异常时切 `diagnose`。
-- 开发新功能：需求不清先 `grill-me`，再 `to-prd`；小任务走 `implement + tdd`，大任务走 `to-issues + triage -> implement + tdd`；异常时切 `diagnose`。
+- 执行现有流程文档：流程清楚时直接 `implement + tdd`；流程不清时先 `grill-me` / `grill-with-docs`，再 `to-prd -> implement + tdd`；异常时切 `diagnose`。
+- 开发新功能：需求不清先 `grill-me` / `grill-with-docs`，再 `to-prd`；小任务走 `implement + tdd`，大任务走 `to-issues + triage -> implement + tdd`；异常时切 `diagnose`。
 - 修复 bug：先 `diagnose`，再 `implement + tdd`；范围很大时补 `to-prd -> to-issues + triage -> implement + tdd`。
-- 优化重构/架构：结构问题明显时走 `improve-codebase-architecture -> grill-with-docs -> to-issues + triage -> implement + tdd`；小重构走 `grill-me -> implement + tdd`。
-- 执行测试/验证：先 `grill-me` 确认测试目标和范围，再 `to-prd -> implement + tdd`；大型测试走 `to-issues + triage -> implement + tdd`；异常时切 `diagnose`。
+- 优化重构/架构：结构问题明显时走 `improve-codebase-architecture -> grill-with-docs -> to-prd -> to-issues + triage -> implement + tdd`；小重构必要时先 `grill-me` / `grill-with-docs`，再 `to-prd -> implement + tdd`。
+- 执行测试/验证：先 `grill-me` / `grill-with-docs`，再 `to-prd -> implement + tdd`；大型测试走 `to-issues + triage -> implement + tdd`；异常时切 `diagnose`。
 
 ---
 
