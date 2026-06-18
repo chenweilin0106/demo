@@ -250,17 +250,3 @@ diagnose
 4. 大任务先 `to-prd`，再 `to-issues`。
 5. 开始执行时统一用 `implement + tdd`。
 6. 功能完成后需要验证质量时，用 `tdd` 补测试，失败再切 `diagnose`。
-
-## 一句话判断
-
-| 你现在遇到的是 | 用 |
-| --- | --- |
-| 想法模糊 | `grill-me` |
-| 想法已清楚但较大 | `to-prd` |
-| PRD 太大 | `to-issues` |
-| 已有明确任务 | `implement + tdd` |
-| 需要测试先行 | `tdd` |
-| 需要补测试/验证质量 | `tdd` |
-| 出问题了 | `diagnose` |
-| 代码结构难受 | `improve-codebase-architecture` |
-| 术语和文档也要同步 | `grill-with-docs` |
