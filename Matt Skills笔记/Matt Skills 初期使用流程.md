@@ -4,16 +4,21 @@
 
 把 Matt Skills 当成工程工具箱：需要时调用，不需要时跳过。
 
-初期只记两条主线：
+初期只记一条判断主线：
 
 ```text
-小任务：
-grill-me / grill-with-docs -> to-prd -> implement + tdd
-异常时 -> diagnose
+必要时先对齐目标：
+grill-me / grill-with-docs
 
-大任务：
-grill-me / grill-with-docs -> to-prd -> to-issues -> triage -> implement + tdd
-异常时 -> diagnose
+沉淀计划：
+to-prd
+
+执行阶段：
+小任务：implement + tdd
+大任务：to-issues + triage -> implement + tdd
+
+异常时：
+diagnose
 ```
 
 `diagnose` 不是固定步骤，只在报错、失败、性能问题、行为不符合预期时切入。
@@ -21,18 +26,16 @@ grill-me / grill-with-docs -> to-prd -> to-issues -> triage -> implement + tdd
 ## 初期最简调用模型
 
 ```text
-需求不清：
+必要时先对齐目标：
 grill-me
 有项目文档作为基础：grill-with-docs
 
 需求变计划：
 to-prd
 
-计划太大：
-to-issues -> triage
-
-开始执行：
-implement + tdd
+判断任务规模：
+小任务 -> implement + tdd
+大任务 -> to-issues + triage -> implement + tdd
 
 执行异常：
 diagnose
@@ -42,12 +45,12 @@ diagnose
 
 | Skill | 什么时候用 |
 | --- | --- |
-| `setup-matt-pocock-skills` | 真实项目首次使用前，初始化 issue tracker、标签、领域文档规则 |
+| `setup-matt-pocock-skills` | 需要把 PRD 或 issue 接入 tracker 前，初始化 issue tracker、标签、领域文档规则 |
 | `grill-me` | 目标不清、范围不清、需要先把问题问准 |
 | `grill-with-docs` | 需要结合 `CONTEXT.md`、ADR、项目术语一起讨论方案 |
-| `to-prd` | 已经聊清楚目标，需要整理成 PRD |
-| `to-issues` | PRD 或计划较大，需要拆成可执行任务 |
-| `triage` | `to-issues` 之后，判断 issue 是否信息足够、能否开工 |
+| `to-prd` | 已经聊清楚目标，需要整理成 PRD 或计划文档 |
+| `to-issues` | PRD 太大时，和 `triage` 搭配拆成可执行任务 |
+| `triage` | `to-issues` 之后的二验，判断任务是否信息足够、能否开工 |
 | `implement` | 已有 PRD、issue、流程文档，需要开始执行 |
 | `tdd` | 新功能、修 bug、补测试时使用 |
 | `diagnose` | bug、报错、失败、性能退化，需要系统排查 |
@@ -57,7 +60,7 @@ diagnose
 
 ### 1. 先对齐目标：`grill-me` / `grill-with-docs`
 
-适合在任务开始时使用。
+需求或范围不清时使用。
 
 作用：
 
@@ -91,15 +94,21 @@ diagnose
 说明：
 
 - 初期可以统一用 `to-prd` 把需求沉淀成计划
+- 先用 `to-prd` 看清任务大小，再决定是否进入 `to-issues + triage`
 - 单纯修 bug 优先用 `diagnose`
 
-### 3. 拆执行任务：`to-issues` / `triage`
+### 3. 大任务拆分：`to-issues + triage`
 
 当 PRD 太大，不能一次完成时使用。
 
 核心原则：拆成垂直切片，每个任务都能独立验证。
 
-`triage` 是对 `to-issues` 结果的二验，用来判断 issue 是否信息足够、边界清楚、能否开工。
+`to-issues + triage` 是一个组合动作：
+
+- `to-issues` 负责把 PRD 拆成可执行任务
+- `triage` 负责二验，判断任务是否信息足够、边界清楚、能否开工
+
+它属于大任务执行前的拆分和二验，不是小任务必经阶段。
 
 适合：
 
@@ -112,19 +121,21 @@ diagnose
 - 单文件笔记
 - 一次能完成的小任务
 
-### 4. 开始执行：`implement + tdd`
+### 4. 执行阶段：小任务 / 大任务
 
-已有明确任务后使用。
+已有明确计划后使用。
 
 规则：
 
+- 小任务：`implement + tdd`
+- 大任务：`to-issues + triage -> implement + tdd`
 - `implement` 表示开始执行任务
 - `tdd` 表示先定义验收点，再实现，再验证
 - 文档任务里的 `tdd` 不一定写测试文件
 
 ### 5. 排查问题：`diagnose`
 
-执行异常时切换到 `diagnose`。
+任何阶段执行异常时切换到 `diagnose`，定位清楚后再回到当前执行阶段。
 
 适合：
 
@@ -163,13 +174,13 @@ implement + tdd
 推荐流程：
 
 ```text
-grill-me -> to-prd -> implement + tdd
+必要时 grill-me / grill-with-docs -> to-prd -> implement + tdd
 ```
 
 大型功能：
 
 ```text
-grill-me -> to-prd -> to-issues -> triage -> implement + tdd
+必要时 grill-me / grill-with-docs -> to-prd -> to-issues + triage -> implement + tdd
 ```
 
 ### 场景 3：修复 bug
@@ -183,14 +194,14 @@ diagnose -> implement + tdd
 大范围修复：
 
 ```text
-diagnose -> to-prd -> to-issues -> triage -> implement + tdd
+diagnose -> to-prd -> to-issues + triage -> implement + tdd
 ```
 
 重点：
 
 - 先复现，不先猜原因。
 - `diagnose` 已包含复现、分析、定位和修复计划。
-- 范围很大时，再补 `to-prd -> to-issues -> triage`。
+- 范围很大时，再补 `to-prd -> to-issues + triage`。
 - 能写回归测试就先写。
 - 修完后用原复现路径验证。
 
@@ -199,7 +210,7 @@ diagnose -> to-prd -> to-issues -> triage -> implement + tdd
 推荐流程：
 
 ```text
-improve-codebase-architecture -> grill-with-docs -> to-issues -> triage -> implement + tdd
+improve-codebase-architecture -> grill-with-docs -> to-prd -> to-issues + triage -> implement + tdd
 ```
 
 适合：
@@ -212,7 +223,7 @@ improve-codebase-architecture -> grill-with-docs -> to-issues -> triage -> imple
 小重构可以直接：
 
 ```text
-grill-me -> implement + tdd
+必要时 grill-me / grill-with-docs -> to-prd -> implement + tdd
 ```
 
 ### 场景 5：执行测试/验证
@@ -220,13 +231,13 @@ grill-me -> implement + tdd
 推荐流程：
 
 ```text
-grill-me -> to-prd -> implement + tdd
+必要时 grill-me / grill-with-docs -> to-prd -> implement + tdd
 ```
 
 大型测试：
 
 ```text
-grill-me -> to-prd -> to-issues -> triage -> implement + tdd
+必要时 grill-me / grill-with-docs -> to-prd -> to-issues + triage -> implement + tdd
 ```
 
 异常时：
@@ -237,16 +248,16 @@ diagnose
 
 使用方式：
 
-1. 用 `grill-me` 确认测试目标和范围。
+1. 必要时用 `grill-me` 确认测试目标和范围。
 2. 用 `to-prd` 整理成测试计划/测试文档。
-3. 用 `implement + tdd` 按测试文档执行并记录结果。
+3. 根据任务大小选择 `implement + tdd` 或 `to-issues + triage -> implement + tdd`。
 4. 测试失败且原因不清楚时，切到 `diagnose`。
 
 ## 初期最佳实践
 
-1. 先用 `grill-me`，少直接开工。
-2. 小任务也可以走 `to-prd`，把计划写短即可。
+1. 需求不清时先用 `grill-me`，有项目文档时用 `grill-with-docs`。
+2. 小任务走 `to-prd -> implement + tdd`，把计划写短即可。
 3. bug 优先 `diagnose`，不是 `to-prd`。
-4. 大任务先 `to-prd`，再 `to-issues`。
-5. 开始执行时统一用 `implement + tdd`。
+4. 大任务走 `to-prd -> to-issues + triage -> implement + tdd`。
+5. 只有 PRD 明显无法一次完成时，才使用 `to-issues + triage`。
 6. 功能完成后需要验证质量时，用 `tdd` 补测试，失败再切 `diagnose`。
