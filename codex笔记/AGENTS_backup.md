@@ -32,17 +32,6 @@
 - `diagnose` 只在 bug、报错、失败、性能退化、结果不符合预期时切入；不是固定步骤。
 - 文档任务使用 `tdd` 时，不要求写测试文件；必须先列验收点，再修改文档，再按验收点检查。
 
-### Skill 列表
-
-- `setup-matt-pocock-skills`：真实项目首次使用 Matt Skills 前执行一次。
-- `grill-me`：目标不清、范围不清时使用。
-- `grill-with-docs`：需要结合项目文档、ADR、领域术语讨论方案时使用。
-- `to-prd`：目标明确后整理成执行计划。
-- `to-issues + triage`：大任务拆分和二验。
-- `implement + tdd`：已有明确任务后执行并验证。
-- `diagnose`：异常排查。
-- `improve-codebase-architecture`：代码难改、难测、结构混乱时使用。
-
 ### 常规场景
 
 - 执行现有流程文档：流程清楚时直接 `implement + tdd`；流程不清时先 `grill-me`；异常时切 `diagnose`。
