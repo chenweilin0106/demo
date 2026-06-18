@@ -61,3 +61,35 @@ diagnose
 ## Further Notes
 
 这是一份本地轻量 PRD，只用于本次笔记优化。
+
+## 补充：主线拆解去重
+
+### Problem Statement
+
+“主线拆解”里的第 3 节“大任务拆分”和第 4 节“执行阶段”都在解释 `to-issues + triage -> implement + tdd`，内容重复。
+
+### Solution
+
+把第 3 节和第 4 节合并成：
+
+```text
+### 3. 判断规模并执行：小任务 / 大任务
+```
+
+合并后保留：
+
+- 小任务：`implement + tdd`
+- 大任务：`to-issues + triage -> implement + tdd`
+- `to-issues + triage` 的适合/不适合判断
+- `implement + tdd` 的最小解释
+
+`diagnose` 顺延为第 4 节，其他章节不动。
+
+### Testing Decisions
+
+- 这是文档任务，不写测试文件。
+- 验收点：
+  - “主线拆解”从 5 个小节变成 4 个小节。
+  - 不再同时存在“大任务拆分”和“执行阶段”两个重复小节。
+  - 合并后的第 3 节同时表达小任务和大任务路径。
+  - `diagnose` 编号改为第 4 节。
