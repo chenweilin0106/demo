@@ -42,16 +42,16 @@ diagnose
 
 | Skill | 什么时候用 |
 | --- | --- |
-| `setup-matt-pocock-skills` | 给真实项目初始化 issue tracker、标签、领域文档规则 |
+| `setup-matt-pocock-skills` | 真实项目首次使用前，初始化 issue tracker、标签、领域文档规则 |
 | `grill-me` | 目标不清、范围不清、需要先把问题问准 |
 | `grill-with-docs` | 需要结合 `CONTEXT.md`、ADR、项目术语一起讨论方案 |
 | `to-prd` | 已经聊清楚目标，需要整理成 PRD |
 | `to-issues` | PRD 或计划较大，需要拆成可执行任务 |
+| `triage` | `to-issues` 之后，判断 issue 是否信息足够、能否开工 |
 | `implement` | 已有 PRD、issue、流程文档，需要开始执行 |
 | `tdd` | 新功能、修 bug、补测试时使用 |
 | `diagnose` | bug、报错、失败、性能退化，需要系统排查 |
-| `triage` | 有 issue 队列，需要判断优先级和状态 |
-| `improve-codebase-architecture` | 代码难改、难测、结构混乱，需要找架构改进点 |
+| `improve-codebase-architecture` | 特殊优化入口：代码难改、难测、结构混乱时使用 |
 
 ## 主线拆解
 
