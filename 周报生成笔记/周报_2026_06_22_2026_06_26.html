@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>周报（2026-06-22 ~ 2026-06-26）</title>
+  </head>
+  <body>
+    <p>使用方式：点击“复制（不带字体）”后，直接到钉钉日志里粘贴。</p>
+    <p><button id="copy">复制（不带字体）</button></p>
+
+    <div id="copy-source">
+      <ol id="weekly">
+        <li>
+          疯狂砸蛋
+          <ol>
+            <li>
+              积分兑奖
+              <ol>
+                <li>还原任务图标样式</li>
+              </ol>
+            </li>
+            <li>
+              基础建设
+              <ol>
+                <li>更新环境变量</li>
+                <li>新增家族秘境任务</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          晶石回馈周
+          <ol>
+            <li>
+              积分兑奖
+              <ol>
+                <li>修复每日任务按钮跳转逻辑</li>
+                <li>补充秘境任务按钮样式</li>
+                <li>新增每日任务按钮状态</li>
+                <li>更新解锁文案样式</li>
+                <li>更新解锁文案逻辑</li>
+              </ol>
+            </li>
+            <li>
+              充值有礼
+              <ol>
+                <li>更新概率弹框（2次提交）</li>
+                <li>更新奖励列表</li>
+              </ol>
+            </li>
+            <li>
+              晶石回馈
+              <ol>
+                <li>修复红点状态更新</li>
+              </ol>
+            </li>
+            <li>
+              状态管理
+              <ol>
+                <li>新增phase</li>
+              </ol>
+            </li>
+            <li>
+              基础建设
+              <ol>
+                <li>更新环境变量</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          技能挑战周
+          <ol>
+            <li>
+              积分兑奖
+              <ol>
+                <li>修复每日任务按钮跳转逻辑</li>
+                <li>新增每日任务按钮状态</li>
+                <li>更新解锁文案样式</li>
+                <li>更新解锁文案逻辑</li>
+              </ol>
+            </li>
+            <li>
+              充值有礼
+              <ol>
+                <li>更新概率弹框（2次提交）</li>
+                <li>更新奖励列表</li>
+              </ol>
+            </li>
+            <li>
+              页面布局
+              <ol>
+                <li>更新切换模块活动信息</li>
+              </ol>
+            </li>
+            <li>
+              状态管理
+              <ol>
+                <li>新增phase</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          晶石派对周
+          <ol>
+            <li>
+              页面布局
+              <ol>
+                <li>更新切换模块活动信息</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          6月会员日
+          <ol>
+            <li>
+              资源更新
+              <ol>
+                <li>更新tk_19图片资源</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          盛夏音乐节
+          <ol>
+            <li>
+              样式/交互优化
+              <ol>
+                <li>新增预览弹窗功能并优化奖励橱窗样式及逻辑</li>
+                <li>优化popupBox样式并调整尺寸及背景逻辑</li>
+              </ol>
+            </li>
+            <li>
+              首页
+              <ol>
+                <li>新增跳转逻辑</li>
+                <li>新增背景音乐</li>
+                <li>新增通知弹框</li>
+                <li>搭建首页</li>
+              </ol>
+            </li>
+            <li>
+              页面布局
+              <ol>
+                <li>新增播放按钮</li>
+              </ol>
+            </li>
+            <li>
+              问题修复
+              <ol>
+                <li>修复vconsole注入逻辑并更新环境变量判断</li>
+                <li>还原webpack缓存配置并修复缓存问题</li>
+              </ol>
+            </li>
+            <li>
+              基础建设
+              <ol>
+                <li>搭建框架</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </div>
+
+    <script>
+      const copySource = document.getElementById("copy-source");
+      const weeklyList = document.getElementById("weekly");
+      const copyButton = document.getElementById("copy");
+
+      function toPlainText(element) {
+        const lines = [];
+        const walk = (node, level) => {
+          if (node.nodeName === "LI") {
+            const textNodes = [];
+            for (const child of node.childNodes) {
+              if (child.nodeType === Node.TEXT_NODE) {
+                const t = child.nodeValue.replace(/\s+/g, " ").trim();
+                if (t) textNodes.push(t);
+              } else if (
+                child.nodeType === Node.ELEMENT_NODE &&
+                child.nodeName !== "OL"
+              ) {
+                const t = child.textContent.replace(/\s+/g, " ").trim();
+                if (t) textNodes.push(t);
+              }
+            }
+            const text = textNodes.join(" ").trim();
+            if (text) {
+              lines.push("  ".repeat(level) + text);
+            }
+            const childOl = node.querySelector(":scope > ol");
+            if (childOl) {
+              for (const childLi of childOl.children) {
+                if (childLi.nodeName === "LI") walk(childLi, level + 1);
+              }
+            }
+            return;
+          }
+
+          if (node.nodeName === "OL") {
+            for (const child of node.children) {
+              if (child.nodeName === "LI") walk(child, level);
+            }
+          }
+        };
+        walk(element, 0);
+        return lines.join("\n");
+      }
+
+      function setClipboard(event) {
+        // 复制时生成“紧凑HTML”：避免缩进/换行产生的空白文本节点被部分编辑器当作空行处理
+        const buildCompactHtml = () => {
+          const esc = (s) =>
+            String(s)
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;");
+
+          const olType = (depth) => {
+            const mod = (depth - 1) % 3;
+            if (mod === 0) return "1";
+            if (mod === 1) return "a";
+            return "i";
+          };
+
+          const listStyleType = (type) => {
+            if (type === "1") return "decimal";
+            if (type === "a") return "lower-alpha";
+            return "lower-roman";
+          };
+
+          const liText = (li) => {
+            const parts = [];
+            for (const child of li.childNodes) {
+              if (child.nodeType === Node.TEXT_NODE) {
+                const t = child.nodeValue.replace(/\s+/g, " ").trim();
+                if (t) parts.push(t);
+              } else if (
+                child.nodeType === Node.ELEMENT_NODE &&
+                child.nodeName !== "OL"
+              ) {
+                const t = child.textContent.replace(/\s+/g, " ").trim();
+                if (t) parts.push(t);
+              }
+            }
+            return parts.join(" ").trim();
+          };
+
+          const renderOl = (ol, depth) => {
+            const type = olType(depth);
+            const styleType = listStyleType(type);
+            let html = `<ol type="${type}" style="margin:0;padding-left:1.6em;list-style-type:${styleType};">`;
+            for (const li of ol.children) {
+              if (li.nodeName !== "LI") continue;
+              const text = liText(li);
+              html += `<li style="list-style-type:${styleType};">` + esc(text);
+              const childOl = li.querySelector(":scope > ol");
+              if (childOl) html += renderOl(childOl, depth + 1);
+              html += "</li>";
+            }
+            html += "</ol>";
+            return html;
+          };
+
+          return renderOl(weeklyList, 1);
+        };
+
+        const html = buildCompactHtml();
+        const text = toPlainText(weeklyList);
+
+        window.__lastCopiedHtml = html;
+        window.__lastCopiedText = text;
+
+        event.clipboardData.setData("text/html", html);
+        event.clipboardData.setData("text/plain", text);
+        event.preventDefault();
+      }
+
+      function selectionInside(node) {
+        const sel = document.getSelection();
+        if (!sel || sel.rangeCount === 0) return false;
+        const range = sel.getRangeAt(0);
+        let common = range.commonAncestorContainer;
+        if (common.nodeType === Node.TEXT_NODE) common = common.parentNode;
+        return node.contains(common);
+      }
+
+      let forceCopy = false;
+      document.addEventListener("copy", (event) => {
+        if (!event.clipboardData) return;
+        if (forceCopy || selectionInside(copySource)) setClipboard(event);
+      });
+
+      copyButton.addEventListener("click", () => {
+        forceCopy = true;
+        const range = document.createRange();
+        range.selectNodeContents(copySource);
+        const sel = document.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand("copy");
+        sel.removeAllRanges();
+        forceCopy = false;
+      });
+    </script>
+  </body>
+</html>
