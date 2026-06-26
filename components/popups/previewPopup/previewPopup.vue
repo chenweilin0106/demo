@@ -1,15 +1,16 @@
 <template>
-  <PopupBox title="title_40.png" @clickClose="clickClose">
-    <div :class="['previewImg', config.type == 'pst_privilege' || config.type == 'car' ? 'gift' : config.type == 'title' ? 'titleSp' : config.type == 'CP_card' ? 'cpCardSp' : config.type == 'world_msg_skins' ? 'wmsSp' : config.type == 'room_dec_suit' ? 'roomSp' : config.type == 'costume' ? 'userMainSp' : config.type == 'ring' ? 'ringSp' : config.type == 'virtual_avatar_components_suite' ? 'vascSp' : config.type == 'joke_gift' ? 'jokeGiftSp' : 'other']">
+  <PopupBox title="预览" is-son @clickClose="clickClose">
+    <div :class="['previewImg', config.type === 'pst_privilege' || config.type === 'car' ? 'gift' : config.type === 'title' ? 'titleSp' : config.type === 'CP_card' ? 'cpCardSp' : config.type === 'world_msg_skins' ? 'wmsSp' : config.type === 'room_dec_suit' ? 'roomSp' : config.type === 'costume' ? 'userMainSp' : config.type === 'ring' ? 'ringSp' : config.type === 'virtual_avatar_components_suite' ? 'vascSp' : config.type === 'joke_gift' ? 'jokeGiftSp' : 'other']">
       <PublicImg :imgName="config.img" :imgType="config.type"></PublicImg>
-      <div class="cpIcon" v-if="config.type == 'CP_card'"></div>
-      <div class="roomSuitIcon" v-if="config.type == 'room_dec_suit'"></div>
+      <div class="cpIcon" v-if="config.type === 'CP_card'"></div>
+      <div class="roomSuitIcon" v-if="config.type === 'room_dec_suit'"></div>
     </div>
     <div class="tip1Text">
-      <div class="zpMark" v-if="config.type=='virtual_avatar_components_suite'"></div>{{ config.tip1 }}
+      <div class="suiteLabel" v-if="config.type === 'virtual_avatar_components_suite'" :class="`status${config.suitType === '珍品' ? '1' : config.suitType === '卓越' ? '2' : config.suitType === '传世' ? '3' : ''}`"></div>{{ config.tip1 }}
     </div>
     <div class="tip2Text" v-if="config.tip2" v-html="config.tip2"></div>
-    <div class="tip2Text" v-if="config.type == 'pst_privilege'">仅静态效果展示，礼物动效惊喜等你来体验</div>
+    <div class="tip2Text" v-if="config.type === 'pst_privilege'">仅静态效果展示，礼物动效惊喜等你来体验</div>
+    <div class="tip3Text" v-if="config.type === 'virtual_avatar_components_suite'">时装按性别发放</div>
     <!-- <div class="tip2Text" v-if="config.type=='car'">仅静态效果展示，座驾动效惊喜等你来体验</div> -->
   </PopupBox>
 </template>
@@ -38,10 +39,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .popupContent {
-  // min-height: 410px;
+::v-deep .popupContent.popupContent {
   .main {
-    margin-bottom: 94px;
+    height: fit-content !important;
     .previewImg {
       margin: 0 auto 0 auto;
       overflow: hidden;
@@ -51,7 +51,7 @@ export default {
       &.gift {
         width: 427px;
         height: 740px;
-        background: url('@/pages/labaFestival/assets/chat_room_bg.png') no-repeat left top/100% 100%;
+        background: url('./chat_room_bg.png') no-repeat left top/100% 100%;
         border: none;
         border-radius: 0;
       }
@@ -76,7 +76,7 @@ export default {
         .cpIcon {
           width: 394px;
           height: 180px;
-          background: url('@/pages/labaFestival/assets/cp_card_bg.png') no-repeat left top/100% 100%;
+          background: url('./cp_card_bg.png') no-repeat left top/100% 100%;
           position: absolute;
           left: 50%;
           top: 46%;
@@ -99,7 +99,7 @@ export default {
         .roomSuitIcon {
           width: 340px;
           height: 736px;
-          background: url('@/pages/labaFestival/assets/room_suit_bg.png') no-repeat left top/100% 100%;
+          background: url('./room_suit_bg.png') no-repeat left top/100% 100%;
           position: absolute;
           left: 50%;
           transform: translateX(-50%);
@@ -111,14 +111,14 @@ export default {
         height: 740px;
         border: none;
         border-radius: 0;
-        background: url('@/pages/labaFestival/assets/user_main_bg.png') no-repeat left top/100% 100%;
+        background: url('./user_main_bg.png') no-repeat left top/100% 100%;
       }
       &.vascSp {
-        width: 481px;
-        height: 615px;
+        width: 489px;
+        height: 627px;
         background: transparent;
         border: none;
-        border-radius: 0px;
+        border-radius: 0;
       }
       &.jokeGiftSp {
         width: 562px;
@@ -135,7 +135,7 @@ export default {
     .tip1Text {
       width: fit-content;
       font-size: 28px;
-      color: #DB3819;
+      color: #FFFFFF;
       text-align: center;
       margin: 26px auto 0;
       white-space: pre-wrap;
@@ -143,19 +143,34 @@ export default {
       position: relative;
       display: flex;
       align-items: center;
-      .zpMark {
+      .suiteLabel {
         margin-right: 5px;
         width: 66px;
-        height: 33px;
-        background: url('@/pages/labaFestival/assets/tk_20.png') no-repeat left top/100% 100%;
+        height: 34px;
+        &.status1 {
+          background: url('./clothe_zp_mark.png') no-repeat left top/100% 100%;
+        }
+        &.status2 {
+          background: url('./clothe_zy_mark.png') no-repeat left top/100% 100%;
+        }
+        &.status3 {
+          background: url('./clothe_cs_mark.png') no-repeat left top/100% 100%;
+        }
       }
     }
     .tip2Text {
       font-size: 24px;
-      color: #80362E;
+      color: #B0D8E5;
       text-align: center;
       margin: 15px auto 0;
       white-space: pre-wrap;
+      line-height: 1;
+    }
+    .tip3Text {
+      font-size: 24px;
+      color: #B0D8E5;
+      text-align: center;
+      margin: 13px auto 0;
       line-height: 1;
     }
   }
