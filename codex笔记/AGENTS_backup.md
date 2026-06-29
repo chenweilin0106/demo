@@ -20,11 +20,9 @@
 <!-- - 完成任务后做自检；如涉及变更，检查影响范围、用户可见结果与相关文件是否符合预期。 -->
 - 修改代码/文件前，先用 $grill-me 对齐需求；若任务需要沉淀正式文档，改用 $grill-with-docs。
 - 需求对齐完成后，用 $to-prd 产出 PRD；仅在任务复杂或需长期追踪时写入实质文档。
-- PRD 完成后按任务规模执行：
-  - Small task：$implement + $tdd
-  - Large task：$to-issues + $triage -> $implement + $tdd
-- Small task 指单点修改、影响范围清楚、无需拆分 issue。
-- Large task 指跨模块、跨流程、需求不确定或需要多人/多阶段推进。
+- PRD 完成后，统一用 $to-issues 进行任务拆分，拆到可独立执行、可独立验证的粒度。
+- 任务拆分完成后，用 $tdd 开始正式实现。
+- 如实现或验证中发现 bug，先用 $diagnose 分析根因，再用 $tdd 完成修复与回归验证。
 
 ## 工具调用优先级（强制）
 - 文档/MCP/SKILLS/搜索工具可用时，禁止直接假设内容或使用终端/Python修改。
