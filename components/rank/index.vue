@@ -70,10 +70,17 @@
           <!-- <li v-show="rankChosen==2"><span></span>最强神豪榜为活动期间<i>本服用户累计充值</i>排行榜，</li> -->
           <!-- <li v-show="rankChosen==2">榜单分服统计</li> -->
 
+          <!-- <li v-show="rankChosen==2"><span></span>神豪榜为活动期间<i>本服用户累计充值</i>排行榜，日榜为单日充</li> -->
+          <!-- <li v-show="rankChosen==2">值排行榜，榜单分服统计</li> -->
+
           <!-- <li><span></span><i>详细榜单规则和奖励可查看页面【奖励详情】</i></li> -->
 
           <!-- <li v-show="rankChosen==1"><span></span>活动期间收到钻石礼物，可获得双倍经验值和双倍</li> -->
           <!-- <li v-show="rankChosen==1">基础魅力值，魅力值上限提高50%</li> -->
+
+          <!-- <li v-show="rankChosen==1"><span></span>活动期间收到钻石礼物，送收双方同享双倍经验值；收礼方</li> -->
+          <!-- <li v-show="rankChosen==1">还可获双倍基础魅力值，魅力值上限提高50%（与其他活动</li> -->
+          <!-- <li v-show="rankChosen==1">效果不叠加）</li> -->
 
           <!-- <li v-show="rankChosen==2"><span></span>购买礼包、会员（含超值兑换中兑换会员）、活力</li> -->
           <!-- <li v-show="rankChosen==2">卡不计算在内</li> -->
@@ -295,7 +302,7 @@ export default {
           this.$toast(res.errmsg)
         }
       })
-    })，
+    })
     /**
      * 切换是否公开昵称 老版本
      */
