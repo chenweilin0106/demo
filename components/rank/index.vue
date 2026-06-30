@@ -15,7 +15,7 @@
       <div class="rewardsTip position-relative"></div>
       <div :key="`${rankChosen}_${tagChosen}`" :class="['rewardsShowArea flex align-center justify-center position-relative',`status${rankChosen}`]">
         <div class="rewardItem position-relative" :class="rewardsList[`${rankChosen}${tagChosen}`].length>=4?'smallMargin':''" v-for="(item) in rewardsList[`${rankChosen}${tagChosen}`]" :key="item.id" @click="previewImgCk(item)">
-          <div :class="['rewardIcon position-absolute position-row-center', item.type=='title'?'titleSp':item.type == 'mic' ? 'micSp' : null]">
+          <div :class="['rewardIcon position-absolute position-row-center', `${item.type}Sp`]">
             <PublicImg :imgName="item.icon" :imgType="item.type" />
           </div>
           <div class="rewardText radius-999 position-absolute position-row-center w-100 text-center line-height-1 flex align-center justify-center">{{item.text}}<img v-if="item.quality" :src="IconPath(item.quality)" class="qualityIcon" alt="" /></div>
@@ -110,6 +110,8 @@ export default {
       tagChosen: 1, // 榜单选择: 1:日榜 2:总榜
       rewardsList: Object.freeze({
         11: [
+          // { id: 311, type: 'title', icon: 'ch_csjd', text: '称号', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
+          // { id: 311, type: 'title', icon: 'ch_csjd', text: '属性称号', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
           // { id: 111, type: 'pst_privilege', icon: 'sjdw_120_120.png', text: '礼物赠送权', mark: '888', previewImg: 'gift_sjdw.png', previewTip1: '商界帝王·礼物赠送权', mark1: false, isNew: false },
           // { id: 121, type: 'costume', icon: 'qqjcl_120_120.png', text: '主页特效', mark: '', previewImg: 'zyp_qqjcl.svga', previewTip1: '千骑卷尘来·主页特效', mark1: '', isNew: false },
           // { id: 321, type: 'chat_bubble', icon: 'qp_xdsk_sc', text: '私聊气泡', mark: '', previewImg: '', previewTip1: '', mark1: false, isNew: false },
@@ -218,9 +220,9 @@ export default {
      */
     selectChosen(r, t, date, isThinking = false) {
       this.isShowDateList = false
-      if (!rankStrategies[t]) return console.log('切换榜单数据错误')
       if (isThinking) this.$thinking.track('WebClick', { module: '问鼎江山', element: this.tabsArray[r - 1].tabName })
       getPageData({ type: 'sweet_top_get_rank_list', mark: { type: t, category: r, date: date || this.todaySelectDate } }).then((res) => {
+      // musicModFourApi({ type: 'get_rank', rank_category: r, rank_type: t, date: date || this.todaySelectDate }).then((res) => {
         if (res.errno) return this.$toast(res.errmsg)
         this.rankChosen = r
         this.tagChosen = t
@@ -296,6 +298,7 @@ export default {
      */
     isShowBtnCk: _throttle(function() {
       getPageData({ type: 'white_love_top_name_set', mark: this.userRankShow.is_show_name == 1 ? '2' : '1' }).then((res) => {
+      // getPageData({ type: 'set_name', mark: this.userRankShow.is_show_name == 1 ? '2' : '1' }).then((res) => {
         if (res.errno == 0) {
           this.selectChosen(this.rankChosen, this.tagChosen, this.selectDate[this.rankChosen])
         } else {
@@ -370,26 +373,33 @@ export default {
         width: 148px;
         height: 128px;
         background: linear-gradient(180deg, #FFE3CF, #FFFFFF);
+        -webkit-background-origin: padding-box;
+        -webkit-background-clip: padding-box;
         border-radius: 12px;
         border: 4px solid #F79A81;
         margin: 10px 20px;
         z-index: 1;
         &.smallMargin{
-          width: 138px;
-          margin-left: 5px;
-          margin-right: 5px;
+          /* width: 138px; */
+          margin: 10px 8px;
         }
         .rewardIcon{
           top: 0;
           z-index: 1;
-          width: 120px;
-          height: 120px;
-          &.micSp{
-            width: 97px;
-            height: 97px;
-          }
+          width: 100%;
+          height: 95px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          //&.micSp, &.titleSp, &.ringSp, &.voiceSp{
+          //  width: 100%;
+          //  height: 95px;
+          //}
           .imgCompo {
             z-index: -1;
+            width: 100%;
+            height: 120px;
           }
         }
         .rewardText{
@@ -411,12 +421,12 @@ export default {
           width: 140px;
           height: 26px;
           background: url('@/pages/520/assets/mk7_49.png') no-repeat left top/100% 100%;
-          top: 74px;
+          top: 69px;
         }
         .rewardMark {
           position: absolute;
           z-index: 2;
-          right: -13px;
+          right: -10px;
           top: 0;
           transform: translateY(-50%);
           background: linear-gradient(-90deg, #75B9FF, #FF84F8);
@@ -530,6 +540,7 @@ export default {
       }
     }
     .rulesBtn{
+      z-index: 2;
       width: 70px;
       height: 185px;
       background: url('@/pages/520/assets/mk7_7.png') no-repeat left top/100% 100%;
