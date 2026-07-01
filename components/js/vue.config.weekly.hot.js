@@ -11,6 +11,7 @@ const envFiles = [
   .map(file => path.resolve(__dirname, file))
   .filter(file => fs.existsSync(file))
 const cacheEnv = process.env.VUE_APP_ENV || process.env.VUE_CLI_MODE || 'default'
+// 开发时跳过稳定目录和产物目录，减少无关文件监听带来的热更新压力。
 const watchIgnored = ['**/node_modules/**', '**/public/**', '**/dist/**', '**/.git/**', '**/.idea/**', '**/.vscode/**', '**/coverage/**']
 // function resolve(dir) {
 //   return path.join(__dirname, dir)
@@ -54,6 +55,7 @@ module.exports = {
   publicPath: isProd ? process.env.VUE_APP_CDN_PATH : '/',
   outputDir: `dist/${PAGE_NAME}`,
   devServer: {
+    // 明确开启 HMR，避免后续配置变更时误关热更新。
     hot: true,
     compress: true,
     client: {
@@ -67,13 +69,16 @@ module.exports = {
     }
   },
   configureWebpack: {
+    // 开发态使用更快的 source map，保留基础报错定位能力。
     ...(!isProd ? { devtool: 'eval-cheap-source-map' } : {}),
     entry: [path.resolve(__dirname, `src/pages/${PAGE_NAME}/main.js`)],
     cache: {
       type: 'filesystem',
+      // 按页面和环境隔离缓存，减少周常多页面之间的缓存互相影响。
       name: `${PAGE_NAME || 'unknown'}-${cacheEnv}`,
       cacheDirectory: path.resolve(__dirname, `node_modules/.cache/webpack/build-${cacheEnv}`),
       buildDependencies: { config: [__filename, ...envFiles] },
+      // 缓存不压缩，减少开发阶段缓存读写开销。
       compression: false,
       allowCollectingMemory: true
     },
@@ -108,8 +113,9 @@ module.exports = {
       .set('type', 'asset/resource')
       .set('generator', { filename: 'assets/svga/[name].[hash:8][ext]' })
     if (!isProd) {
+      // 开发态不生成 preload 资源提示，减少 HTML 插件处理。
       config.plugins.delete('preload')
-      // 优化监视选项
+      // 合并短时间内的连续保存，避免重复触发 rebuild。
       config.watchOptions({ ignored: watchIgnored, aggregateTimeout: 100 })
     }
     config.when(isProd, (config) => {
