@@ -11,6 +11,7 @@ const envFiles = [
   .map(file => path.resolve(__dirname, file))
   .filter(file => fs.existsSync(file))
 const cacheEnv = process.env.VUE_APP_ENV || process.env.VUE_CLI_MODE || 'default'
+const watchIgnored = ['**/node_modules/**', '**/public/**', '**/dist/**', '**/.git/**', '**/.idea/**', '**/.vscode/**', '**/coverage/**']
 // function resolve(dir) {
 //   return path.join(__dirname, dir)
 // }
@@ -53,25 +54,27 @@ module.exports = {
   publicPath: isProd ? process.env.VUE_APP_CDN_PATH : '/',
   outputDir: `dist/${PAGE_NAME}`,
   devServer: {
+    hot: true,
     compress: true,
     client: {
       webSocketURL: 'auto://0.0.0.0:0/ws'
     },
     static: {
       watch: {
-        ignored: [/node_modules/, /public/, /dist/, /.idea/],
+        ignored: watchIgnored,
         poll: false
       }
     }
   },
   configureWebpack: {
+    ...(!isProd ? { devtool: 'eval-cheap-source-map' } : {}),
     entry: [path.resolve(__dirname, `src/pages/${PAGE_NAME}/main.js`)],
     cache: {
       type: 'filesystem',
+      name: `${PAGE_NAME || 'unknown'}-${cacheEnv}`,
       cacheDirectory: path.resolve(__dirname, `node_modules/.cache/webpack/build-${cacheEnv}`),
-      buildDependencies: {
-        config: [__filename, ...envFiles]
-      },
+      buildDependencies: { config: [__filename, ...envFiles] },
+      compression: false,
       allowCollectingMemory: true
     },
     // 关闭 webpack 的性能提示
@@ -104,10 +107,11 @@ module.exports = {
       .test(/\.svga$/i)
       .set('type', 'asset/resource')
       .set('generator', { filename: 'assets/svga/[name].[hash:8][ext]' })
-    // 优化监视选项
-    config.watchOptions({
-      ignored: ['node_modules/**', 'public/**', 'dist/**', '.idea/**']
-    })
+    if (!isProd) {
+      config.plugins.delete('preload')
+      // 优化监视选项
+      config.watchOptions({ ignored: watchIgnored, aggregateTimeout: 100 })
+    }
     config.when(isProd, (config) => {
       config.optimization.splitChunks({
         chunks: 'all',
