@@ -1,7 +1,16 @@
-// const fs = require('fs')
+const fs = require('fs')
 const path = require('path')
 const { PAGE_NAME } = process.env
 const isProd = process.env.NODE_ENV === 'production'
+const envFiles = [
+  '.env',
+  process.env.VUE_CLI_MODE ? `.env.${process.env.VUE_CLI_MODE}` : '',
+  process.env.VUE_APP_ENV ? `.env.${process.env.VUE_APP_ENV}` : ''
+]
+  .filter(Boolean)
+  .map(file => path.resolve(__dirname, file))
+  .filter(file => fs.existsSync(file))
+const cacheEnv = process.env.VUE_APP_ENV || process.env.VUE_CLI_MODE || 'default'
 // function resolve(dir) {
 //   return path.join(__dirname, dir)
 // }
@@ -19,7 +28,7 @@ const cdn = {
     `${process.env.VUE_APP_OSS_PATH}activity/public/vue/node_modules/lottie.min.js`,
     `${process.env.VUE_APP_OSS_PATH}activity/public/vue/node_modules/thinkingdata.umd.min.js`,
     `${process.env.VUE_APP_OSS_PATH}activity/public/vue/node_modules/svga.min.js`
-    // `${process.env.VUE_APP_OSS_PATH}activity/public/vue/node_modules/html2canvas.min.js`,
+    // `${process.env.VUE_APP_OSS_PATH}activity/public/vue/node_modules/html2canvas.min.js`
     // `${process.env.VUE_APP_OSS_PATH}activity/public/vue/node_modules/swiper.min.js`
     // `${process.env.VUE_APP_OSS_PATH}activity/public/vue/node_modules/vant.min.js`
   ]
@@ -35,38 +44,33 @@ const externals = {
   'lottie-web': 'lottie',
   'thinkingdata-browser': 'thinkingdata',
   svgaplayerweb: 'SVGA'
-  // html2canvas: 'html2canvas',
+  // html2canvas: 'html2canvas'
   // swiper: 'Swiper'
   // vant: 'vant'
 }
 module.exports = {
   productionSourceMap: false,
-  devServer: {
-    hot: true,
-    compress: true,
-    client: {
-      overlay: false
-    },
-    static: {
-      watch: {
-        ignored: [/node_modules/, /public/, /dist/, /.idea/],
-        poll: false
-      }
-    }
-  },
   publicPath: isProd ? process.env.VUE_APP_CDN_PATH : '/',
   outputDir: `dist/${PAGE_NAME}`,
+  devServer: {
+    client: {
+      webSocketURL: 'auto://0.0.0.0:0/ws'
+    }
+  },
   configureWebpack: {
     entry: [path.resolve(__dirname, `src/pages/${PAGE_NAME}/main.js`)],
-    // 关闭 webpack 的性能提示
-    performance: { hints: false },
     cache: {
       type: 'filesystem',
+      cacheDirectory: path.resolve(__dirname, `node_modules/.cache/webpack/build-${cacheEnv}`),
       buildDependencies: {
-        config: [__filename]
-      },
-      allowCollectingMemory: true
-    }
+        config: [__filename, ...envFiles]
+      }
+    },
+    // 关闭 webpack 的性能提示
+    performance: { hints: false }
+    // devServer: {
+    //   allowedHosts: 'all'
+    // }
   },
   chainWebpack(config) {
     if (isProd) {
@@ -80,37 +84,34 @@ module.exports = {
       config.externals(externals)
     }
     config.plugin('html').tap((args) => {
-      args[0].template = `src/pages/${PAGE_NAME}/index.html`
+      args[0].template = fs.existsSync(`src/pages/${PAGE_NAME}/index.html`)
+        ? `src/pages/${PAGE_NAME}/index.html`
+        : 'public/index.html'
       return args
     })
-      // 开启babel-loader缓存
-    config.module
-      .rule('js')
-      .use('babel-loader')
-      .loader('babel-loader')
-      .options({
-        cacheDirectory: true
-      })
     config.plugins.delete('prefetch')
-    // 优化监视选项
-    config.watchOptions({
-      ignored: ['node_modules/**', 'public/**', 'dist/**', '.idea/**']
-    })
+    // 新增：让 webpack 识别并打包 .svga 文件为静态资源（webpack5新增）
+    config.module
+      .rule('svga')
+      .test(/\.svga$/i)
+      .set('type', 'asset/resource')
+      .set('generator', { filename: 'assets/svga/[name].[hash:8][ext]' })
+
     config.when(isProd, (config) => {
       config.optimization.splitChunks({
         chunks: 'all',
-        maxSize: 200000,
+        maxSize: 200000, // 最大分包大小
         cacheGroups: {
           libs: {
             name: 'chunk-libs',
             test: /[\\/]node_modules[\\/]/,
             priority: 10,
-            chunks: 'initial'
+            chunks: 'initial' // only package third parties that are initially dependent
           },
           vantUI: {
-            name: 'chunk-vantUI',
-            priority: 15,
-            test: /[\\/]node_modules[\\/]_?vant(.*)/
+            name: 'chunk-vantUI', // split vantUI into a single package
+            priority: 15, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+            test: /[\\/]node_modules[\\/]_?vant(.*)/ // in order to adapt to cnpm
           }
         }
       })
